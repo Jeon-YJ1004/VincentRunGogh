@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    // Infra test01
+    // Infra test02
 
     private final AuthService authService;
 
