@@ -54,12 +54,13 @@ export default defineConfig({
       '@components': path.resolve(__dirname, './src/components'),
       '@drawing': path.resolve(__dirname, './src/components/drawing'),
       '@pages': path.resolve(__dirname, './src/pages'),
+      'sockjs-client': 'sockjs-client/dist/sockjs',
     },
   },
   optimizeDeps: {
     include: ['@fullcalendar/common'],
   },
-  server : {
+  server: {
     port: 5173,
   },
 });

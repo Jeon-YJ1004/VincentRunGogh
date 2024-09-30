@@ -13,6 +13,7 @@
     CalendarMonthOutline,
   } from 'flowbite-svelte-icons';
   import BMIChart from '@/components/myhealth/BMIChart.svelte';
+  import BackButton from '@/components/buttons/BackButton.svelte';
   import ProfileForm from '@/components/forms/ProfileForm.svelte';
   import ImageForm from '@/components/forms/ImageForm.svelte';
   import { profileFormStore } from '@/stores/profileFormStore';
@@ -187,6 +188,7 @@
   onDestroy(unsubscribe);
 </script>
 
+<BackButton />
 <!-- // SECTION - profile -->
 <div class="flex items-center space-x-4 rtl:space-x-reverse">
   <div class="wrap">

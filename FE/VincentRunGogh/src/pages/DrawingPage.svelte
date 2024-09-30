@@ -1,18 +1,28 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
+  import { writable } from 'svelte/store';
   import L, { Map as LeafletMap, Marker, Polyline } from 'leaflet';
   import type { LatLng, LatLngExpression, Control } from 'leaflet';
-  import { push, pop, replace } from 'svelte-spa-router';
-
+  import { replace, querystring } from 'svelte-spa-router';
   import Swal from 'sweetalert2';
   import { get } from 'svelte/store';
 
-  import { MapToolbar, MapGUI } from '@/components/drawing';
-  import { isLockScreen, isPause, elapsedTime, posList } from '@/stores/drawingStore';
+  import { MapToolbar, MapGUI, Timer } from '@/components/drawing';
+  import {
+    isLockScreen,
+    isPause,
+    elapsedTime,
+    posList,
+    updateDrawingInfo,
+    setDrawingPos,
+    updateDistanceAndSpeed,
+  } from '@/stores/drawingStore';
   import DrawingPauseModal from '@/components/modals/DrawingPauseModal.svelte';
-  import Timer from '@/components/drawing/Timer.svelte';
-  import { updateDistanceAndSpeed } from '@/utils/calculateFuc';
+  import { userStore } from '@/stores/userStore';
 
+  import { startDrawing } from '@/api/drawingApi';
+  import { connectWebSocket, disconnectWebSocket, sendRealTimePosition } from '@/api/websocket';
+  import { formatTimeToHMS } from '@/utils/formatter';
   $: $isLockScreen = $isLockScreen;
   $: $isPause = $isPause;
   $: $elapsedTime = $elapsedTime;
@@ -26,6 +36,7 @@
   let trackingIntervalId: number | null = null; // 10초마다 위치를 추적하는 setInterval의 ID
   let startPos: LatLng | null = null;
   let startTime: Date | null = null;
+  let firstLocationFound = writable(false); // 최초 위치 찾기 상태
 
   //STUB - 임시 좌표 없애기
   // const posList: LatLngExpression[] = [
@@ -46,6 +57,47 @@
     }).addTo(m);
 
     return m;
+  }
+  function handleLocationFound(e: L.LocationEvent) {
+    const { lat, lng } = e.latlng;
+    currPos = new L.LatLng(lat, lng);
+
+    if (!startPos) {
+      startPos = new L.LatLng(lat, lng);
+    }
+    addPosition(lat, lng);
+
+    firstLocationFound.update((value) => {
+      if (!value) {
+        // 처음 위치 찾기
+        console.log('처음 location found');
+        firstLocationFound.set(true);
+      } else {
+        // 주기적 위치 업데이트
+        console.log('주기적 found');
+        const currentUser = get(userStore);
+        const nickname = currentUser ? currentUser.nickname : '';
+        console.log('소켓 데이터 보내기!');
+        console.log(trackingIntervalId);
+        sendRealTimePosition({ lat, lng }, nickname);
+        setDrawingPos({ lat, lng, time: formatTimeToHMS() });
+        if (map !== null) {
+          // 마커가 이미 존재하면 업데이트하고, 없으면 새로 추가
+          if (marker.has('current')) {
+            const existingMarker = marker.get('current');
+            existingMarker?.setLatLng(currPos); // 기존 마커 위치 업데이트
+          } else {
+            const newMarker = createMarker(currPos); // 새 마커 생성
+            marker.set('current', newMarker); // 새 마커를 저장
+          }
+          if (lineLayers) {
+            lineLayers?.addLatLng(currPos);
+          }
+          updateDistanceAndSpeed($posList);
+        }
+      }
+      return true;
+    });
   }
 
   let toolbar = new L.Control({ position: 'topright' });
@@ -108,33 +160,31 @@
                 // modalType에 따라 새로운 모달 렌더링
                 renderModal(nextModalType);
               });
+
               modalInstance.$on('cancel', (event) => {
                 renderModal('pause');
               });
 
               // complete 이벤트 처리
               modalInstance.$on('complete', () => {
-                //TODO - api 연결
-                Swal.close(); // SweetAlert 모달을 닫음
+                Swal.close();
                 replace('/drawingcapture?mode=complete');
               });
 
               // save 이벤트 처리
               modalInstance.$on('save', () => {
-                //TODO - api 연결
                 console.log('Temporary save');
-                Swal.close(); // SweetAlert 모달을 닫음
+                Swal.close();
                 replace('/drawingcapture?mode=save');
               });
 
               // continue 이벤트 처리
               modalInstance.$on('continue', () => {
                 //TODO - 3초 보여주기
-                // countdown = 3;
-                Swal.close(); // SweetAlert 모달을 닫음
+                countdown = 3;
+                Swal.close();
                 setTimeout(() => {
                   isPause.update((value) => !value);
-                  toggleTracking();
                   console.log('Continuing drawing');
                 }, 3000);
               });
@@ -188,7 +238,10 @@ fill="#000000" stroke="none">
   }
 
   function createLines(): Polyline {
-    return L.polyline($posList, { color: '#E4E', opacity: 0.5, smoothFactor: 1 });
+    return L.polyline(
+      $posList.map((p) => p.latlng),
+      { color: '#E4E', opacity: 0.5, smoothFactor: 1 }
+    );
   }
 
   let lineLayers: Polyline;
@@ -228,32 +281,40 @@ fill="#000000" stroke="none">
   function toggleTracking() {
     const trackingActive = get(isPause);
     if (!trackingActive) {
+      console.log('트래킹 시작');
       map?.locate({ setView: true, maxZoom: 18 });
+      map.on('locationfound', handleLocationFound);
 
-      map?.on('locationfound', (e: L.LocationEvent) => {
-        const { lat, lng } = e.latlng;
-        currPos = new L.LatLng(lat, lng);
+      // map?.on('locationfound', (e: L.LocationEvent) => {
+      //   const { lat, lng } = e.latlng;
+      //   currPos = new L.LatLng(lat, lng);
 
-        if (!startPos) {
-          startPos = new L.LatLng(lat, lng);
-        }
-        addPosition(lat, lng);
-
-        if (map !== null) {
-          // 마커가 이미 존재하면 업데이트하고, 없으면 새로 추가
-          if (marker.has('current')) {
-            const existingMarker = marker.get('current');
-            existingMarker?.setLatLng(currPos); // 기존 마커 위치 업데이트
-          } else {
-            const newMarker = createMarker(currPos); // 새 마커 생성
-            marker.set('current', newMarker); // 새 마커를 저장
-          }
-          if (lineLayers) {
-            lineLayers?.addLatLng(currPos);
-          }
-          updateDistanceAndSpeed($posList);
-        }
-      });
+      //   if (!startPos) {
+      //     startPos = new L.LatLng(lat, lng);
+      //   }
+      //   addPosition(lat, lng);
+      //   //!SECTION - 소켓에 위치 전송
+      //   const currentUser = get(userStore);
+      //   const nickname = currentUser ? currentUser.nickname : '';
+      //   console.log('소켓 데이터 보내기!');
+      //   console.log(trackingIntervalId);
+      //   sendRealTimePosition({ lat, lng }, nickname);
+      //   setDrawingPos({ lat, lng, time: formatTimeToHMS() });
+      //   if (map !== null) {
+      //     // 마커가 이미 존재하면 업데이트하고, 없으면 새로 추가
+      //     if (marker.has('current')) {
+      //       const existingMarker = marker.get('current');
+      //       existingMarker?.setLatLng(currPos); // 기존 마커 위치 업데이트
+      //     } else {
+      //       const newMarker = createMarker(currPos); // 새 마커 생성
+      //       marker.set('current', newMarker); // 새 마커를 저장
+      //     }
+      //     if (lineLayers) {
+      //       lineLayers?.addLatLng(currPos);
+      //     }
+      //     updateDistanceAndSpeed($posList);
+      //   }
+      // });
 
       map?.on('locationerror', (e: L.ErrorEvent) => {
         console.error(e.message);
@@ -271,15 +332,18 @@ fill="#000000" stroke="none">
       trackingIntervalId = window.setInterval(() => {
         map?.locate();
       }, 10000);
+      console.log(timerIntervalId + ' ' + trackingIntervalId);
     } else {
       console.log('일시정지');
 
       if (timerIntervalId) {
+        console.log('시간 타이머 멈추기 :' + timerIntervalId);
         clearInterval(timerIntervalId);
         timerIntervalId = null;
       }
 
       if (trackingIntervalId) {
+        console.log('10초 위치 트래킹 멈추기 :' + trackingIntervalId);
         clearInterval(trackingIntervalId);
         trackingIntervalId = null;
       }
@@ -289,9 +353,48 @@ fill="#000000" stroke="none">
   function clickLockScreen() {
     $isLockScreen = !$isLockScreen;
   }
+  function handleTimerComplete() {
+    countdown = null;
+    !map && mapAction();
+    console.log('타이머 끝 ');
+    toggleTracking();
+  }
+  let routeId, drawingId;
+  let options = {};
+
+  // Reactive statement to update routeId and drawingId whenever querystring changes
+  $: if ($querystring) {
+    const params = new URLSearchParams($querystring);
+    routeId = params.get('routeId');
+    drawingId = params.get('drawingId');
+
+    // Update options inside the reactive statement
+    options = {
+      ...(drawingId ? { drawingId } : {}),
+      ...(routeId ? { rootId: routeId } : {}),
+    };
+  }
 
   onMount(() => {
+    userStore.initialize(); // 스토어에서 사용자 정보 초기화
     countdown = 3;
+    startDrawing(
+      options,
+      async (response) => {
+        console.log('api 연결 후 드로잉 데이터:', response);
+        updateDrawingInfo(response.data.data); // 스토어를 업데이트
+        try {
+          await connectWebSocket();
+          console.log('WebSocket connected successfully');
+        } catch (error) {
+          console.error('Failed to connect WebSocket:', error);
+        }
+      },
+      (error) => {
+        console.error('Failed to start drawing:', error);
+      }
+    );
+
     //TODO - 루트의 좌표 값들을 url의 routeId 파람으로 조회
     //이전에 한 드로잉은 다른 색으로 보여주기
   });
@@ -301,20 +404,14 @@ fill="#000000" stroke="none">
       // clearInterval(timerIntervalId);
       // clearInterval(trackingIntervalId);
     }
+    disconnectWebSocket();
   });
 </script>
 
 <svelte:window on:resize={resizeMap} />
 
 {#if countdown}
-  <Timer
-    on:clearTimer={() => {
-      countdown = null;
-      !map && mapAction();
-      toggleTracking();
-    }}
-    {countdown}
-  />
+  <Timer on:clearTimer={handleTimerComplete} {countdown} />
 {/if}
 
 <div class="map-container" style="height:100vh; width:100%;">

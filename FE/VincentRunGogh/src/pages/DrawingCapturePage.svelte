@@ -7,14 +7,15 @@
   import 'leaflet/dist/leaflet.css';
   import 'leaflet-draw';
   import 'leaflet-draw/dist/leaflet.draw.css';
+  import html2canvas from 'html2canvas';
+  import { Canvg } from 'canvg';
+
   import Swal from 'sweetalert2';
   import { location, querystring } from 'svelte-spa-router';
   import { get } from 'svelte/store';
 
-  import { elapsedTime, posList, route, totalDistance } from '@/stores/drawingStore';
-
-  import html2canvas from 'html2canvas';
-  import { Canvg } from 'canvg';
+  import { elapsedTime, posList, route, totalDistance, drawingStore } from '@/stores/drawingStore';
+  import { startDrawing, completeDrawing, saveDrawing } from '@/api/drawingApi';
 
   // 폼 형태 변수 임시저장 or 완료
   let isComplete = $querystring?.split('=')[1] === 'complete';
@@ -240,15 +241,31 @@
   }
 
   async function submitDrawing() {
-    //TODO - 백에게 전달
+    const { endInfo } = get(drawingStore);
 
+    const data = {
+      drawingImage,
+      drawingDetailImage,
+      step: 0,
+      // ...endInfo,
+    };
+
+    if (inputName?.length > 0) {
+      data.title = inputName;
+    }
+    console.log(data);
+    if (isComplete) {
+      completeDrawing(get(drawingStore).drawingId, data);
+    } else {
+      saveDrawing(get(drawingStore).drawingId, data);
+    }
     replace('/');
   }
 
   //초기 렌더링
   onMount(() => {
-    console.log(get(posList));
     initializeMap();
+    console.log(get(drawingStore));
   });
 </script>
 

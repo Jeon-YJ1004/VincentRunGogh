@@ -7,10 +7,10 @@
     isPause,
     elapsedTime,
     totalDistance,
-    averageSpeed,
+    currentPace,
   } from '@/stores/drawingStore';
   import { get } from 'svelte/store';
-  import { formatSecToMMSS } from '@/utils/calculateFuc';
+  import { formatSecToMMSS } from '@/utils/formatter';
 
   const dispatch = createEventDispatcher<{
     'click-pause': boolean;
@@ -140,8 +140,8 @@
       이동거리:
       {$totalDistance}
       <!-- 평균 속도 -->
-      평균 속도:
-      {$averageSpeed}
+      페이스:
+      {$currentPace}
       <!-- 남은 거리 -->
       {#if hasRoute}
         남은 거리:

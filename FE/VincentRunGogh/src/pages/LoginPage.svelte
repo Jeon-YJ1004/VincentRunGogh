@@ -23,7 +23,7 @@
           } else {
             console.log('로그인 성공');
             // replace('/'); // 여기서 페이지 변경
-            window.location.href = '/'; // 홈으로 이동
+            replace('/');
           }
         }
       },
