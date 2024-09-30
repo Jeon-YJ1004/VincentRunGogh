@@ -70,7 +70,7 @@ public class AwsService {
             }
 
             //memberId로 랜덤
-            String uniqueFileName = generateFileName(String.valueOf(userId), extension);
+            String uniqueFileName = "profile/"+generateFileName(String.valueOf(userId), extension);
 
             s3Client.putObject(new PutObjectRequest(name, uniqueFileName, fileObj));
             fileObj.delete();
