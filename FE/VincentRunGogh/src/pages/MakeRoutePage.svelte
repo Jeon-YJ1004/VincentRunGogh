@@ -54,7 +54,12 @@
       attribution: '© OpenStreetMap',
       crossOrigin: 'anonymous',
     }).addTo(map);
-
+    // 동시 터치 방지
+    map.on('touchstart', function (e) {
+      if (e.touches && e.touches.length > 1) {
+        e.preventDefault();
+      }
+    });
     //지도 재계산
     setTimeout(() => {
       map.invalidateSize();
@@ -117,6 +122,7 @@
   //마우스 움직일 때
 
   function onMouseMove(e) {
+    // e.preventDefault();
     if ((isDrawing && isMouseDown) || isTouchDown) {
       if (!currentPolyline) {
         currentLatLngs = [e.latlng];
@@ -162,7 +168,8 @@
   }
 
   // 터치 시작할 때
-  function onTouchStart() {
+  function onTouchStart(e) {
+    e.preventDefault();
     if (isDrawing) {
       isTouchDown = true;
     }
@@ -170,6 +177,7 @@
 
   // 터치 움직일 때
   function onTouchMove(e) {
+    // e.preventDefault();
     const touch = e.touches[0]; // 터치 위치 가져오기
     const latlng = map.mouseEventToLatLng(touch); // 터치 좌표를 지도 좌표로 변환
     onMouseMove({ latlng }); // 마우스 움직임과 동일하게 처리
