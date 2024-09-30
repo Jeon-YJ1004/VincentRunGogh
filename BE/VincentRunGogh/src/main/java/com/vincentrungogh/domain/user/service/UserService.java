@@ -110,7 +110,7 @@ public class UserService implements UserDetailsService {
         LocalDate date = LocalDate.now();
 
         // 2. 시작 날짜
-        LocalDate startDate = date.minusWeeks(1);
+        LocalDate startDate = date.minusDays(6);
 
         // 3. 드로잉 정보 가져오기
         List<Drawing> weekDrawings = drawingRepository.findAllByUser(user);
@@ -130,8 +130,9 @@ public class UserService implements UserDetailsService {
         // 6. 저장
         for (DrawingDetail drawingDetail : weekDrawingsDetail) {
             int index = (int) ChronoUnit.DAYS.between(drawingDetail.getCreated().toLocalDate(), date);
-            distance[6 - index] = distance[6 - index]+ drawingDetail.getDistance();
-            time[6 - index] = time[6 - index]+ drawingDetail.getTime();
+
+            distance[6 - index] += drawingDetail.getDistance();
+            time[6 - index] += drawingDetail.getTime();
         }
 
         return WeekExerciseResponse.createWeekExerciseResponse(distance, time);
