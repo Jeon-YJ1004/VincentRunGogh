@@ -184,7 +184,7 @@
   }
 
   //다시그리기
-  function redraw() {
+  function redraw(isRoute: boolean) {
     if (currentPolyline) {
       map.removeLayer(currentPolyline);
       currentPolyline = null;
@@ -199,12 +199,15 @@
     isChapterOne = true;
     skip = 0;
     shortenLatLngs = [];
-    let footer = document.querySelector('#makeroute-footer');
-    footer.style.height = '30vh';
+    if (isRoute) {
+      let footer = document.querySelector('#makeroute-footer');
+      footer.style.height = '30vh';
+    }
   }
 
   //다음 - 결과물 객체
   async function next() {
+    console.log(shortenLatLngs, currentLatLngs);
     drawForm = {
       positionList: shortenLatLngs,
       leftLat: northWest.lat,
@@ -533,7 +536,7 @@
         {/if}
 
         {#if !showControls}
-          <GradientButton color="pinkToOrange" size="sm" on:click={redraw} pill>
+          <GradientButton color="pinkToOrange" size="sm" on:click={() => redraw(false)} pill>
             <RedoOutline class="me-2" size="sm" />다시그리기
           </GradientButton>
           <GradientButton color="purpleToBlue" size="sm" on:click={next} pill>
@@ -548,7 +551,7 @@
         {#if !isConfirm && !isSubmit}
           <p class="mb-3">위 루트로 진행하시겠습니까?</p>
           <div id="controls">
-            <GradientButton color="pinkToOrange" size="sm" on:click={redraw} pill>
+            <GradientButton color="pinkToOrange" size="sm" on:click={() => redraw(true)} pill>
               <RedoOutline class="me-2" size="sm" />다시그리기
             </GradientButton>
             <GradientButton color="purpleToBlue" size="sm" on:click={routeConfirm} pill>
