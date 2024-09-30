@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { formatSecToMMSS } from '@/utils/calculateFuc';
   import { Card, GradientButton } from 'flowbite-svelte';
   import { replace } from 'svelte-spa-router';
   import { RedoOutline } from 'flowbite-svelte-icons';
-
+  import { formatSecToMMSS } from '@/utils/formatter.ts';
   export let title: string;
   export let distance: number;
   export let time: number;
