@@ -19,6 +19,7 @@
   import html2canvas from 'html2canvas';
   import { Canvg, SVGElement } from 'canvg';
   import { makeRoute, sendArtLine } from '@/api/routeApi';
+  import SaveRouteDrawing from '@/components/cards/SaveRouteDrawing.svelte';
 
   //진행 상태 변수
   let isChapterOne = true;
@@ -54,12 +55,7 @@
       attribution: '© OpenStreetMap',
       crossOrigin: 'anonymous',
     }).addTo(map);
-    // 동시 터치 방지
-    map.on('touchstart', function (e) {
-      if (e.touches && e.touches.length > 1) {
-        e.preventDefault();
-      }
-    });
+
     //지도 재계산
     setTimeout(() => {
       map.invalidateSize();
@@ -122,7 +118,6 @@
   //마우스 움직일 때
 
   function onMouseMove(e) {
-    // e.preventDefault();
     if ((isDrawing && isMouseDown) || isTouchDown) {
       if (!currentPolyline) {
         currentLatLngs = [e.latlng];
@@ -168,8 +163,7 @@
   }
 
   // 터치 시작할 때
-  function onTouchStart(e) {
-    e.preventDefault();
+  function onTouchStart() {
     if (isDrawing) {
       isTouchDown = true;
     }
@@ -177,7 +171,6 @@
 
   // 터치 움직일 때
   function onTouchMove(e) {
-    // e.preventDefault();
     const touch = e.touches[0]; // 터치 위치 가져오기
     const latlng = map.mouseEventToLatLng(touch); // 터치 좌표를 지도 좌표로 변환
     onMouseMove({ latlng }); // 마우스 움직임과 동일하게 처리
@@ -435,88 +428,15 @@
 <div id="make-route">
   {#if !isSubmit}
     <div id="map"></div>
-  {:else}
-    <div id="route-result">
-      <h2 id="result-title">루트 저장 완료!</h2>
-      <Card>
-        <div id="canvas-img">
-          <!-- SVG 프레임 -->
-          <svg
-            id="frame-svg"
-            xmlns="http://www.w3.org/2000/svg"
-            width="330"
-            height="330"
-            viewBox="0 0 370 370"
-            fill="none"
-          >
-            <!-- 프레임 모양을 그리는 부분 -->
-            <path d="M22.2695 346.728H369L346.73 368.994H0L22.2695 346.728Z" fill="#AD9D8D" />
-            <path
-              d="M22.2671 346.728L22.2671 0.00057665L-5.37221e-06 19.0858L-5.24521e-06 368.997L22.2671 346.728Z"
-              fill="#AD9D8D"
-            />
-            <path
-              d="M300.605 367.417C308.558 364.766 322.872 349.924 345.14 367.417L367.405 346.727H130.42H22.266L0.00371167 369.001C7.95625 366.35 14.3143 349.923 36.5814 367.416C44.5339 364.765 55.6674 349.923 77.9345 367.416C85.8871 364.765 100.202 349.923 122.469 367.416C130.421 364.765 144.736 349.924 167.003 367.417C174.955 364.766 189.27 349.922 211.537 367.414C219.49 364.764 233.804 349.924 256.071 367.417C264.024 364.766 278.338 349.924 300.605 367.417Z"
-              fill="url(#paint0_linear_1029_931)"
-            />
-            <path
-              d="M0.00125062 268.793C7.95378 266.143 11.1325 302.204 0.000171401 313.342C5.3017 321.819 12.7246 344.82 0.00371167 369.001L22.266 346.727L22.2679 0L0.00371167 19.0861C7.95625 16.4355 11.1323 36.5771 0 47.715C7.95253 45.0644 11.136 79.5204 0.00371167 90.6582C7.95625 88.0077 11.1325 122.464 0.000171401 133.602C7.95271 130.951 11.1342 168.595 0.00185584 179.733C7.95439 177.082 11.136 213.122 0.00371167 224.26C7.95625 221.609 11.1335 257.655 0.00125062 268.793Z"
-              fill="url(#paint1_linear_1029_931)"
-            />
-
-            <!-- 클리핑 패스 정의 -->
-            <clipPath id="clipShape">
-              <!-- 여기서 프레임의 클리핑 영역을 정의합니다 -->
-              <rect x="10" y="10" width="369" height="369" />
-            </clipPath>
-
-            <defs>
-              <linearGradient
-                id="paint0_linear_1029_931"
-                x1="365.817"
-                y1="-2.53864e-05"
-                x2="0.00423596"
-                y2="368.998"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="#CCCCCC" />
-              </linearGradient>
-              <linearGradient
-                id="paint1_linear_1029_931"
-                x1="183.703"
-                y1="5.45097e-06"
-                x2="0.0035463"
-                y2="368.995"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="#D1D1D1" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <!-- 이미지 -->
-          <img id="map-image" src={routeInfo?.artImage} alt="" />
-        </div>
-        {#if routeInfo}
-          <div class="mb-3">
-            <h2 id="result-title-card">{inputName}</h2>
-          </div>
-          <div class="flex justify-around mb-3">
-            <div>
-              루트 총 길이 <br /> <br />
-              <span class="font-bold">{parseFloat((routeInfo.distance / 1000).toFixed(2))}km</span>
-            </div>
-            <div>
-              예상 소요 시간 <br /> <br />
-              <span class="font-bold">{Math.floor(routeInfo.predictTime / 60)}분</span>
-            </div>
-          </div>
-        {/if}
-      </Card>
-    </div>
+  {:else if routeInfo}
+    <SaveRouteDrawing
+      title={inputName}
+      distance={routeInfo.distance}
+      time={routeInfo.predictTime}
+      image={routeInfo.artImage}
+      isRoute={true}
+    />
   {/if}
-  <!-- 첫 제출 전까지 -->
   <div id="makeroute-footer" class="flex flex-col items-center justify-end pb-3">
     {#if isChapterOne}
       {#if isFixed}
@@ -595,11 +515,6 @@
             다음 <ArrowRightOutline class="ms-2" size="sm" />
           </GradientButton>
         {/if}
-        {#if isSubmit}
-          <GradientButton color="redToYellow" size="sm" on:click={() => replace('/')} pill>
-            <RedoOutline class="me-2" size="sm" /> 홈으로
-          </GradientButton>
-        {/if}
       </div>
     {/if}
   </div>
@@ -654,54 +569,5 @@
       rgba(255, 255, 255, 0.6) 90%,
       rgba(255, 255, 255, 0) 100%
     );
-  }
-
-  #canvas-img {
-    position: relative;
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #map-image {
-    position: absolute;
-    bottom: 16px;
-    left: 6px;
-    width: 97.5%;
-    height: 97.5%;
-    object-fit: cover; /* 이미지를 프레임 안에 잘 맞추기 위해 사용 */
-    clip-path: url(#clipShape); /* SVG 프레임의 빈 공간에 이미지를 배치 */
-    z-index: 0;
-  }
-
-  #frame-svg {
-    width: 100%;
-    height: auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  #route-result {
-    z-index: 1001;
-    width: 80%;
-    height: 60%;
-    margin-top: 25%;
-    text-align: center;
-  }
-
-  #result-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 5%;
-    margin-top: 5%;
-  }
-
-  #result-title-card {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10%;
-    margin-top: 10%;
   }
 </style>
