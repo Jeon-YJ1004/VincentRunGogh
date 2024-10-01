@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getDrawingList } from '@/api/drawingApi2';
+  import { getDrawingInfo, getDrawingList } from '@/api/drawingApi2';
   import { getWeeklyInfo } from '@/api/userApi';
   import Tabbar from '@/components/tabbar/Tabbar.svelte';
   import { Chart, Card, ImagePlaceholder } from 'flowbite-svelte';
@@ -7,6 +7,7 @@
   import { userStore } from '@/stores/userStore';
   import Swal from 'sweetalert2';
   import { writable } from 'svelte/store';
+  import RouteDetail from '@/components/modals/RouteDetail.svelte';
 
   let isLoad: boolean = false;
 
@@ -72,7 +73,7 @@
     updated: string;
   }[] = [];
 
-  async function getDrawingInfo() {
+  async function getDrawings() {
     try {
       let responseOngoing = await getDrawingList('ongoing');
       let ongoingLength: number = responseOngoing.data.findDrawingList.length;
@@ -93,30 +94,33 @@
   }
 
   // 진행중인 드로잉 클릭
-  async function clickOngoingDrawing(drawingId: number) {
-    // try {
-    //     let responseOngoing = await getDrawingInfo(drawingId);
-    //     // 요청 성공 후 모달 열기
-    //     Swal.fire({
-    //         title: '진행중인 드로잉',
-    //         html:'<div id='
-    //         text: data.message, // AJAX 요청으로 받은 데이터를 모달에 표시
-    //         showCancelButton: true,
-    //         confirmButtonText: '확인',
-    //         preConfirm: () => {
-    //             // 확인 버튼 클릭 시 실행할 코드
-    //             return new Promise((resolve) => {
-    //                 // 추가 처리 코드 (예: 다른 AJAX 요청 등)
-    //                 resolve();
-    //             });
-    //         }
-    //     });
-    // } catch (error) {
-    //     // 오류 처리
-    //     Swal.fire('오류', 'AJAX 요청에 실패했습니다.', 'error');
-    // }
+  async function clickOngoingDrawing(artImage: string, drawingId: number) {
+    try {
+      let responseOngoing = await getDrawingInfo(drawingId);
+      // 요청 성공 후 모달 열기
+      Swal.fire({
+        html: '<div id="route-detail"></div>',
+        showConfirmButton: false,
+        didOpen: () => {
+          // 'route-detail'라는 ID를 가진 div에 Svelte 컴포넌트 렌더링
+          new RouteDetail({
+            target: document.getElementById('route-detail'),
+            props: {
+              route: responseOngoing.data,
+              onClose: () => {
+                Swal.close(); // 모달 닫기
+              },
+              type: artImage,
+            },
+          });
+        },
+      });
+    } catch (error) {
+      {
+        throw error;
+      }
+    }
   }
-
   // 주간 운동량
   // 이전 7일 계산
   let today: Date = new Date();
@@ -310,7 +314,7 @@
 
   onMount(async () => {
     await getWeekly();
-    await getDrawingInfo();
+    await getDrawings();
     let UserInfo = localStorage.getItem('user');
     console.log(UserInfo);
     if (UserInfo) {
@@ -339,7 +343,7 @@
           <Card
             class="m-2 mb-0 text-xs p-0 w-c-30"
             size="xs"
-            on:click={() => clickOngoingDrawing(drawing.drawingId)}
+            on:click={() => clickOngoingDrawing(drawing.artImage, drawing.drawingId)}
           >
             <img class="rounded-t-lg" src={drawing.artImage} alt="" />
             <div class="p-1">
