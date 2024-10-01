@@ -11,22 +11,27 @@ import lombok.NoArgsConstructor;
 public class DrawingResponseDto {
     private String title;
     private String drawingImage;
-    private Double avgSpeed;
-    private int distance;
+    private int avgPace;
+    private Double distance;
 
     @Builder
-    private DrawingResponseDto(String title, String drawingImage, Double avgSpeed, int distance) {
+    private DrawingResponseDto(String title, String drawingImage, int avgPace, Double distance) {
         this.title = title;
         this.drawingImage = drawingImage;
-        this.avgSpeed = avgSpeed;
+        this.avgPace = avgPace;
         this.distance = distance;
     }
 
-    public static DrawingResponseDto createDrawingResponseDto(Drawing drawing, Double avgSpeed, int distance) {
+    public static DrawingResponseDto createDrawingResponseDto(Drawing drawing, Double avgSpeed, int meterDistance) {
+
+        Double distance = Math.round((meterDistance / 1000.0) * 100) / 100.0;
+        int avgPace = (int) Math.round((60.0 / (avgSpeed * 3.6)) * 60);
+
+
         return DrawingResponseDto.builder()
                 .title(drawing.getTitle())
                 .drawingImage(drawing.getAccumulatedDrawingImage())
-                .avgSpeed(Math.round(avgSpeed*(3.6) * 100.0) / 100.0)
+                .avgPace(avgPace)
                 .distance(distance)
                 .build();
     }

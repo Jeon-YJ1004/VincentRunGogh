@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 public class SaveRouteResponseDto {
     private String routeId;
     private String artImage;
-    private int distance;
+    private Double distance;
     private int predictTime;
 
     @Builder
-    private SaveRouteResponseDto(String routeId, String artImage, int distance, int predictTime) {
+    private SaveRouteResponseDto(String routeId, String artImage, Double distance, int predictTime) {
         this.routeId = routeId;
         this.artImage = artImage;
         this.distance = distance;
@@ -23,11 +23,15 @@ public class SaveRouteResponseDto {
     }
 
     public static SaveRouteResponseDto createSaveRouteResponseDto(Route route, double averageSpeed) {
+
+        int meterDistance  = route.getDistance();
+        Double distance = Math.round((meterDistance / 1000.0) * 100) / 100.0;
+
         return SaveRouteResponseDto.builder()
                 .routeId(route.getId())
                 .artImage(route.getArtImage())
-                .distance(route.getDistance())
-                .predictTime((int) (route.getDistance() / averageSpeed))
+                .distance(distance)
+                .predictTime((int) (route.getDistance() / (averageSpeed * (5.0 / 18.0))))
                 .build();
     }
 }
