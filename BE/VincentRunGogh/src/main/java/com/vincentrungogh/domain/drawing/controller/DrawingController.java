@@ -1,6 +1,7 @@
 package com.vincentrungogh.domain.drawing.controller;
 
 import com.vincentrungogh.domain.drawing.service.dto.request.CompleteDrawingRequest;
+import com.vincentrungogh.domain.drawing.service.dto.request.RestartDrawingRequest;
 import com.vincentrungogh.domain.drawing.service.dto.request.SaveDrawingRequest;
 import com.vincentrungogh.domain.drawing.service.dto.request.StartDrawingRequest;
 import com.vincentrungogh.domain.drawing.service.dto.response.RestartDrawingResponse;
@@ -90,7 +91,7 @@ public class DrawingController {
     @PostMapping("/start")
     public ResponseEntity<?> startDrawing(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody StartDrawingRequest request){
 
-        StartDrawingResponse response = drawingService.startDrawing(userPrincipal.getId(), request.getRouteId());
+        StartDrawingResponse response = drawingService.startDrawing(userPrincipal.getId(), request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResultDto.res(HttpStatus.OK.value(), "드로잉이 시작되었습니다.", response));
@@ -105,9 +106,9 @@ public class DrawingController {
     })
     @CommonSwaggerResponse.CommonResponses
     @PostMapping("/start/{drawingId}")
-    public ResponseEntity<?> restartDrawing(@PathVariable int drawingId){
+    public ResponseEntity<?> restartDrawing(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable int drawingId, @RequestBody @Valid RestartDrawingRequest request){
 
-        RestartDrawingResponse response = drawingService.restartDrawing(drawingId);
+        RestartDrawingResponse response = drawingService.restartDrawing(drawingId, request, userPrincipal.getId());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResultDto.res(HttpStatus.OK.value(), "드로잉이 시작되었습니다.", response));

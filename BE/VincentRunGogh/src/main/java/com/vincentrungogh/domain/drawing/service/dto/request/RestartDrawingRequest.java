@@ -7,13 +7,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StartDrawingRequest {
-    private String routeId;
+public class RestartDrawingRequest {
     @NotNull
     private Double lat;
     @NotNull

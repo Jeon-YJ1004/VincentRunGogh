@@ -3,9 +3,7 @@ package com.vincentrungogh.domain.drawing.service;
 import com.vincentrungogh.domain.drawing.entity.DrawingDetail;
 import com.vincentrungogh.domain.drawing.entity.MongoDrawingDetail;
 import com.vincentrungogh.domain.drawing.repository.MongoDrawingRepository;
-import com.vincentrungogh.domain.drawing.service.dto.request.CompleteDrawingRequest;
-import com.vincentrungogh.domain.drawing.service.dto.request.DataSaveDrawingDetailRequset;
-import com.vincentrungogh.domain.drawing.service.dto.request.SaveDrawingRequest;
+import com.vincentrungogh.domain.drawing.service.dto.request.*;
 import com.vincentrungogh.domain.drawing.service.dto.response.DataSaveDrawingDetailResponse;
 import com.vincentrungogh.domain.drawing.service.dto.response.RestartDrawingResponse;
 import com.vincentrungogh.domain.drawing.service.dto.response.StartDrawingResponse;
@@ -16,6 +14,7 @@ import com.vincentrungogh.domain.route.repository.RouteRepository;
 import com.vincentrungogh.domain.route.service.dto.common.Position;
 import com.vincentrungogh.domain.running.service.dto.request.RunningRequest;
 import com.vincentrungogh.domain.user.service.UserService;
+import com.vincentrungogh.global.auth.service.dto.request.ResetPasswordRequest;
 import com.vincentrungogh.global.service.PythonApiService;
 import com.vincentrungogh.global.service.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +71,10 @@ public class DrawingService {
     }
 
     @Transactional
-    public StartDrawingResponse startDrawing(int userId, String routeId) {
+    public StartDrawingResponse startDrawing(int userId, StartDrawingRequest request) {
+        // 0. 레디스 저장
+        String routeId = request.getRouteId();
+        redisService.saveRunning(userId, RunningRequest.createRunningRequest(request.getLat(), request.getLng(), request.getTime()));
 
         // 1. 유저 여부
         User user = userService.getUserById(userId);
@@ -118,23 +120,26 @@ public class DrawingService {
 
     }
 
-    public RestartDrawingResponse restartDrawing(int drawingId){
-        // 0. 드로잉 찾기
+    public RestartDrawingResponse restartDrawing(int drawingId, RestartDrawingRequest request, int userId){
+        // 0. 레디스 저장
+        redisService.saveRunning(userId, RunningRequest.createRunningRequest(request.getLat(), request.getLng(), request.getTime()));
+
+        // 1. 드로잉 찾기
         Drawing drawing = drawingRepository.findById(drawingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
 
-        // 1. 드로잉디테일 찾기
+        // 2. 드로잉디테일 찾기
         List<String> drawingDetailIds = drawingDetailRepository.findAllIdsByDrawing(drawing);
 
-        // 2. 드로잉 디테일 정보 찾기
+        // 3. 드로잉 디테일 정보 찾기
         List<MongoDrawingDetail> mongoDrawingPositionList = mongoDrawingRepository.findAllByIdIn(drawingDetailIds);
 
-        // 3.
+        // 4.
         List<Position> drawingPositionList = mongoDrawingPositionList.stream()
                 .flatMap(mongoDrawing -> mongoDrawing.getPositionList().stream())
                 .toList();
 
-        // 4. 루트 정보
+        // 5. 루트 정보
         List<Position> routePositionList = mongoRouteRepository.findById(drawing.getRoute().getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ROUTE_NOT_FOUND)).getPositionList();
 
@@ -147,6 +152,9 @@ public class DrawingService {
 
     @Transactional
     public void saveDrawing(int userId, int drawingId, SaveDrawingRequest request) {
+        // 0. 레디스 저장
+        redisService.saveRunning(userId, RunningRequest.createRunningRequest(request.getLat(), request.getLng(), request.getTime()));
+
         // 1. 파이썬 호출
         DataSaveDrawingDetailResponse response = processDrawing(userId);
 
@@ -167,6 +175,9 @@ public class DrawingService {
 
     @Transactional
     public void completeDrawing(int userId, int drawingId, CompleteDrawingRequest request) {
+        // 0. 레디스 저장
+        redisService.saveRunning(userId, RunningRequest.createRunningRequest(request.getLat(), request.getLng(), request.getTime()));
+
         // 1. 파이썬 호출
         DataSaveDrawingDetailResponse response = processDrawing(userId);
 
