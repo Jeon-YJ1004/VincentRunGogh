@@ -1,11 +1,23 @@
 <script lang="ts">
+  import { getDrawingList } from '@/api/drawingApi2';
   import { getWeeklyInfo } from '@/api/userApi';
   import Tabbar from '@/components/tabbar/Tabbar.svelte';
-  import { Chart, Card, A, Button, Dropdown, DropdownItem } from 'flowbite-svelte';
+  import { Chart, Card, ImagePlaceholder } from 'flowbite-svelte';
   import { onMount } from 'svelte';
+  import { userStore } from '@/stores/userStore';
   import Swal from 'sweetalert2';
+  import { writable } from 'svelte/store';
 
   let isLoad: boolean = false;
+
+  // 로컬스토리지에서 유저정보 가져오기
+  let user: {
+    profile: string;
+    nickname: string;
+  } = {
+    profile: '',
+    nickname: '',
+  };
 
   // 유형별 정보 더미
   let dummyGroupInfo: {
@@ -46,48 +58,48 @@
     `오늘은 ${Math.floor(dummyGroupInfo.myDayRuntime / 60)}분 뛰었군요!`,
     `오늘은 ${parseFloat((dummyGroupInfo.myDayDistance / 1000).toFixed(2))}km를 뛰었군요!`,
   ];
-
+  // 랜덤 문구 출력
   let randomNum: number = Math.floor(Math.random() * welcomeWordList.length);
-  console.log(randomNum);
 
   // 진행중 드로잉 더미
-  let dummyDrawingList: {
+
+  // 진행중 드로잉 리스트 받기
+  let ongoingDrawingList: {
     drawingId: number;
     title: string;
     artImage: string;
     drawingImage: string;
     updated: string;
-  }[] = [
-    {
-      drawingId: 1,
-      title: '런닝 제목1',
-      artImage: 'http://via.placeholder.com/150x150',
-      drawingImage: 'http://via.placeholder.com/150x150/FFFF00',
-      updated: '2024-07-15',
-    },
-    {
-      drawingId: 2,
-      title: '런닝 제목2',
-      artImage: 'http://via.placeholder.com/150x150',
-      drawingImage: 'http://via.placeholder.com/150x150/FFFF00',
-      updated: '2024-08-22',
-    },
-    {
-      drawingId: 3,
-      title: '런닝 제목3',
-      artImage: 'http://via.placeholder.com/150x150',
-      drawingImage: 'http://via.placeholder.com/150x150/FFFF00',
-      updated: '2024-06-30',
-    },
-  ];
+  }[] = [];
+
+  async function getDrawingInfo() {
+    try {
+      let responseOngoing = await getDrawingList('ongoing');
+      let ongoingLength: number = responseOngoing.data.findDrawingList.length;
+      if (ongoingLength > 3) {
+        for (let i = 0; i < 3; i++) {
+          ongoingDrawingList = [...ongoingDrawingList, responseOngoing.data.findDrawingList[i]];
+        }
+      } else {
+        for (let i = 0; i < ongoingLength; i++) {
+          ongoingDrawingList = [...ongoingDrawingList, responseOngoing.data.findDrawingList[i]];
+        }
+      }
+    } catch (error) {
+      {
+        throw error;
+      }
+    }
+  }
 
   // 진행중인 드로잉 클릭
   async function clickOngoingDrawing(drawingId: number) {
     // try {
-    //     let data = await fetchData(); // AJAX 요청 함수 호출
+    //     let responseOngoing = await getDrawingInfo(drawingId);
     //     // 요청 성공 후 모달 열기
     //     Swal.fire({
-    //         title: '모달 제목',
+    //         title: '진행중인 드로잉',
+    //         html:'<div id='
     //         text: data.message, // AJAX 요청으로 받은 데이터를 모달에 표시
     //         showCancelButton: true,
     //         confirmButtonText: '확인',
@@ -146,20 +158,20 @@
         series: [
           {
             name: '운동 거리',
-            color: '#1A56DB',
+            color: '#FFB800',
             data: [
-              { x: dateList[0], y: weeklyInfo.distance[0] },
-              { x: dateList[1], y: weeklyInfo.distance[1] },
-              { x: dateList[2], y: weeklyInfo.distance[2] },
-              { x: dateList[3], y: weeklyInfo.distance[3] },
-              { x: dateList[4], y: weeklyInfo.distance[4] },
-              { x: dateList[5], y: weeklyInfo.distance[5] },
-              { x: dateList[6], y: weeklyInfo.distance[6] },
+              { x: dateList[0], y: Math.floor(weeklyInfo.distance[0] * 0.25) },
+              { x: dateList[1], y: Math.floor(weeklyInfo.distance[1] * 0.25) },
+              { x: dateList[2], y: Math.floor(weeklyInfo.distance[2] * 0.25) },
+              { x: dateList[3], y: Math.floor(weeklyInfo.distance[3] * 0.25) },
+              { x: dateList[4], y: Math.floor(weeklyInfo.distance[4] * 0.25) },
+              { x: dateList[5], y: Math.floor(weeklyInfo.distance[5] * 0.25) },
+              { x: dateList[6], y: Math.floor(weeklyInfo.distance[6] * 0.25) },
             ],
           },
           {
             name: '운동 시간',
-            color: '#FDBA8C',
+            color: '#5E8358',
             data: [
               { x: dateList[0], y: weeklyInfo.time[0] },
               { x: dateList[1], y: weeklyInfo.time[1] },
@@ -181,11 +193,11 @@
 
   // 주간 차트 옵션
   let options = {
-    colors: ['#1A56DB', '#FDBA8C'],
+    colors: ['rgb(255,184,0)', 'rgb(94,131,88)'],
     series: [
       {
         name: '운동 거리',
-        color: '#1A56DB',
+        color: '#FFB800',
         data: [
           { x: dateList[0], y: 0 },
           { x: dateList[1], y: 0 },
@@ -198,7 +210,7 @@
       },
       {
         name: '운동 시간',
-        color: '#FDBA8C',
+        color: '#5E8358',
         data: [
           { x: dateList[0], y: 0 },
           { x: dateList[1], y: 0 },
@@ -214,7 +226,7 @@
       type: 'bar',
       width: '100%',
       height: '120%',
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: 'Pretendard-Regular',
       toolbar: {
         show: false,
       },
@@ -231,12 +243,12 @@
       shared: true,
       intersect: false,
       style: {
-        fontFamily: 'Inter, sans-serif',
+        fontFamily: 'Pretendard-Regular',
       },
       y: {
         formatter: function (val: number, { seriesIndex }) {
           if (seriesIndex === 0) {
-            return parseFloat((val / 1000).toFixed(2)) + 'km'; // '운동 거리'에 km 단위 추가
+            return Math.floor(val) + 'km'; // '운동 거리'에 km 단위 추가
           } else if (seriesIndex === 1) {
             return Math.floor(val / 60) + '분'; // '운동 시간'에 분 단위 추가
           }
@@ -277,7 +289,7 @@
       labels: {
         show: true,
         style: {
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: 'Pretendard-Regular',
           cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400',
         },
       },
@@ -298,6 +310,15 @@
 
   onMount(async () => {
     await getWeekly();
+    await getDrawingInfo();
+    let UserInfo = localStorage.getItem('user');
+    console.log(UserInfo);
+    if (UserInfo) {
+      user = {
+        profile: JSON.parse(UserInfo).profile,
+        nickname: JSON.parse(UserInfo).nickname,
+      };
+    }
     isLoad = true;
   });
 </script>
@@ -306,40 +327,84 @@
 
 <div id="homepage-body">
   <div id="homepage-header">
-    <p>유저 이름님!</p>
+    <h1 style="font-family: 'Brush Script MT'; font-size:30px;">Vincent Run Gogh</h1>
+    <p><span class="text-xl font-bold">{user.nickname}</span>님!</p>
     <h3 class="font-bold">{welcomeWordList[randomNum]}</h3>
   </div>
   <div id="homepage-drawing">
-    <p>진행 중인 드로잉</p>
+    <p class="mt-2 font-bold">진행 중인 드로잉</p>
     <div id="drawing-list">
-      {#each dummyDrawingList as drawing}
+      {#if ongoingDrawingList}
+        {#each ongoingDrawingList as drawing}
+          <Card
+            class="m-2 mb-0 text-xs p-0 w-c-30"
+            size="xs"
+            on:click={() => clickOngoingDrawing(drawing.drawingId)}
+          >
+            <img class="rounded-t-lg" src={drawing.artImage} alt="" />
+            <div class="p-1">
+              <h5 class="mb-2 font-bold tracking-tight text-gray-900 dark:text-white">
+                {drawing.title}
+              </h5>
+              <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
+                {drawing.updated.split('T')[0]}
+              </p>
+            </div>
+          </Card>
+        {/each}
+      {:else}
         <Card
-          class="m-2 mt-5 mb-5 text-xs p-0 "
+          class="m-2 mt-5 mb-5 text-xs p-0 h-40 gap-1 flex flex-col justify-around items-center"
           size="xs"
-          on:click={() => clickOngoingDrawing(drawing.drawingId)}
+          horizontal
         >
-          <img class="rounded-t-lg" src="http://via.placeholder.com/100x100" alt="" />
-          <div class="p-1">
-            <h5 class="mb-2 font-bold tracking-tight text-gray-900 dark:text-white">
-              {drawing.title}
-            </h5>
-            <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-              {drawing.updated}
-            </p>
-          </div>
+          <ImagePlaceholder imgOnly imgHeight="20" divClass="w-20 m-0 animate-pulse" />
+          <ImagePlaceholder imgOnly imgHeight="20" divClass="w-20 m-0 animate-pulse" />
+          <ImagePlaceholder imgOnly imgHeight="20" divClass="w-20 m-0 animate-pulse" />
         </Card>
-      {/each}
+      {/if}
     </div>
   </div>
   <div id="homepage-chart">
-    <Card class="w-80">
+    <Card class="w-80 pb-1 pt-3 bg-opacity-80">
+      <p class="font-bold text-black">주간 운동 정보</p>
       {#if isLoad}
-        <Chart {options} />
+        <div class="flex ms-3 justify-center items-center">
+          <Chart {options} />
+        </div>
       {/if}
     </Card>
   </div>
   <div id="homepage-tabbar">
     <Tabbar />
+  </div>
+  <div id="background">
+    <svg width="200" height="100" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+      <ellipse cx="100" cy="50" rx="220" ry="330" fill="url(#grad1)" filter="url(#blur-filter)" />
+      <defs>
+        <filter id="blur-filter" x="-50%" y="-50%" width="1000%" height="1000%">
+          <feGaussianBlur stdDeviation="40" />
+        </filter>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="80%" y2="70%">
+          <stop offset="0%" style="stop-color:rgb(255,184,0);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:rgb(255,218,115);stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+  <div id="background2">
+    <svg width="200" height="100" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+      <ellipse cx="100" cy="50" rx="220" ry="330" fill="url(#grad2)" filter="url(#blur-filter)" />
+      <defs>
+        <filter id="blur-filter" x="-50%" y="-50%" width="1000%" height="1000%">
+          <feGaussianBlur stdDeviation="40" />
+        </filter>
+        <linearGradient id="grad2" x1="0%" y1="0%" x2="80%" y2="70%">
+          <stop offset="0%" style="stop-color:rgb(94,131,88);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:rgb(154,186,149);stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
   </div>
 </div>
 
@@ -350,20 +415,39 @@
     width: 100%;
     max-width: 1024px;
     margin: 0;
-    background: var(--white-bg-color, #f9f8ef);
+    background: rgba(0, 0, 0, 0);
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   #homepage-header {
+    z-index: 2;
     justify-self: left;
     height: 25vh;
-    padding: 15vh 0vh 10vh 0vh;
+    padding: 2vh 0vh 10vh 0vh;
   }
-
+  #homepage-header > h1 {
+    margin-bottom: 10vh;
+  }
   #homepage-drawing {
-    height: 30vh;
+    height: 28vh;
     padding-top: 0%;
+    width: 90%;
+    margin-left: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    margin-bottom: 5vh;
+    border-radius: 3%;
+    background-color: rgba(255, 255, 255, 0.8);
+    --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color),
+      0 2px 4px -2px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+      var(--tw-shadow);
+    z-index: 2;
   }
 
   #drawing-list {
@@ -371,16 +455,46 @@
     height: 90%;
     justify-content: space-around;
     align-items: center;
+    overflow: hidden;
+    z-index: 2;
   }
 
   #homepage-chart {
-    height: 30vh;
+    height: 28vh;
+    gap: 1vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 2;
   }
 
   #homepage-tabbar {
     height: 15vh;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0);
+  }
+
+  #background {
+    position: fixed;
+    top: 6%;
+    left: 26%;
+    transform: translateX(-50%);
+    z-index: 1;
+    opacity: 0.8;
+    overflow: visible;
+  }
+
+  #background2 {
+    position: fixed;
+    bottom: -9%;
+    right: -50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    opacity: 0.8;
+    overflow: visible;
+  }
+
+  .apexcharts-inner {
+    margin: auto;
   }
 </style>
