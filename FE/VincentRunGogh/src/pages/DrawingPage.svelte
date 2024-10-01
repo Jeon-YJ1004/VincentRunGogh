@@ -123,7 +123,35 @@
     }
   };
 
-  let gui = new L.Control({ position: 'bottomleft' });
+  L.Map.include({
+    _initControlPos: function () {
+      var corners = (this._controlCorners = {}),
+        l = 'leaflet-',
+        container = (this._controlContainer = L.DomUtil.create(
+          'div',
+          l + 'control-container',
+          this._container
+        ));
+
+      function createCorner(vSide, hSide) {
+        var className = l + vSide + ' ' + l + hSide;
+
+        corners[vSide + hSide] = L.DomUtil.create('div', className, container);
+      }
+
+      createCorner('top', 'left');
+      createCorner('top', 'right');
+      createCorner('bottom', 'left');
+      createCorner('bottom', 'right');
+
+      createCorner('top', 'center');
+      createCorner('middle', 'center');
+      createCorner('middle', 'left');
+      createCorner('middle', 'right');
+      createCorner('bottom', 'center');
+    },
+  });
+  let gui = new L.Control({ position: 'bottomcenter' });
   let guiComponent: MapGUI | null = null;
   gui.onAdd = (map: LeafletMap) => {
     const div = L.DomUtil.create('div');
@@ -201,7 +229,6 @@
 
     return div;
   };
-
   gui.onRemove = () => {
     if (guiComponent) {
       guiComponent.$destroy();
@@ -240,7 +267,7 @@ fill="#000000" stroke="none">
   function createLines(): Polyline {
     return L.polyline(
       $posList.map((p) => p.latlng),
-      { color: '#E4E', opacity: 0.5, smoothFactor: 1 }
+      { color: '#3FAE48', opacity: 0.5, smoothFactor: 1 }
     );
   }
 

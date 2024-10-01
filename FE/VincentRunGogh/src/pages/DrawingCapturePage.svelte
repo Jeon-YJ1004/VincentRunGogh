@@ -12,11 +12,21 @@
 
   import Swal from 'sweetalert2';
   import { location, querystring } from 'svelte-spa-router';
-  import { get } from 'svelte/store';
+  import { get, writable } from 'svelte/store';
+  import { Button, Input, GradientButton, Label, Card } from 'flowbite-svelte';
+  import {
+    LockSolid,
+    LockOpenSolid,
+    RedoOutline,
+    ArrowRightOutline,
+    HomeSolid,
+  } from 'flowbite-svelte-icons';
 
   import { elapsedTime, posList, route, totalDistance, drawingStore } from '@/stores/drawingStore';
   import { startDrawing, completeDrawing, saveDrawing } from '@/api/drawingApi';
-
+  import SaveRouteDrawing from '@components/cards/SaveRouteDrawing.svelte';
+  import { sub } from 'date-fns';
+  import { toastAlert } from '@/utils/notificationAlert';
   // 폼 형태 변수 임시저장 or 완료
   let isComplete = $querystring?.split('=')[1] === 'complete';
   let map: LeafletMap;
@@ -28,8 +38,8 @@
   let latLngMessageList: string[] = ['지도를 움직여 표지를 지정해주세요', '드로잉을 저장했습니다!'];
   let latLngMessage: string = latLngMessageList[0];
 
-  let drawingImage: string = '';
-  let drawingDetailImage: string = '';
+  let drawingImage = writable('');
+  let drawingDetailImage = writable('');
 
   // 속도에 따른 색상을 반환하는 함수
   function getSpeedColor(speed: number): string {
@@ -101,17 +111,8 @@
   }
 
   let imgData1, imgData2;
-  // 맵 캡쳐 함수 1: 지도, posList 선(속도에 따른 색상), 루트 선 포함
-  async function captureMapWithLines() {
-    // const mapCanvas = await html2canvas(mapRef, {
-    //   useCORS: true,
-    // });
-    // const imageData = mapCanvas.toDataURL('image/png');
-    return mapCapture(1);
-  }
 
-  // 맵 캡쳐 함수 2: 지도, posList 선(단일 색상)
-  async function captureMapWithSingleColor() {
+  async function changeMapWithSingleColor() {
     // posList 선을 단일 색상으로 그리기 위해 기존의 선 제거 후 재생성
     if (posPolyline) map.removeLayer(posPolyline);
 
@@ -131,181 +132,241 @@
         opacity: 0.8,
       }).addTo(map);
     });
-
-    // const mapCanvas = await html2canvas(mapRef, {
-    //   useCORS: true,
-    // });
-    // const imageData = mapCanvas.toDataURL('image/png');
-  }
-  //지도 잠그기
-  async function lockMap() {
-    // 맵 잠금
-    // map.dragging.disable();
-    // map.scrollWheelZoom.disable();
-    // map.touchZoom.disable();
-
-    // 두 가지 캡쳐 함수 호출
-    // mapCapture(1).then((image) => {
-    //   console.log('Map with lines captured:', image);
-    //   document.querySelector('#final1').src = image;
-    // });
-    // captureMapWithSingleColor();
-    // mapCapture(2).then((image) => {
-    //   console.log('Map with single color lines captured:', image);
-    //   document.querySelector('#final2').src = image;
-    // });
-    await mapCapture('#final1');
-    captureMapWithSingleColor();
-
-    await mapCapture('#final2');
-    isLocked = true;
-  }
-
-  let inputName: string = '';
-
-  let finalImage = null;
-  async function mapCapture(result: string) {
-    map.invalidateSize();
-    // 사용 변수 지정
-    let svgData = null;
-    let mapData = null;
-    let svgSizeX = null;
-    let svgSizeY = null;
-
-    // SVG 캡쳐
-    const svg = document.querySelector('svg'); // SVG를 선택합니다.
-    // SVG 사이즈
-    svgSizeX = svg.width.baseVal.value;
-    svgSizeY = svg.height.baseVal.value;
-
-    const svgString = new XMLSerializer().serializeToString(svg);
-
-    // canvas 및 context 생성
-    const svgCanvas = document.createElement('canvas');
-    const svgCtx = svgCanvas.getContext('2d');
-
-    // Canvg를 이용해 SVG를 캔버스에 그립니다
-    const canvg = await Canvg.fromString(svgCtx, svgString);
-    await canvg.render(); // 렌더링 완료될 때까지 기다림
-
-    // 캔버스의 데이터를 base64로 변환
-    svgData = svgCanvas.toDataURL('image/png');
-
-    // svg 숨기기
-    svg.style.display = 'none';
-
-    // 지도 캡쳐
-    const mapCanvas = await html2canvas(document.querySelector('#map'), {
-      useCORS: true,
-    });
-    mapData = mapCanvas.toDataURL('image/png');
-
-    // svg 다시보이기
-    if (svg) {
-      svg.style.display = '';
-    }
-
-    const finalCanvas = document.createElement('canvas');
-    finalCanvas.width = 500;
-    finalCanvas.height = 500;
-
-    const ctx = finalCanvas.getContext('2d');
-
-    // 지도, svg 모두 불러오기
-
-    const mapImg = new Image();
-    const svgImg = new Image();
-    mapImg.src = mapData;
-    svgImg.src = svgData;
-
-    mapImg.onload = () => {
-      svgImg.onload = () => {
-        //중심 기준 자르기
-        const cropX = (mapCanvas.width - 500) / 2;
-        const cropY = (mapCanvas.height - 500) / 2;
-        const svgCropX = (svgSizeX - 500) / 2;
-        const svgCropY = (svgSizeY - 500) / 2;
-
-        //지도 그리기
-        ctx.drawImage(mapImg, cropX, cropY, 500, 500, 0, 0, 500, 500);
-        ctx.drawImage(svgImg, svgCropX, svgCropY, 500, 500, 0, 0, 500, 500);
-
-        //결과
-        finalImage = finalCanvas.toDataURL('image/png');
-        if (result === '#final1') {
-          drawingImage = finalImage;
-        } else drawingDetailImage = finalImage;
-        document.querySelector(result).src = finalImage;
-      };
-    };
   }
 
   async function submitDrawing() {
     const { endInfo } = get(drawingStore);
 
     const data = {
-      drawingImage,
-      drawingDetailImage,
+      drawingImage: $drawingImage,
+      drawingDetailImage: $drawingDetailImage,
       step: 0,
-      // ...endInfo,
+      ...endInfo,
     };
 
-    if (inputName?.length > 0) {
-      data.title = inputName;
-    }
+    data.title = inputName;
     console.log(data);
     if (isComplete) {
-      completeDrawing(get(drawingStore).drawingId, data);
+      completeDrawing(
+        get(drawingStore).drawingId,
+        data,
+        (response) => {
+          // toastAlert('드로잉 완성 성공');
+          isLocked = true;
+        },
+        (error) => {}
+      );
     } else {
-      saveDrawing(get(drawingStore).drawingId, data);
+      saveDrawing(
+        get(drawingStore).drawingId,
+        data,
+        (response) => {
+          // toastAlert('드로잉 저장 성공');
+        },
+        (error) => {}
+      );
     }
-    replace('/');
+  }
+  //지도 잠그기
+  let errorMessage: string = '';
+
+  async function lockMap() {
+    if (inputName.length === 0) {
+      errorMessage = '루트 이름을 입력해 주세요.';
+      Swal.fire({
+        text: errorMessage,
+        icon: 'error',
+      });
+      return;
+    } else if (inputName.length > 10) {
+      errorMessage = '최대 10글자까지만 가능합니다.';
+      Swal.fire({
+        text: errorMessage,
+        icon: 'error',
+      });
+      return;
+    } else errorMessage = '';
+    await mapCapture(true);
+    await changeMapWithSingleColor();
+
+    await mapCapture(false);
+    await submitDrawing();
+  }
+
+  let inputName: string = '';
+
+  async function mapCapture(isTypeColorLine: boolean) {
+    map.invalidateSize();
+    const svg = document.querySelector('svg');
+    const svgString = new XMLSerializer().serializeToString(svg);
+    const svgCanvas = document.createElement('canvas');
+    const svgCtx = svgCanvas.getContext('2d');
+    const canvg = await Canvg.fromString(svgCtx, svgString);
+
+    await canvg.render(); // Canvg 렌더링이 완료될 때까지 기다림
+
+    svg.style.display = 'none';
+
+    const mapCanvas = await html2canvas(document.querySelector('#map'), {
+      useCORS: true,
+    });
+
+    svg.style.display = '';
+
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = 500;
+    finalCanvas.height = 500;
+    const ctx = finalCanvas.getContext('2d');
+    const mapImg = new Image();
+    const svgImg = new Image();
+
+    // 데이터 URL 설정
+    mapImg.src = mapCanvas.toDataURL('image/png');
+    svgImg.src = svgCanvas.toDataURL('image/png');
+
+    // 이미지 로딩을 Promise로 처리
+    await new Promise((resolve) => {
+      mapImg.onload = () => {
+        svgImg.onload = () => {
+          const cropX = (mapCanvas.width - 500) / 2;
+          const cropY = (mapCanvas.height - 500) / 2;
+          const svgCropX = (svgCanvas.width - 500) / 2;
+          const svgCropY = (svgCanvas.height - 500) / 2;
+
+          ctx.drawImage(mapImg, cropX, cropY, 500, 500, 0, 0, 500, 500);
+          ctx.drawImage(svgImg, svgCropX, svgCropY, 500, 500, 0, 0, 500, 500);
+
+          resolve();
+        };
+      };
+    });
+
+    const finalImage = finalCanvas.toDataURL('image/png');
+    if (isTypeColorLine) {
+      console.log('속도 색');
+      $drawingDetailImage = finalImage;
+    } else {
+      console.log('단일 색');
+      $drawingImage = finalImage;
+    }
   }
 
   //초기 렌더링
   onMount(() => {
     initializeMap();
-    console.log(get(drawingStore));
+    // console.log(get(drawingStore));
   });
 </script>
 
+<div id="makeroute-header" class="flex justify-center items-center">
+  {#if isComplete}
+    <h2 class="font-bold">드로잉 완성</h2>
+  {:else}
+    <h2 class="font-bold">드로잉 임시저장</h2>
+  {/if}
+</div>
 <div class="make-route">
-  <!-- 첫 제출 전까지 -->
-  <img id="final1" src="" alt="" />
-  <img id="final2" src="" alt="" />
   {#if !isLocked}
     <div bind:this={mapRef} id="map"></div>
-    <div>
-      <p>{latLngMessage}</p>
-    </div>
-
-    {#if isComplete}
-      <div>
-        <label for="route-name">드로잉의 이름을 지어주세요!</label><br />
-        <input bind:value={inputName} type="text" name="route-name" id="route-name" />
+    <div id="makeroute-footer" class="flex flex-col items-center justify-end">
+      <div
+        class="fixed left-1/2 transform -translate-x-1/2 text-red-500 font-bold px-2 py-1 top-[12vh] overflow-hidden text-ellipsis whitespace-nowrap bg-[#FFFFFF67]"
+      >
+        {latLngMessage}
       </div>
-    {/if}
-    <div id="controls">
-      <button on:click={lockMap}>고정하기</button>
+
+      {#if isComplete}
+        <div class="mb-6">
+          <Label for="input-group-1" class="block mb-2">드로잉 이름</Label>
+          <Input
+            bind:value={inputName}
+            id="route-name"
+            type="text"
+            color="base"
+            placeholder="최대 10글자까지 입력가능합니다"
+            required
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1.22em"
+              height="1.5em"
+              viewBox="0 0 416 512"
+              slot="left"
+              class="text-gray-400"
+              ><path
+                fill="currentColor"
+                d="M272 96c26.51 0 48-21.49 48-48S298.51 0 272 0s-48 21.49-48 48s21.49 48 48 48M113.69 317.47l-14.8 34.52H32c-17.67 0-32 14.33-32 32s14.33 32 32 32h77.45c19.25 0 36.58-11.44 44.11-29.09l8.79-20.52l-10.67-6.3c-17.32-10.23-30.06-25.37-37.99-42.61M384 223.99h-44.03l-26.06-53.25c-12.5-25.55-35.45-44.23-61.78-50.94l-71.08-21.14c-28.3-6.8-57.77-.55-80.84 17.14l-39.67 30.41c-14.03 10.75-16.69 30.83-5.92 44.86s30.84 16.66 44.86 5.92l39.69-30.41c7.67-5.89 17.44-8 25.27-6.14l14.7 4.37l-37.46 87.39c-12.62 29.48-1.31 64.01 26.3 80.31l84.98 50.17l-27.47 87.73c-5.28 16.86 4.11 34.81 20.97 40.09c3.19 1 6.41 1.48 9.58 1.48c13.61 0 26.23-8.77 30.52-22.45l31.64-101.06c5.91-20.77-2.89-43.08-21.64-54.39l-61.24-36.14l31.31-78.28l20.27 41.43c8 16.34 24.92 26.89 43.11 26.89H384c17.67 0 32-14.33 32-32s-14.33-31.99-32-31.99"
+              /></svg
+            >
+          </Input>
+        </div>
+      {/if}
+
+      <div id="controls">
+        <GradientButton color="pinkToOrange" size="sm" on:click={lockMap} pill>
+          <LockSolid class="me-2" size="sm" /> 저장하기
+        </GradientButton>
+      </div>
     </div>
   {:else}
-    <!-- 제출 후 -->
-    드로잉 이름: {inputName}
-    총길이: {$totalDistance}
-    시간: {$elapsedTime}
-    <button on:click={submitDrawing}>홈으로</button>
+    <SaveRouteDrawing
+      title={inputName}
+      distance={$totalDistance}
+      time={$elapsedTime}
+      image={$drawingDetailImage}
+      isRoute={false}
+    />
   {/if}
 </div>
 
 <style>
+  #makeroute-header {
+    z-index: 1000;
+    position: fixed;
+    height: 10vh;
+    width: 100%;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 1) 80%,
+      rgba(255, 255, 255, 0.6) 90%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+
+  #make-route {
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+  }
+
   #map {
-    height: 60vh;
+    height: 100vh;
     width: 100vw;
     max-width: 100%;
     pointer-events: auto;
     touch-action: auto;
   }
+
   #controls {
     margin: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  #makeroute-footer {
+    z-index: 1000;
+    position: fixed;
+    bottom: 0px;
+    height: 20vh;
+    width: 100%;
+    transition: 300ms;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 1) 80%,
+      rgba(255, 255, 255, 0.6) 90%,
+      rgba(255, 255, 255, 0) 100%
+    );
   }
 </style>

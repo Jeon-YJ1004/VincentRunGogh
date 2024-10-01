@@ -441,8 +441,7 @@
     {#if isChapterOne}
       {#if isFixed}
         <div
-          class="fixed left-1/2 transform -translate-x-1/2 text-red-500 font-bold bg-white px-2 py-1"
-          style="top: 12vh;"
+          class="fixed left-1/2 transform -translate-x-1/2 text-red-500 font-bold px-2 py-1 top-[12vh] overflow-hidden text-ellipsis whitespace-nowrap"
         >
           지도가 고정되었습니다.
         </div>

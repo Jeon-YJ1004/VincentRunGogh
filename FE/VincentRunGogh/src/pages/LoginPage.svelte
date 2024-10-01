@@ -8,9 +8,10 @@
 
   let id = '';
   let password = '';
-
+  let loading = false;
   const handleLogin = async (event: SubmitEvent) => {
     event.preventDefault();
+    loading = true;
     login(
       id,
       password,

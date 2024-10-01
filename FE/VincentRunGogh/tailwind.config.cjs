@@ -1,12 +1,11 @@
 import flowbitePlugin from 'flowbite/plugin'
 
-import type { Config } from 'tailwindcss';
 
 export default {
-	content: ['./src/**/*.{html,js,svelte,ts}', './node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}'],
+  content: ['./src/**/*.{html,js,svelte,ts}', './node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}'],
   darkMode: 'selector',
-	theme: {
-		extend: {
+  theme: {
+    extend: {
       colors: {
         // flowbite-svelte
         primary: {
@@ -20,8 +19,24 @@ export default {
           700: '#E0AA1E', //메인 노랑 어둡게
           800: '#CC4522',
           900: '#A5371B'
-        }
-      },
+        },
+        transparent: 'transparent',
+        current: 'currentColor',
+        'yellow-main': '#FFB800',
+        'green-main': '#5E8358',
+      }, gradientColorStops: theme => ({
+        'yellow-linear-start': '#FAFDB1',
+        'yellow-linear-end': '#FFC326',
+        'red-linear-start': '#FF9693',
+        'red-linear-end': '#FF4040',
+        'green-linear-start': '#A2FEA5',
+        'green-linear-end': '#33A03B',
+      }),
+      backgroundImage: theme => ({
+        'yellow-gradient': `linear-gradient(95%, ${theme('colors.yellow-linear-start')} 89%, ${theme('colors.yellow-linear-end')} 95%)`,
+        'red-gradient': `linear-gradient(100%, ${theme('colors.red-linear-start')}, ${theme('colors.red-linear-end')})`,
+        'green-gradient': `linear-gradient(100%, ${theme('colors.green-linear-start')}, ${theme('colors.green-linear-end')})`,
+      }),
       width: {
         c: {
           // 5%부터 100%까지 5의 배수로 설정
@@ -72,8 +87,9 @@ export default {
           '100': '100%',
         }
       }
-    }
-	},
 
-	plugins: [flowbitePlugin]
-} as Config;
+    }
+  },
+
+  plugins: [flowbitePlugin]
+} 

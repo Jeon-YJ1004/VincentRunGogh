@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
-  import { Button } from 'flowbite-svelte';
-
+  import { createEventDispatcher } from 'svelte';
+  import { PlayOutline, StopOutline, PauseOutline, ArrowLeftOutline } from 'flowbite-svelte-icons';
   export let modalType: string;
 
   const dispatch = createEventDispatcher();
@@ -10,31 +9,37 @@
       title: '일시정지',
       buttons: [
         {
-          label: '완성',
-          color: 'red',
+          icon: StopOutline,
           action: () => dispatch('confirm', { modalType: 'complete' }),
+          color: 'red ',
+          text: '완성',
         },
-        //FIXME - 자유 드로잉일경우 임시저장 없어야함
         {
-          label: '임시저장',
-          color: 'yellow',
+          icon: PauseOutline,
           action: () => dispatch('confirm', { modalType: 'save' }),
+          color: 'yellow ',
+          text: '임시저장',
         },
-        { label: '계속', color: 'green', action: () => dispatch('continue') },
+        { icon: PlayOutline, action: () => dispatch('continue'), color: 'green', text: '계속' },
       ],
     },
     save: {
       title: '드로잉 임시저장 모달',
       buttons: [
-        { label: '뒤로가기', color: 'gray', action: () => dispatch('cancel') },
-        { label: '임시저장', color: 'yellow', action: () => dispatch('save') },
+        {
+          icon: ArrowLeftOutline,
+          action: () => dispatch('cancel'),
+          color: 'gray',
+          text: '뒤로가기',
+        },
+        { icon: PauseOutline, action: () => dispatch('save'), color: 'yellow ', text: '임시저장' },
       ],
     },
     complete: {
       title: '드로잉 완료 모달',
       buttons: [
-        { label: '뒤로가기', color: 'gray', action: () => dispatch('cancel') },
-        { label: '완성', color: 'red', action: () => dispatch('complete') },
+        { icon: ArrowLeftOutline, action: () => dispatch('cancel'), color: 'gray' },
+        { icon: StopOutline, action: () => dispatch('complete'), color: 'red', text: '완성' },
       ],
     },
   };
@@ -43,37 +48,29 @@
   $: currentModal = modalData[modalType]; // modalType이 변경되면 업데이트
 </script>
 
-<!-- Flowbite 모달 UI -->
 <div class="text-center">
   <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">{currentModal.title}</h3>
-  <!-- <Button color="red" class="me-2"
-    ><svg xmlns="http://www.w3.org/2000/svg" width="76" height="76" viewBox="0 0 76 76" fill="none">
-      <circle cx="38" cy="38" r="38" fill="url(#paint0_linear_249_1372)" />
-      <defs>
-        <linearGradient
-          id="paint0_linear_249_1372"
-          x1="18.5"
-          y1="9.5"
-          x2="66"
-          y2="100"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stop-color="#FF9693" />
-          <stop offset="1" stop-color="#FF4040" />
-        </linearGradient>
-      </defs>
-    </svg></Button
-  > -->
-  {#each currentModal.buttons as button}
-    <Button
-      type="button"
-      class={`text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 ${button.color === 'red' ? 'bg-red-500 hover:bg-red-600' : ''} ${button.color === 'yellow' ? 'bg-yellow-500 hover:bg-yellow-600' : ''} ${button.color === 'green' ? 'bg-green-500 hover:bg-green-600' : ''} ${button.color === 'gray' ? 'bg-gray-500 hover:bg-gray-600' : ''}`}
-      on:click={button.action}
-    >
-      {button.label}
-    </Button>
-  {/each}
+  <div class="flex items-center justify-evenly flex-row gap-1">
+    {#each currentModal.buttons as { icon, action, color, text }}
+      <div class="flex content-center flex-col justify-center gap-2">
+        <button on:click={action} class={`rounded-full p-1 ${color}`}>
+          <svelte:component this={icon} class={`w-16 h-16 text-[#1f1f1f78]`} />
+        </button>
+        <span class="text-base text-[var(--gray-color-400)]">{text}</span>
+      </div>
+    {/each}
+  </div>
 </div>
 
 <style>
+  /* Additional styles */
+  .yellow {
+    background: var(--yellow-linear-gradient);
+  }
+  .red {
+    background: var(--red-linear-gradient);
+  }
+  .green {
+    background: var(--green-linear-gradient);
+  }
 </style>

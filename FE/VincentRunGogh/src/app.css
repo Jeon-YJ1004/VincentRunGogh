@@ -31,10 +31,37 @@
   --black-color-200: #2c2c2e;
   --black-color-300: #000000;
 
+  --yellow-main-color: #ffb800;
+  --green-main-color: #5e8358;
+
+  /* Gradient colors */
+  --yellow-linear-start: #fafdb1;
+  --yellow-linear-end: #ffc326;
+  --red-linear-start: #ff9693;
+  --red-linear-end: #ff4040;
+  --green-linear-start: #a2fea5;
+  --green-linear-end: #33a03b;
+
+  /* Gradients */
+  --yellow-linear-gradient: linear-gradient(
+    to bottom,
+    var(--yellow-linear-start) 0%,
+    var(--yellow-linear-end) 100%
+  );
+  --red-linear-gradient: linear-gradient(
+    to bottom,
+    var(--red-linear-start) 0%,
+    var(--red-linear-end) 100%
+  );
+  --green-linear-gradient: linear-gradient(
+    to bottom,
+    var(--green-linear-start) 0%,
+    var(--green-linear-end) 100%
+  );
   --font-size-title: 1.8rem;
   --font-size-large: 2rem;
   --font-size-medium: 1.7rem;
-  --font-size-small: 1.32rem;
+  --font-size-small: 1rem;
 
   --margin-lr-default: 3rem;
 }
@@ -219,4 +246,21 @@ button:focus-visible {
   justify-content: center; */
   width: 100%;
   height: 100%;
+}
+
+.leaflet-center {
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+
+.leaflet-middle {
+  top: 50%;
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+  transform: translate(0%, -50%);
+}
+
+.leaflet-center.leaflet-middle {
+  transform: translate(-50%, -50%);
 }
