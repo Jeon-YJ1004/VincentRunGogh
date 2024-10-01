@@ -1,34 +1,25 @@
 <script lang="ts">
+  import { formatSecToMMSS } from '@/utils/formatter';
   import { Carousel, Indicator } from 'flowbite-svelte';
 
-  export let article: {
-    boardId: number;
-    nickname: string;
-    profile: string;
-    title: string;
-    drawingImage: string;
-    artImage: string;
-    comment: string;
-    likeCount: number;
-    isLiked: boolean;
-    distance: number;
-    time: number;
-    created: any;
-    distanceFromUser: number;
-  };
+  export let title;
+  export let artImage;
+  export let drawingImage;
+  export let distance;
+  export let time;
 </script>
 
 <div class="relative max-w-4xl">
   <div class="absolute top-3 -left-13 z-30">
     <div class="text-left ms-3 mb-3 text-gray-700 dark:text-gray-400 leading-tight">
-      <span>{article.title}</span>
+      <span>{title}</span>
     </div>
   </div>
   <Carousel
     class="w-full"
     images={[
-      { src: article.drawingImage, alt: 'drawingImage' },
-      { src: article.artImage, alt: 'artImage' },
+      { src: drawingImage, alt: 'drawingImage' },
+      { src: artImage, alt: 'artImage' },
     ]}
     let:Indicators
   >
@@ -57,7 +48,7 @@
           /></svg
         >
       </span>
-      <span>{article.distance / 1000}km</span>
+      <span>{distance}km</span>
       <span class="inline-block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +64,7 @@
           /></svg
         >
       </span>
-      <span>{Math.floor(article.time / 60)}분</span>
+      <span>{formatSecToMMSS(time)}</span>
     </div>
   </div>
 </div>

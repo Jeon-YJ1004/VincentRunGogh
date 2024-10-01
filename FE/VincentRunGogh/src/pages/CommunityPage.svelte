@@ -274,7 +274,13 @@
             <img src={article.profile} alt="" style="width: 50px;" />
             <p class="ml-5">{article.nickname}</p>
           </div>
-          <FeedArticle {article} />
+          <FeedArticle
+            title={article.title}
+            artImage={article.artImage}
+            drawingImage={article.drawingImage}
+            distance={article.distance}
+            time={article.time}
+          />
           <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
             {article.comment}
           </p>
