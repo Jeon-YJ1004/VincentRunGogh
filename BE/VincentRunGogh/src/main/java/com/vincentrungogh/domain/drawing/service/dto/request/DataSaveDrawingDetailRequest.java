@@ -10,17 +10,17 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DataSaveDrawingDetailRequset {
+public class DataSaveDrawingDetailRequest {
 
     private List<RunningRequest> positionTimeList;
 
     @Builder
-    private DataSaveDrawingDetailRequset(List<RunningRequest> positionTimeList) {
+    private DataSaveDrawingDetailRequest(List<RunningRequest> positionTimeList) {
         this.positionTimeList = positionTimeList;
     }
 
-    public static DataSaveDrawingDetailRequset createDataSaveDrawingDetailRequset(List<RunningRequest> positionTimeList) {
-        return DataSaveDrawingDetailRequset.builder()
+    public static DataSaveDrawingDetailRequest createDataSaveDrawingDetailRequset(List<RunningRequest> positionTimeList) {
+        return DataSaveDrawingDetailRequest.builder()
                 .positionTimeList(positionTimeList)
                 .build();
     }
