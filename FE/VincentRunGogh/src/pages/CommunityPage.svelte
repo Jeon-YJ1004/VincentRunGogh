@@ -6,6 +6,7 @@
   import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
   import { Card, Button, Avatar } from 'flowbite-svelte';
   import BackButton from '@components/buttons/BackButton.svelte';
+  import Header from '@/components/common/Header.svelte';
 
   let dummyArticleList: {
     boardId: number;
@@ -248,10 +249,7 @@
 </script>
 
 <div id="community-body">
-  <div id="community-header" class="flex justify-center items-center">
-    <BackButton />
-    <h2>커뮤니티</h2>
-  </div>
+  <Header title="커뮤니티" />
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-interactive-supports-focus -->
   <div
@@ -325,11 +323,6 @@
     background: var(--white-bg-color, #f9f8ef);
     display: flex;
     flex-direction: column;
-  }
-
-  #community-header {
-    height: 10vh;
-    width: 100%;
   }
 
   #community-mystorage {

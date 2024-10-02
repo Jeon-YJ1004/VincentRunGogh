@@ -487,6 +487,7 @@
     z-index: 1;
     opacity: 0.8;
     overflow: visible;
+    transition: 800ms;
   }
 
   #background2 {
@@ -497,9 +498,6 @@
     z-index: 1;
     opacity: 0.8;
     overflow: visible;
-  }
-
-  .apexcharts-inner {
-    margin: auto;
+    transition: 800ms;
   }
 </style>

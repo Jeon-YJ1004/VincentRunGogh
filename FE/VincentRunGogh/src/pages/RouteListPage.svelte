@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getRouteList } from '@/api/routeApi';
   import BackButton from '@/components/buttons/BackButton.svelte';
+  import Header from '@/components/common/Header.svelte';
   import RouteDetail from '@/components/modals/RouteDetail.svelte';
   import { formatSecToMMSS } from '@/utils/formatter';
   import { Tabs, TabItem, Card, Button } from 'flowbite-svelte';
@@ -49,13 +50,14 @@
 
   function searchCondition() {
     Swal.fire({
-      title: '검색 범위를 조절해주세요!',
+      title: "<div class='text-lg'>" + '검색 범위를 조절해주세요!' + '</div>',
       html: `
     <input type="range" min="1" max="10" step="1" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" id="range-input" value="${range}">
     <div id="range-value">반경 ${range}km 까지 검색합니다.</div>
   `,
       showCancelButton: true,
       confirmButtonText: '확인',
+      confirmButtonColor: '#FFB800',
       cancelButtonText: '취소',
       preConfirm: () => {
         return range; // 범위 값을 반환
@@ -162,19 +164,17 @@
   }
 </script>
 
-<div id="routelist-header" class="flex justify-center items-center">
-  <BackButton />
-  <h2>루트 조회</h2>
-</div>
-<div id="search-control">
-  <Button size="sm" on:click={searchCondition}>검색 반경 설정</Button>
-  <p class="my-3 font-bold">반경 {range}km내의 루트만 표시됩니다.</p>
-</div>
+<Header title="루트 조회" />
+
 <div id="routelist-body">
+  <div id="search-control">
+    <Button size="sm" on:click={searchCondition}>검색 반경 설정</Button>
+    <p class="my-3 font-bold">반경 {range}km내의 루트만 표시됩니다.</p>
+  </div>
   <Tabs id="tabs" defaultClass="flex justify-between p-0" tabStyle="underline">
     <div id="tab-item">
       <TabItem
-        defaultClass="tab-item font-bold text-xs gap-2"
+        defaultClass="tab-item font-bold text-xs gap-2 bg-white bg-opacity-80 rounded-t-md"
         divClass="flex flex-col justify-center p-0 w-80"
         on:click={getMyRoute}
         open
@@ -184,190 +184,234 @@
           <p>만든 루트</p>
         </div>
         <div id="routelist-content" class="space-y-4" on:touchmove>
-          {#each routeList as route}
-            {#if route.distanceFromUser <= range * 1000}
-              <div class="h-[14vh] mb-3">
-                <Card
-                  on:click={() => showRouteDetail(route)}
-                  horizontal
-                  class="w-full p-0 flex"
-                  size="sm"
-                >
-                  <div class="flex p-1">
-                    <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
-                    <div class="ms-3 mt-2">
-                      <p
-                        class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
-                      >
-                        나와의 거리 {route.distanceFromUser}km
-                      </p>
-                      <h5
-                        class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
-                      >
-                        {route.title}
-                      </h5>
-                      <div class="flex justify-between">
+          {#if routeList.length === 0}
+            <h1>주변 {range}km 내에 루트가 없습니다!</h1>
+          {:else}
+            {#each routeList as route}
+              {#if route.distanceFromUser <= range}
+                <div class="h-[14vh] mb-3 relative z-10">
+                  <Card
+                    on:click={() => showRouteDetail(route)}
+                    horizontal
+                    class="w-full p-0 flex"
+                    size="sm"
+                  >
+                    <div class="flex p-1">
+                      <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
+                      <div class="ms-3 mt-2">
                         <p
-                          class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                         >
-                          <span class="text-xs">총 길이</span>
-                          {route.distance}km
+                          나와의 거리 {route.distanceFromUser}km
                         </p>
-                        <p
-                          class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        <h5
+                          class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
                         >
-                          <span class="text-xs">예상 소요 시간</span>
-                          {formatSecToMMSS(route.predictTime)}
-                        </p>
+                          {route.title}
+                        </h5>
+                        <div class="flex justify-between">
+                          <p
+                            class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          >
+                            <span class="text-xs">총 길이</span>
+                            {route.distance}km
+                          </p>
+                          <p
+                            class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          >
+                            <span class="text-xs">예상 소요 시간</span>
+                            {formatSecToMMSS(route.predictTime)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card>
-              </div>
-            {/if}
-          {/each}
+                  </Card>
+                </div>
+              {/if}
+            {/each}
+          {/if}
         </div>
       </TabItem>
     </div>
     <div id="tab-item">
-      <TabItem defaultClass="tab-item font-bold text-xs gap-2" on:click={getLikedRoute}>
+      <TabItem
+        defaultClass="tab-item font-bold text-xs gap-2 bg-white bg-opacity-80 rounded-t-md"
+        on:click={getLikedRoute}
+      >
         <div slot="title" class="flex items-center gap-1">
           <HeartSolid size="sm" />
           찜한 루트
         </div>
         <div id="routelist-content" class="space-y-4" on:touchmove>
-          {#each routeList as route}
-            {#if route.distanceFromUser <= range * 1000}
-              <div class="h-[14vh] mb-3">
-                <Card
-                  on:click={() => showRouteDetail(route)}
-                  horizontal
-                  class="w-full p-0 flex"
-                  size="sm"
-                >
-                  <div class="flex p-1">
-                    <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
-                    <div class="ms-3 mt-2">
-                      <p
-                        class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
-                      >
-                        나와의 거리 {route.distanceFromUser}km
-                      </p>
-                      <h5
-                        class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
-                      >
-                        {route.title}
-                      </h5>
-                      <div class="flex justify-between">
+          {#if routeList.length === 0}
+            <h1>찜한 루트가 아직 없습니다!</h1>
+          {:else}
+            {#each routeList as route}
+              {#if route.distanceFromUser <= range}
+                <div class="h-[14vh] mb-3 relative z-10">
+                  <Card
+                    on:click={() => showRouteDetail(route)}
+                    horizontal
+                    class="w-full p-0 flex"
+                    size="sm"
+                  >
+                    <div class="flex p-1">
+                      <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
+                      <div class="ms-3 mt-2">
                         <p
-                          class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                         >
-                          <span class="text-xs">총 길이</span>
-                          {route.distance}km
+                          나와의 거리 {route.distanceFromUser}km
                         </p>
-                        <p
-                          class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        <h5
+                          class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
                         >
-                          <span class="text-xs">예상 소요 시간</span>
-                          {formatSecToMMSS(route.predictTime)}
-                        </p>
+                          {route.title}
+                        </h5>
+                        <div class="flex justify-between">
+                          <p
+                            class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          >
+                            <span class="text-xs">총 길이</span>
+                            {route.distance}km
+                          </p>
+                          <p
+                            class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          >
+                            <span class="text-xs">예상 소요 시간</span>
+                            {formatSecToMMSS(route.predictTime)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card>
-              </div>
-            {/if}
-          {/each}
+                  </Card>
+                </div>
+              {/if}
+            {/each}
+          {/if}
         </div>
       </TabItem>
     </div>
     <div id="tab-item">
-      <TabItem defaultClass="tab-item font-bold text-xs gap-2" on:click={getOtherRoute}>
+      <TabItem
+        defaultClass="tab-item font-bold text-xs gap-2 bg-white bg-opacity-80 rounded-t-md"
+        on:click={getOtherRoute}
+      >
         <div slot="title" class="flex items-center gap-1">
           <MapPinSolid size="sm" />
           주변 루트
         </div>
         <div id="routelist-content" class="space-y-4" on:touchmove>
-          {#each routeList as route}
-            {#if route.distanceFromUser <= range * 1000}
-              <div class="h-[14vh] mb-3">
-                <Card
-                  on:click={() => showRouteDetail(route)}
-                  horizontal
-                  class="w-full p-0 flex"
-                  size="sm"
-                >
-                  <div class="flex p-1">
-                    <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
-                    <div class="ms-3 mt-2">
-                      <p
-                        class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
-                      >
-                        나와의 거리 {route.distanceFromUser}km
-                      </p>
-                      <h5
-                        class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
-                      >
-                        {route.title}
-                      </h5>
-                      <div class="flex justify-between">
+          {#if routeList.length === 0}
+            <h1>주변 {range}km 내에 루트가 없습니다!</h1>
+          {:else}
+            {#each routeList as route}
+              {#if route.distanceFromUser <= range}
+                <div class="h-[14vh] mb-3 relative z-10">
+                  <Card
+                    on:click={() => showRouteDetail(route)}
+                    horizontal
+                    class="w-full p-0 flex"
+                    size="sm"
+                  >
+                    <div class="flex p-1">
+                      <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
+                      <div class="ms-3 mt-2">
                         <p
-                          class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                         >
-                          <span class="text-xs">총 길이</span>
-                          {route.distance}km
+                          나와의 거리 {route.distanceFromUser}km
                         </p>
-                        <p
-                          class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        <h5
+                          class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
                         >
-                          <span class="text-xs">예상 소요 시간</span>
-                          {formatSecToMMSS(route.predictTime)}
-                        </p>
+                          {route.title}
+                        </h5>
+                        <div class="flex justify-between">
+                          <p
+                            class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          >
+                            <span class="text-xs">총 길이</span>
+                            {route.distance}km
+                          </p>
+                          <p
+                            class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                          >
+                            <span class="text-xs">예상 소요 시간</span>
+                            {formatSecToMMSS(route.predictTime)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card>
-              </div>
-            {/if}
-          {/each}
+                  </Card>
+                </div>
+              {/if}
+            {/each}
+          {/if}
         </div>
       </TabItem>
     </div>
   </Tabs>
 </div>
-<div class="absolute bottom-3 right-3">
+<div class="absolute bottom-3 right-3 z-20">
   <Button on:click={() => scrollToTop('#routelist-body')} size="sm">
     <ChevronDoubleUpOutline />
   </Button>
 </div>
+<div id="background">
+  <svg width="200" height="100" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+    <ellipse cx="100" cy="50" rx="220" ry="330" fill="url(#grad1)" filter="url(#blur-filter)" />
+    <defs>
+      <filter id="blur-filter" x="-50%" y="-50%" width="1000%" height="1000%">
+        <feGaussianBlur stdDeviation="40" />
+      </filter>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="80%" y2="70%">
+        <stop offset="0%" style="stop-color:rgb(255,184,0);stop-opacity:1" />
+        <stop offset="100%" style="stop-color:rgb(255,218,115);stop-opacity:1" />
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+<div id="background2">
+  <svg width="200" height="100" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+    <ellipse cx="100" cy="50" rx="220" ry="330" fill="url(#grad2)" filter="url(#blur-filter)" />
+    <defs>
+      <filter id="blur-filter" x="-50%" y="-50%" width="1000%" height="1000%">
+        <feGaussianBlur stdDeviation="40" />
+      </filter>
+      <linearGradient id="grad2" x1="0%" y1="0%" x2="80%" y2="70%">
+        <stop offset="0%" style="stop-color:rgb(94,131,88);stop-opacity:1" />
+        <stop offset="100%" style="stop-color:rgb(154,186,149);stop-opacity:1" />
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
 
 <style>
-  #routelist-header {
-    height: 10vh;
-    width: 100%;
-  }
-
   #search-control {
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 10vh;
+    z-index: 2;
   }
 
   #routelist-content {
     height: auto;
     flex-grow: 1;
     overflow-y: scroll;
+    z-index: 2;
   }
 
   #routelist-body {
     width: 100%;
-    height: 80%;
+    height: 90%;
     padding-bottom: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow-y: scroll;
+    z-index: 2;
   }
 
   #routelist-body::-webkit-scrollbar {
@@ -376,5 +420,28 @@
 
   #tab-item {
     width: 35%;
+    z-index: 2 !important;
+  }
+
+  #background {
+    position: fixed;
+    bottom: 2%;
+    left: 25%;
+    transform: translateX(-50%);
+    z-index: 1;
+    opacity: 0.3;
+    overflow: visible;
+    transition: 800ms;
+  }
+
+  #background2 {
+    position: fixed;
+    top: 9%;
+    right: -50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    opacity: 0.3;
+    overflow: visible;
+    transition: 800ms;
   }
 </style>

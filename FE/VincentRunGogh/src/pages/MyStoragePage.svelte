@@ -6,6 +6,7 @@
   import Swal from 'sweetalert2';
   import BackButton from '@/components/buttons/BackButton.svelte';
   import FeedArticle from '@/components/cards/FeedArticle.svelte';
+  import Header from '@/components/common/Header.svelte';
 
   let dummyArticleList: {
     boardId: number;
@@ -418,11 +419,8 @@
   }
 </script>
 
-<div id="community-body">
-  <div id="community-header" class="flex justify-center items-center">
-    <BackButton />
-    <h2>내 보관함</h2>
-  </div>
+<div id="mystorage-body">
+  <Header title="내 보관함" />
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-interactive-supports-focus -->
   <div id="community-mystorage" role="button" class="absolute top-3 right-3">
@@ -432,7 +430,7 @@
     <Button size="sm" on:click={searchCondition}>검색 반경 설정</Button>
     <p class="my-3 font-bold">반경 {range}km내의 루트만 표시됩니다.</p>
   </div>
-  <div id="community-content">
+  <div id="mystorage-content">
     <Tabs defaultClass="flex justify-between" tabStyle="underline">
       <!-- api 연결시 여기에 on:click 해야함 just like RouteListPage -->
       <TabItem defaultClass="tab-item font-bold text-xs gap-2" open>
@@ -534,13 +532,10 @@
       </TabItem>
     </Tabs>
   </div>
-  <div id="community-tabbar">
-    <Tabbar />
-  </div>
 </div>
 
 <style>
-  #community-body {
+  #mystorage-body {
     justify-self: center;
     text-align: center;
     width: 100%;
@@ -551,17 +546,12 @@
     flex-direction: column;
   }
 
-  #community-header {
-    height: 10vh;
-    width: 100%;
-  }
-
   #community-mystorage {
     width: 15%;
   }
 
-  #community-content {
-    height: 75vh;
+  #mystorage-content {
+    height: 90vh;
     width: 100%;
     overflow-y: scroll;
     display: flex;
@@ -569,11 +559,7 @@
     align-items: center;
   }
 
-  #community-content::-webkit-scrollbar {
+  #mystorage-content::-webkit-scrollbar {
     display: none;
-  }
-
-  #community-tabbar {
-    height: 15vh;
   }
 </style>
