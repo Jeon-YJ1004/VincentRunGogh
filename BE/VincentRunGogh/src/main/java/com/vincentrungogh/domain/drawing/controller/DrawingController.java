@@ -81,6 +81,8 @@ public class DrawingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "드로잉이 시작되었습니다.",
                     content = @Content(schema = @Schema(implementation = StartDrawingResponse.class))),
+            @ApiResponse(responseCode = "400", description = "3개의 드로잉이 진행 중입니다. 진행 중인 드로잉을 완료해주세요.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class))),
             @ApiResponse(responseCode = "500", description = "드로잉을 시작하는데 실패했습니다.",
                     content = @Content(schema = @Schema(implementation = ResultDto.class)))
     })

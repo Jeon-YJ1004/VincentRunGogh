@@ -14,4 +14,6 @@ public interface DrawingRepository extends JpaRepository<Drawing, Integer> {
     List<Drawing> findAllByUserAndIsCompleted(User user, Boolean isCompleted);
 
     List<Drawing> findAllByUserAndIsCreatedBoard(User user, Boolean isCreatedBoard);
+
+    int countAllByUserAndIsCompleted(User user, Boolean isCompleted);
 }
