@@ -14,12 +14,11 @@ import com.vincentrungogh.domain.route.repository.RouteRepository;
 import com.vincentrungogh.domain.route.service.dto.common.Position;
 import com.vincentrungogh.domain.running.service.dto.request.RunningRequest;
 import com.vincentrungogh.domain.user.service.UserService;
-import com.vincentrungogh.global.auth.service.dto.request.ResetPasswordRequest;
+import com.vincentrungogh.global.service.AwsService;
 import com.vincentrungogh.global.service.PythonApiService;
 import com.vincentrungogh.global.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import com.vincentrungogh.domain.drawing.entity.Drawing;
 import com.vincentrungogh.domain.drawing.repository.DrawingDetailRepository;
@@ -31,10 +30,7 @@ import com.vincentrungogh.global.exception.CustomException;
 import com.vincentrungogh.global.exception.ErrorCode;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -50,6 +46,7 @@ public class DrawingService {
     private final UserService userService;
     private final RedisService redisService;
     private final PythonApiService pythonApiService;
+    private final AwsService awsService;
 
     @Transactional
     public DrawingResponseDto getDrawing(int userId, int drawingId) {
@@ -165,12 +162,12 @@ public class DrawingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
 
         // 3. 드로잉 업데이트
-        drawing.changeAccumulatedDrawingImage(request.getDrawingImage());
+        drawing.changeAccumulatedDrawingImage(this.getImageUrl(request.getDrawingImage()));
         drawingRepository.save(drawing);
 
         // 4. 드로잉 디테일 저장
         DrawingDetail drawingDetail = DrawingDetail
-                .createDrawingDetail(response, request.getDrawingDetailImage(),
+                .createDrawingDetail(response, this.getImageUrl(request.getDrawingDetailImage()),
                         drawing);
         drawingDetailRepository.save(drawingDetail);
     }
@@ -188,11 +185,11 @@ public class DrawingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
 
         // 3. 드로잉 업데이트
-        drawing.completeDrawing(request.getTitle(), request.getDrawingDetailImage());
+        drawing.completeDrawing(request.getTitle(), this.getImageUrl(request.getDrawingImage()));
 
         // 4. 드로잉 디테일 저장
         DrawingDetail drawingDetail = DrawingDetail
-                .completeDrawingDetail(response, request.getDrawingDetailImage(),
+                .completeDrawingDetail(response, this.getImageUrl(request.getDrawingDetailImage()),
                         drawing);
         drawingDetailRepository.save(drawingDetail);
     }
@@ -203,7 +200,7 @@ public class DrawingService {
 
         // 2. python 연결
         DataSaveDrawingDetailResponse response = pythonApiService.saveDrawingDetail(
-                DataSaveDrawingDetailRequset.createDataSaveDrawingDetailRequset(redisPositionList)
+                DataSaveDrawingDetailRequest.createDataSaveDrawingDetailRequset(redisPositionList)
         );
 
         log.info("saveDrawing : " + response);
@@ -212,5 +209,10 @@ public class DrawingService {
         redisService.removeRunning(userId);
 
         return response;
+    }
+
+    private String getImageUrl(String image){
+        String fileName = awsService.uploadDrawingFile(image);
+        return awsService.getImageUrl(fileName);
     }
 }

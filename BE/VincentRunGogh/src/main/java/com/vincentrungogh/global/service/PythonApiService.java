@@ -5,7 +5,7 @@ import com.vincentrungogh.domain.route.service.dto.request.ArtRouteRequestDto;
 import com.vincentrungogh.domain.route.service.dto.request.DataSaveRouteRequestDto;
 import com.vincentrungogh.domain.route.service.dto.response.DataArtRouteResponseDto;
 import com.vincentrungogh.domain.route.service.dto.response.DataSaveRouteResponseDto;
-import com.vincentrungogh.domain.drawing.service.dto.request.DataSaveDrawingDetailRequset;
+import com.vincentrungogh.domain.drawing.service.dto.request.DataSaveDrawingDetailRequest;
 import com.vincentrungogh.global.exception.CustomException;
 import com.vincentrungogh.global.exception.ErrorCode;
 import com.vincentrungogh.global.util.ResultDto;
@@ -94,7 +94,7 @@ public class PythonApiService {
         return (DataSaveRouteResponseDto) response.getBody().getData();
     }
 
-    public DataSaveDrawingDetailResponse saveDrawingDetail(DataSaveDrawingDetailRequset request){
+    public DataSaveDrawingDetailResponse saveDrawingDetail(DataSaveDrawingDetailRequest request){
 
         URI uri = UriComponentsBuilder
                 .fromUriString(dataUrl)

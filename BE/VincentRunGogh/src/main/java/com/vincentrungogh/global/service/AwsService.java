@@ -58,6 +58,29 @@ public class AwsService {
         }
     }
 
+    public String uploadDrawingFile(String file) {
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(file.getBytes(StandardCharsets.UTF_8));
+
+            String fileName = "drawing/" + UUID.randomUUID()+".jpg";
+
+            // S3에 업로드할 InputStream 생성
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(decodedBytes);
+
+            // S3에 파일 업로드
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(decodedBytes.length);
+            s3Client.putObject(new PutObjectRequest(name, fileName, inputStream, metadata));
+
+            inputStream.close(); // InputStream 닫기
+
+            return fileName;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ErrorCode.FAILED_CONVERT_FILE);
+        }
+    }
+
     public String uploadFile(MultipartFile file, int userId) {
         try{
             File fileObj = convertMultiPartFileToFile(file);
