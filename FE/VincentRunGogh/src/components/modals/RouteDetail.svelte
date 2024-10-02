@@ -6,24 +6,26 @@
   export let onClose: any;
   export let route;
   export let type;
-  export let routeId: number | null = null;
+  export let routeId: string | null = null;
   export let drawingId: number | null = null;
 
   // 너무 멀리 떨어진 루트 상세 접근시 시작버튼 비활성화
   let isFar: boolean = Math.floor(route.distanceFromUser / 1000) > 5.0;
 
-  // 취소시 홈으로 돌아가기
-  function goHome() {
-    replace('/');
+  // 취소시  돌아가기
+  function goBack() {
     if (onClose) onClose();
   }
 
   // 시작 시 이동
   function startDrawing() {
-    let startURL = `/drawingmap?drawingId=${drawingId}`;
-    console.log(startURL);
-    if (routeId) {
+    let startURL = '';
+    if (routeId && drawingId) {
       startURL = `/drawingmap?drawingId=${drawingId}&routeId=${routeId}`;
+    } else if (drawingId) {
+      startURL = `/drawingmap?drawingId=${drawingId}`;
+    } else {
+      startURL = `/drawingmap?routeId=${routeId}`;
     }
     console.log(startURL);
     replace(startURL);
@@ -107,7 +109,7 @@
     <p class="my-4">루트 길이 {parseFloat((route.distance / 1000).toFixed(2))}km</p>
   {/if}
   <div class="flex justify-around">
-    <GradientButton color="pinkToOrange" size="sm" on:click={goHome} pill>
+    <GradientButton color="pinkToOrange" size="sm" on:click={goBack} pill>
       <RedoOutline class="me-2" size="sm" />돌아가기
     </GradientButton>
     <GradientButton color="greenToBlue" size="sm" on:click={startDrawing} pill>
