@@ -4,9 +4,7 @@ import com.vincentrungogh.domain.drawing.entity.DrawingDetail;
 import com.vincentrungogh.domain.drawing.entity.MongoDrawingDetail;
 import com.vincentrungogh.domain.drawing.repository.MongoDrawingRepository;
 import com.vincentrungogh.domain.drawing.service.dto.request.*;
-import com.vincentrungogh.domain.drawing.service.dto.response.DataSaveDrawingDetailResponse;
-import com.vincentrungogh.domain.drawing.service.dto.response.RestartDrawingResponse;
-import com.vincentrungogh.domain.drawing.service.dto.response.StartDrawingResponse;
+import com.vincentrungogh.domain.drawing.service.dto.response.*;
 import com.vincentrungogh.domain.route.entity.MongoRoute;
 import com.vincentrungogh.domain.route.entity.Route;
 import com.vincentrungogh.domain.route.repository.MongoRouteRepository;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 import com.vincentrungogh.domain.drawing.entity.Drawing;
 import com.vincentrungogh.domain.drawing.repository.DrawingDetailRepository;
 import com.vincentrungogh.domain.drawing.repository.DrawingRepository;
-import com.vincentrungogh.domain.drawing.service.dto.response.DrawingResponseDto;
 import com.vincentrungogh.domain.user.entity.User;
 import com.vincentrungogh.domain.user.repository.UserRepository;
 import com.vincentrungogh.global.exception.CustomException;
@@ -150,7 +147,7 @@ public class DrawingService {
     }
 
     @Transactional
-    public void saveDrawing(int userId, int drawingId, SaveDrawingRequest request) {
+    public SaveDrawingResponse saveDrawing(int userId, int drawingId, SaveDrawingRequest request) {
         // 0. 레디스 저장
         redisService.saveRunning(userId, RunningRequest.createRunningRequest(request.getLat(), request.getLng(), request.getTime()));
 
@@ -162,18 +159,23 @@ public class DrawingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
 
         // 3. 드로잉 업데이트
-        drawing.changeAccumulatedDrawingImage(this.getImageUrl(request.getDrawingImage()));
+        String drawingImageURL = this.getImageUrl(request.getDrawingImage());
+        drawing.changeAccumulatedDrawingImage(drawingImageURL);
         drawingRepository.save(drawing);
 
         // 4. 드로잉 디테일 저장
+        String drawingDetailImageURL = this.getImageUrl(request.getDrawingDetailImage());
         DrawingDetail drawingDetail = DrawingDetail
-                .createDrawingDetail(response, this.getImageUrl(request.getDrawingDetailImage()),
+                .createDrawingDetail(response, drawingDetailImageURL,
                         drawing);
         drawingDetailRepository.save(drawingDetail);
+
+        return SaveDrawingResponse
+                .createSaveDrawingResponse(drawingImageURL, drawingDetailImageURL);
     }
 
     @Transactional
-    public void completeDrawing(int userId, int drawingId, CompleteDrawingRequest request) {
+    public SaveDrawingResponse completeDrawing(int userId, int drawingId, CompleteDrawingRequest request) {
         // 0. 레디스 저장
         redisService.saveRunning(userId, RunningRequest.createRunningRequest(request.getLat(), request.getLng(), request.getTime()));
 
@@ -185,13 +187,18 @@ public class DrawingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
 
         // 3. 드로잉 업데이트
-        drawing.completeDrawing(request.getTitle(), this.getImageUrl(request.getDrawingImage()));
+        String drawingImageURL = this.getImageUrl(request.getDrawingImage());
+        drawing.completeDrawing(request.getTitle(), drawingImageURL);
 
         // 4. 드로잉 디테일 저장
+        String drawingDetailImageURL = this.getImageUrl(request.getDrawingDetailImage());
         DrawingDetail drawingDetail = DrawingDetail
-                .completeDrawingDetail(response, this.getImageUrl(request.getDrawingDetailImage()),
+                .completeDrawingDetail(response, drawingDetailImageURL,
                         drawing);
         drawingDetailRepository.save(drawingDetail);
+
+        return SaveDrawingResponse
+                .createSaveDrawingResponse(drawingImageURL, drawingDetailImageURL);
     }
 
     private DataSaveDrawingDetailResponse processDrawing(int userId) {
