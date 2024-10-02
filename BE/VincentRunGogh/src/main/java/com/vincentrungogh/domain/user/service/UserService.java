@@ -57,7 +57,8 @@ public class UserService implements UserDetailsService {
 
         // 2. 닉네임 중복 확인
         Optional<User> optionalUser = userRepository.findByNickname(request.getNickname());
-        if(optionalUser.isPresent()){
+
+        if(optionalUser.isPresent() && optionalUser.get().getId() != userId){
             throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
         }
 
