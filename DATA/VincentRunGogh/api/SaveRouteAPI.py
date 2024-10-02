@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from pyspark.sql import SparkSession
 
 from core.CalculateCenterAndDistance import calculate_center_and_distance
 
@@ -12,6 +13,8 @@ from models.dto.responseDto import ResponseDto
 
 @api_router.post("/rootings", response_model=ResponseDto)
 async def save_route(request: DataSaveRouteRequestDto):
+    spark = SparkSession.builder.appName("SaveRoutePyspark").getOrCreate()
+
     # Position 객체를 dict로 변환
     position_list_dicts = [position.dict() for position in request.positionList]
 
@@ -21,6 +24,8 @@ async def save_route(request: DataSaveRouteRequestDto):
     print("생성되었습니다.")
     # route의 정보를 계산한 값 넣기
     center_lat, center_lng, distance = calculate_center_and_distance(route)
+
+    spark.stop()
 
     # 저장된 route의 ID를 응답 데이터로 포함
     response_data = {

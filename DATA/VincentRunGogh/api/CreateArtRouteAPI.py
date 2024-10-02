@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from pyspark.sql import SparkSession
 
 from core.GenerateRoute import generate_route
 from models.dto.requestDto import DataArtRouteRequestDto
@@ -8,10 +9,13 @@ api_router = APIRouter()
 
 @api_router.post("/rootings/art", response_model=ResponseDto)
 async def create_art_route(request: DataArtRouteRequestDto):
+    spark = SparkSession.builder.appName("artRoutePyspark").getOrCreate()
     # 요청에서 position_list 받기
     # print(ArtRouteRequest.leftLat)
     user_drawn_path = [(each.lat, each.lng) for each in request.positionList]
     position_list = generate_route(user_drawn_path,request.leftLat,request.leftLng,request.rightLat,request.rightLng)
+
+    spark.stop()
 
     response_data = {
         "status": 200,

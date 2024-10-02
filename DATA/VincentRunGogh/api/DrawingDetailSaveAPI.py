@@ -1,4 +1,6 @@
 from fastapi import APIRouter
+from pyspark.sql import SparkSession
+
 api_router = APIRouter()
 
 from db import mongodb
@@ -14,6 +16,9 @@ from pySpark.RouteTotalDistance import haversine, calculate_total_distance
 
 @api_router.post("/rootings/drawings", response_model=ResponseDto)
 async def save_drawing_detail(request: DataSaveDrawingDetailRequestDto):
+
+    spark = SparkSession.builder.appName("saveDrawingPyspark").getOrCreate()
+
     # 1. 시간 계산 : 처음과 끝만 계산하기(5초마다 보내기 때문)
     # 중간 일시정지가 된다면 데이터가 들어오지 않음. 그러면 결론.
     # 만약 다음 노드와의 time 차이가 30초이상이 나는 경우는 일시정지로 간주
@@ -51,6 +56,8 @@ async def save_drawing_detail(request: DataSaveDrawingDetailRequestDto):
     drawingDetail = DrawingDetail(positionList=position_list_dicts)
     await mongodb.engine.save(drawingDetail)
     print("생성되었습니다.")
+
+    spark.stop()
 
     # 저장된 route의 ID를 응답 데이터로 포함
     response_data = {

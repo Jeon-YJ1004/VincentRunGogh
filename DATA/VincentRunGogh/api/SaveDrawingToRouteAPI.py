@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from pyspark.sql import SparkSession
 
 from core.CalculateCenterAndDistance import calculate_center_and_distance
 
@@ -15,7 +16,7 @@ from models.dto.responseDto import ResponseDto
 async def save_drawing_to_route(request: DataDrawingRouteRequestDto):
 
     print("테스트 ")
-
+    spark = SparkSession.builder.appName("DrawingToRoutePyspark").getOrCreate()
     id_list = request.drawingDetailList
 
     # 문자열을 ObjectId로 변환
@@ -42,6 +43,7 @@ async def save_drawing_to_route(request: DataDrawingRouteRequestDto):
 
     center_lat, center_lng, distance = calculate_center_and_distance(route)
 
+    spark.stop()
     # 저장된 route의 ID를 응답 데이터로 포함
     response_data = {
         "status": 200,
