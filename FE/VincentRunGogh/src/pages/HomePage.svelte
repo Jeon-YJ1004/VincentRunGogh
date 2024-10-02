@@ -111,6 +111,7 @@
                 Swal.close(); // 모달 닫기
               },
               type: artImage,
+              drawingId: drawingId,
             },
           });
         },

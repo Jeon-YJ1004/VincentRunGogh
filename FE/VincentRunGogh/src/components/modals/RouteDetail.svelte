@@ -20,7 +20,13 @@
 
   // 시작 시 이동
   function startDrawing() {
-    replace(`/drawingmap?routeId=${routeId}&drawingId=${drawingId}`);
+    let startURL = `/drawingmap?drawingId=${drawingId}`;
+    console.log(startURL);
+    if (routeId) {
+      startURL = `/drawingmap?drawingId=${drawingId}&routeId=${routeId}`;
+    }
+    console.log(startURL);
+    replace(startURL);
     if (onClose) onClose();
   }
 </script>
