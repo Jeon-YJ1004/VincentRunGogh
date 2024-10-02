@@ -74,6 +74,7 @@ public class DrawingService {
     public StartDrawingResponse startDrawing(int userId, StartDrawingRequest request) {
         // 0. 레디스 저장
         String routeId = request.getRouteId();
+        redisService.removeRunning(userId);
         redisService.saveRunning(userId, RunningRequest.createRunningRequest(request.getLat(), request.getLng(), request.getTime()));
 
         // 1. 유저 여부
@@ -122,6 +123,7 @@ public class DrawingService {
 
     public RestartDrawingResponse restartDrawing(int drawingId, RestartDrawingRequest request, int userId){
         // 0. 레디스 저장
+        redisService.removeRunning(userId);
         redisService.saveRunning(userId, RunningRequest.createRunningRequest(request.getLat(), request.getLng(), request.getTime()));
 
         // 1. 드로잉 찾기

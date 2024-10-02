@@ -68,7 +68,7 @@ public class User {
                 .gender(gender)
                 .birth(birth)
                 .isChanged(false) //비밀번호 재발급 default false
-                .profile("기본 프로필") //추후 기본 프로필로 변경
+                .profile("https://vincentrungogh.s3.ap-northeast-2.amazonaws.com/profile/profile-default.png") //추후 기본 프로필로 변경
                 .height(height)
                 .weight(weight)
                 .build();

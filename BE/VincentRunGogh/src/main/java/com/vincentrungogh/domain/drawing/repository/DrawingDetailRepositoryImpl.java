@@ -1,13 +1,21 @@
 package com.vincentrungogh.domain.drawing.repository;
 
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.vincentrungogh.domain.drawing.entity.Drawing;
+import com.vincentrungogh.domain.drawing.entity.DrawingDetail;
 import com.vincentrungogh.domain.drawing.entity.QDrawingDetail;
+import com.vincentrungogh.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+
+import static com.vincentrungogh.domain.drawing.entity.QDrawing.drawing;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,6 +51,19 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                 .select(drawingDetail.id)
                 .from(drawingDetail)
                 .where(drawingDetail.drawing.eq(drawing))
+                .fetch();
+    }
+
+    @Override
+    public List<DrawingDetail> findAllByUserAndCreatedBetweenDates(User user, LocalDate start, LocalDate end) {
+        return queryFactory
+                .selectFrom(drawingDetail)
+                .where(drawingDetail.drawing.in(
+                        JPAExpressions
+                                .select(drawing)
+                                .from(drawing)
+                                .where(drawing.user.eq(user)) // user 필터링
+                ).and(drawingDetail.created.between(start.atTime(LocalTime.MIN), end.atTime(LocalTime.MAX))))
                 .fetch();
     }
 }
