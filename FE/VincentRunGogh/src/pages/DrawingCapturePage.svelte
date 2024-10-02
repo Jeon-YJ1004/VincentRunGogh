@@ -14,20 +14,11 @@
   import { location, querystring } from 'svelte-spa-router';
   import { get, writable } from 'svelte/store';
   import { Button, Input, GradientButton, Label, Card } from 'flowbite-svelte';
-  import {
-    LockSolid,
-    LockOpenSolid,
-    RedoOutline,
-    ArrowRightOutline,
-    HomeSolid,
-  } from 'flowbite-svelte-icons';
+  import { LockSolid, LockOpenSolid } from 'flowbite-svelte-icons';
 
   import { elapsedTime, posList, route, totalDistance, drawingStore } from '@/stores/drawingStore';
   import { startDrawing, completeDrawing, saveDrawing } from '@/api/drawingApi';
   import SaveRouteDrawing from '@components/cards/SaveRouteDrawing.svelte';
-  import { sub } from 'date-fns';
-  import { toastAlert } from '@/utils/notificationAlert';
-  import Spinner from '@/components/common/Spinner.svelte';
 
   let isLoading = false;
   // 폼 형태 변수 임시저장 or 완료
