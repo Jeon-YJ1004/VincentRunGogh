@@ -2,6 +2,7 @@
   import { getRouteList } from '@/api/routeApi';
   import BackButton from '@/components/buttons/BackButton.svelte';
   import RouteDetail from '@/components/modals/RouteDetail.svelte';
+  import { formatSecToMMSS } from '@/utils/formatter';
   import { Tabs, TabItem, Card, Button } from 'flowbite-svelte';
   import {
     PaletteOutline,
@@ -185,32 +186,40 @@
         <div id="routelist-content" class="space-y-4" on:touchmove>
           {#each routeList as route}
             {#if route.distanceFromUser <= range * 1000}
-              <div class="h-[12vh] mb-3">
+              <div class="h-[14vh] mb-3">
                 <Card
                   on:click={() => showRouteDetail(route)}
                   horizontal
                   class="w-full p-0 flex"
                   size="sm"
                 >
-                  <div>
+                  <div class="flex p-1">
                     <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
-                    <p
-                      class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
-                    >
-                      나와의 거리 {route.distanceFromUser}km
-                    </p>
-                    <h5 class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                      {route.title}
-                    </h5>
-                    <div class="flex justify-around">
-                      <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                        <span class="text-xs">총 길이</span>
-                        {route.distance}km
+                    <div class="ms-3 mt-2">
+                      <p
+                        class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                      >
+                        나와의 거리 {route.distanceFromUser}km
                       </p>
-                      <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                        <span class="text-xs">예상 소요 시간</span>
-                        {route.predictTime}
-                      </p>
+                      <h5
+                        class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
+                      >
+                        {route.title}
+                      </h5>
+                      <div class="flex justify-between">
+                        <p
+                          class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        >
+                          <span class="text-xs">총 길이</span>
+                          {route.distance}km
+                        </p>
+                        <p
+                          class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        >
+                          <span class="text-xs">예상 소요 시간</span>
+                          {formatSecToMMSS(route.predictTime)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -228,25 +237,46 @@
         </div>
         <div id="routelist-content" class="space-y-4" on:touchmove>
           {#each routeList as route}
-            <Card on:click={() => showRouteDetail(route)} horizontal size="sm" class="grow">
-              <img src={route.artImage} alt="" />
-              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                나와의 거리 {parseFloat((route.distanceFromUser / 1000).toFixed(2))}km
-              </p>
-              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                {route.title}
-              </h5>
-              <div class="flex justify-around">
-                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                  <span class="text-sm">총 길이</span>
-                  {route.distance}km
-                </p>
-                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                  <span class="text-sm">예상 소요 시간</span>
-                  {route.predictTime}
-                </p>
+            {#if route.distanceFromUser <= range * 1000}
+              <div class="h-[14vh] mb-3">
+                <Card
+                  on:click={() => showRouteDetail(route)}
+                  horizontal
+                  class="w-full p-0 flex"
+                  size="sm"
+                >
+                  <div class="flex p-1">
+                    <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
+                    <div class="ms-3 mt-2">
+                      <p
+                        class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                      >
+                        나와의 거리 {route.distanceFromUser}km
+                      </p>
+                      <h5
+                        class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
+                      >
+                        {route.title}
+                      </h5>
+                      <div class="flex justify-between">
+                        <p
+                          class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        >
+                          <span class="text-xs">총 길이</span>
+                          {route.distance}km
+                        </p>
+                        <p
+                          class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        >
+                          <span class="text-xs">예상 소요 시간</span>
+                          {formatSecToMMSS(route.predictTime)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
               </div>
-            </Card>
+            {/if}
           {/each}
         </div>
       </TabItem>
@@ -259,25 +289,46 @@
         </div>
         <div id="routelist-content" class="space-y-4" on:touchmove>
           {#each routeList as route}
-            <Card on:click={() => showRouteDetail(route)} horizontal size="sm" class="grow">
-              <img src={route.artImage} alt="" />
-              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                나와의 거리 {parseFloat((route.distanceFromUser / 1000).toFixed(2))}km
-              </p>
-              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                {route.title}
-              </h5>
-              <div class="flex justify-around">
-                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                  <span class="text-sm">총 길이</span>
-                  {route.distance}km
-                </p>
-                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                  <span class="text-sm">예상 소요 시간</span>
-                  {route.predictTime}
-                </p>
+            {#if route.distanceFromUser <= range * 1000}
+              <div class="h-[14vh] mb-3">
+                <Card
+                  on:click={() => showRouteDetail(route)}
+                  horizontal
+                  class="w-full p-0 flex"
+                  size="sm"
+                >
+                  <div class="flex p-1">
+                    <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
+                    <div class="ms-3 mt-2">
+                      <p
+                        class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                      >
+                        나와의 거리 {route.distanceFromUser}km
+                      </p>
+                      <h5
+                        class="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white"
+                      >
+                        {route.title}
+                      </h5>
+                      <div class="flex justify-between">
+                        <p
+                          class="me-3 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        >
+                          <span class="text-xs">총 길이</span>
+                          {route.distance}km
+                        </p>
+                        <p
+                          class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
+                        >
+                          <span class="text-xs">예상 소요 시간</span>
+                          {formatSecToMMSS(route.predictTime)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
               </div>
-            </Card>
+            {/if}
           {/each}
         </div>
       </TabItem>

@@ -104,9 +104,9 @@
 
   <h2 class="font-bold my-4 text-xl">{route.title}</h2>
   {#if type === 'routeList'}
-    <p class="my-4">나와의 거리 {parseFloat((route.distanceFromUser / 1000).toFixed(2))}km</p>
+    <p class="my-4">나와의 거리 {route.distanceFromUser}km</p>
   {:else}
-    <p class="my-4">루트 길이 {parseFloat((route.distance / 1000).toFixed(2))}km</p>
+    <p class="my-4">루트 길이 {route.distance}km</p>
   {/if}
   <div class="flex justify-around">
     <GradientButton color="pinkToOrange" size="sm" on:click={goBack} pill>
