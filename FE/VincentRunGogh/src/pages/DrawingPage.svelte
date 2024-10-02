@@ -35,16 +35,8 @@
   let timerIntervalId: number | null = null; // 1초마다 타이머 업데이트하는 setInterval의 ID
   let trackingIntervalId: number | null = null; // 10초마다 위치를 추적하는 setInterval의 ID
   let startPos: LatLng | null = null;
-  let startTime: Date | null = null;
+  let startTime: string | null = null;
   let firstLocationFound = writable(false); // 최초 위치 찾기 상태
-
-  //STUB - 임시 좌표 없애기
-  // const posList: LatLngExpression[] = [
-  //   [36.3528192, 127.3102336],
-  //   [36.35, 127.31],
-  //   [36.36, 127.3102336],
-  //   [36.37, 127.3102336],
-  // ];
 
   function createMap(): LeafletMap {
     const m = L.map('map', { preferCanvas: true });
@@ -58,13 +50,11 @@
 
     return m;
   }
+
   function handleLocationFound(e: L.LocationEvent) {
     const { lat, lng } = e.latlng;
     currPos = new L.LatLng(lat, lng);
 
-    if (!startPos) {
-      startPos = new L.LatLng(lat, lng);
-    }
     addPosition(lat, lng);
 
     firstLocationFound.update((value) => {
@@ -72,14 +62,42 @@
         // 처음 위치 찾기
         console.log('처음 location found');
         firstLocationFound.set(true);
+        startPos = new L.LatLng(lat, lng);
+        const data = { lat: lat, lng: lng, time: startTime };
+        console.log(data);
+        console.log(options);
+        startDrawing(
+          options,
+          data,
+          async (response) => {
+            console.log('api 연결 후 드로잉 데이터:', response);
+            updateDrawingInfo(response.data.data); // 스토어를 업데이트
+            try {
+              await connectWebSocket();
+              console.log('WebSocket connected successfully');
+            } catch (error) {
+              console.error('Failed to connect WebSocket:', error);
+            }
+          },
+          (error) => {
+            console.error('Failed to start drawing:', error);
+          }
+        );
+
+        //TODO - 루트의 좌표 값들을 url의 routeId 파람으로 조회
+        //이전에 한 드로잉은 다른 색으로 보여주기
       } else {
         // 주기적 위치 업데이트
         console.log('주기적 found');
-        const currentUser = get(userStore);
-        const nickname = currentUser ? currentUser.nickname : '';
-        console.log('소켓 데이터 보내기!');
-        console.log(trackingIntervalId);
-        sendRealTimePosition({ lat, lng }, nickname);
+
+        if (!$isPause) {
+          console.log('소켓 데이터 보내기!');
+          const currentUser = get(userStore);
+          const nickname = currentUser ? currentUser.nickname : '';
+          console.log(nickname);
+          sendRealTimePosition({ lat, lng }, nickname);
+          updateDistanceAndSpeed($posList);
+        }
         setDrawingPos({ lat, lng, time: formatTimeToHMS() });
         if (map !== null) {
           // 마커가 이미 존재하면 업데이트하고, 없으면 새로 추가
@@ -93,7 +111,6 @@
           if (lineLayers) {
             lineLayers?.addLatLng(currPos);
           }
-          updateDistanceAndSpeed($posList);
         }
       }
       return true;
@@ -305,50 +322,19 @@ fill="#000000" stroke="none">
     // posList에 새로운 좌표 추가
     posList.update((list) => [...list, newPos]);
   }
-  function toggleTracking() {
+  async function toggleTracking() {
     const trackingActive = get(isPause);
+    map?.locate({ setView: true, maxZoom: 18 });
+    map?.on('locationfound', handleLocationFound);
+
+    map?.on('locationerror', (e: L.ErrorEvent) => {
+      console.error(e.message);
+    });
     if (!trackingActive) {
       console.log('트래킹 시작');
-      map?.locate({ setView: true, maxZoom: 18 });
-      map.on('locationfound', handleLocationFound);
-
-      // map?.on('locationfound', (e: L.LocationEvent) => {
-      //   const { lat, lng } = e.latlng;
-      //   currPos = new L.LatLng(lat, lng);
-
-      //   if (!startPos) {
-      //     startPos = new L.LatLng(lat, lng);
-      //   }
-      //   addPosition(lat, lng);
-      //   //!SECTION - 소켓에 위치 전송
-      //   const currentUser = get(userStore);
-      //   const nickname = currentUser ? currentUser.nickname : '';
-      //   console.log('소켓 데이터 보내기!');
-      //   console.log(trackingIntervalId);
-      //   sendRealTimePosition({ lat, lng }, nickname);
-      //   setDrawingPos({ lat, lng, time: formatTimeToHMS() });
-      //   if (map !== null) {
-      //     // 마커가 이미 존재하면 업데이트하고, 없으면 새로 추가
-      //     if (marker.has('current')) {
-      //       const existingMarker = marker.get('current');
-      //       existingMarker?.setLatLng(currPos); // 기존 마커 위치 업데이트
-      //     } else {
-      //       const newMarker = createMarker(currPos); // 새 마커 생성
-      //       marker.set('current', newMarker); // 새 마커를 저장
-      //     }
-      //     if (lineLayers) {
-      //       lineLayers?.addLatLng(currPos);
-      //     }
-      //     updateDistanceAndSpeed($posList);
-      //   }
-      // });
-
-      map?.on('locationerror', (e: L.ErrorEvent) => {
-        console.error(e.message);
-      });
 
       if (!startTime) {
-        startTime = new Date();
+        startTime = formatTimeToHMS();
       }
 
       timerIntervalId = window.setInterval(() => {
@@ -359,7 +345,6 @@ fill="#000000" stroke="none">
       trackingIntervalId = window.setInterval(() => {
         map?.locate();
       }, 10000);
-      console.log(timerIntervalId + ' ' + trackingIntervalId);
     } else {
       console.log('일시정지');
 
@@ -405,25 +390,6 @@ fill="#000000" stroke="none">
   onMount(() => {
     userStore.initialize(); // 스토어에서 사용자 정보 초기화
     countdown = 3;
-    startDrawing(
-      options,
-      async (response) => {
-        console.log('api 연결 후 드로잉 데이터:', response);
-        updateDrawingInfo(response.data.data); // 스토어를 업데이트
-        try {
-          await connectWebSocket();
-          console.log('WebSocket connected successfully');
-        } catch (error) {
-          console.error('Failed to connect WebSocket:', error);
-        }
-      },
-      (error) => {
-        console.error('Failed to start drawing:', error);
-      }
-    );
-
-    //TODO - 루트의 좌표 값들을 url의 routeId 파람으로 조회
-    //이전에 한 드로잉은 다른 색으로 보여주기
   });
   onDestroy(() => {
     if (map) {

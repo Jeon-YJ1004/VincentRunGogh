@@ -91,10 +91,14 @@ function loginAxios(isMultipart) {
           successAlert('다시 로그인 해주세요', () => {
             window.location.replace('/#/login');
             localStorage.removeItem('userStore');
-            return new Promise(() => {});
+            return new Promise(() => { });
           });
         }
-      } else return Promise.reject(error);
+      } else {
+        errorAlert(error.response.data.message);
+
+        return Promise.reject(error);
+      }
     }
   );
   return instance;

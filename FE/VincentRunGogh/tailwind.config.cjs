@@ -24,6 +24,7 @@ export default {
         current: 'currentColor',
         'yellow-main': '#FFB800',
         'green-main': '#5E8358',
+        'bg-main': '#F9F8EF',
       }, gradientColorStops: theme => ({
         'yellow-linear-start': '#FAFDB1',
         'yellow-linear-end': '#FFC326',

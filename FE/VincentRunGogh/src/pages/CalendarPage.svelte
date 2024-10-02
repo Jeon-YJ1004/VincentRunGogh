@@ -9,6 +9,7 @@
   import { getMonthData } from '@/api/myhealthApi';
   import DrawingSummaryInfo from '@/components/calendar/DrawingSummaryInfo.svelte';
   type CalendarOptions = typeof CalendarOptions;
+
   interface MonthInfo {
     monthTotalTime: number;
     monthTotalDistance: number;

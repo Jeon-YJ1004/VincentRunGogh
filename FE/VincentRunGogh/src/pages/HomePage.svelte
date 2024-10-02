@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getDrawingInfo, getDrawingList } from '@/api/drawingApi2';
   import { getWeeklyInfo } from '@/api/userApi';
-  import Tabbar from '@/components/tabbar/Tabbar.svelte';
+  import Tabbar from '@/components/common/Tabbar.svelte';
   import { Chart, Card, ImagePlaceholder } from 'flowbite-svelte';
   import { onMount } from 'svelte';
   import { userStore } from '@/stores/userStore';

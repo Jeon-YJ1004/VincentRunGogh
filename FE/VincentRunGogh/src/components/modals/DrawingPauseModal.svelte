@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { PlayOutline, StopOutline, PauseOutline, ArrowLeftOutline } from 'flowbite-svelte-icons';
+  import { drawingStore } from '@/stores/drawingStore';
   export let modalType: string;
 
   const dispatch = createEventDispatcher();
@@ -38,7 +39,12 @@
     complete: {
       title: '드로잉 완료 모달',
       buttons: [
-        { icon: ArrowLeftOutline, action: () => dispatch('cancel'), color: 'gray' },
+        {
+          icon: ArrowLeftOutline,
+          action: () => dispatch('cancel'),
+          color: 'gray',
+          text: '뒤로가기',
+        },
         { icon: StopOutline, action: () => dispatch('complete'), color: 'red', text: '완성' },
       ],
     },

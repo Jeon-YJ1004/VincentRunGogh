@@ -12,6 +12,7 @@ import SignUpPage from './SignUpPage.svelte';
 import MyHealthPage from './MyHealthPage.svelte';
 import ProgressPage from './ProgressPage.svelte';
 import SignUpProfilePage from './SignUpProfilePage.svelte';
+import HistoryPage from './HistoryPage.svelte';
 export {
   DrawingDetailPage,
   DrawingPage,
@@ -27,4 +28,5 @@ export {
   MyHealthPage,
   ProgressPage,
   SignUpProfilePage,
+  HistoryPage
 };

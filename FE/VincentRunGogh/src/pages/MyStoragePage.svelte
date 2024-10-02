@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tabbar from '@/components/tabbar/Tabbar.svelte';
+  import Tabbar from '@/components/common/Tabbar.svelte';
   import { Card, Button, Carousel, Tabs, TabItem, Avatar } from 'flowbite-svelte';
   import { replace } from 'svelte-spa-router';
   import { PaletteOutline, HeartSolid, TrashBinSolid, HeartOutline } from 'flowbite-svelte-icons';

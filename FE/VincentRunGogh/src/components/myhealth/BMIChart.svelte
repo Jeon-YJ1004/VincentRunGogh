@@ -1,111 +1,60 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
-  import { Chart, registerables } from 'chart.js';
+  import { writable } from 'svelte/store';
 
-  const centerLabelPlugin = {
-    id: 'centerLabel',
-    afterDraw(chart) {
-      const {
-        ctx,
-        chartArea: { top, bottom, left, right, width, height },
-      } = chart;
-      ctx.save();
-      ctx.font = '16px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle = 'black';
-      ctx.fillText(
-        chart.data.datasets[0].needleValue.toFixed(1),
-        left + width / 2,
-        top + height / 2
-      );
-      ctx.restore();
-    },
+  const MIN_BMI = 15;
+  const MAX_BMI = 40;
+  export let bmi: number = 22.5; // 예제 BMI 값
+
+  const bmiCategoryColors = {
+    Thinness: { bg: 'from-blue-200 to-blue-300', border: 'border-blue-300' },
+    Normal: { bg: 'from-green-200 to-green-300', border: 'border-green-300' },
+    Overweight: { bg: 'from-yellow-200 to-yellow-300', border: 'border-yellow-300' },
+    Obesity: { bg: 'from-red-200 to-red-300', border: 'border-red-300' },
   };
-  const needlePlugin = {
-    id: 'needle',
-    afterDatasetsDraw(chart, args, options) {
-      const {
-        ctx,
-        config,
-        data,
-        chartArea: { top, bottom, left, right, width, height },
-      } = chart;
-      const needleValue = data.datasets[0].needleValue;
-      const cx = left + width / 2;
-      const cy = top + height / 2;
-      const radius = Math.min(width, height) / 2;
 
-      // 계산된 위치에 바늘 그리기
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate((Math.PI / 180) * (needleValue * 2 - 180)); // 바늘 회전 계산
-      ctx.beginPath();
-      ctx.moveTo(0, -3);
-      ctx.lineTo(radius - 10, 0);
-      ctx.lineTo(0, 3);
-      ctx.fillStyle = 'black';
-      ctx.fill();
-      ctx.restore();
+  const groupList = [
+    {
+      title: 'Thinness',
+      range: [MIN_BMI, 18.5],
+      color: bmiCategoryColors.Thinness,
     },
+    {
+      title: 'Normal',
+      range: [18.5, 25],
+      color: bmiCategoryColors.Normal,
+    },
+    {
+      title: 'Overweight',
+      range: [25, 30],
+      color: bmiCategoryColors.Overweight,
+    },
+    {
+      title: 'Obesity',
+      range: [30, MAX_BMI],
+      color: bmiCategoryColors.Obesity,
+    },
+  ];
+
+  const calculateWidth = (min: number, max: number): number => {
+    return ((max - min) / (MAX_BMI - MIN_BMI)) * 100; // returns a percentage
   };
-  Chart.register(...registerables);
-  // Chart.register(...registerables, needlePlugin, centerLabelPlugin);
 
-  export let bmi = 22.5; // 예제 BMI 값
-
-  let chart = null;
-  onMount(() => {
-    const ctx = document.getElementById('bmiChart').getContext('2d');
-    chart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Underweight', 'Normal', 'Overweight', 'Obese'],
-        datasets: [
-          {
-            data: [18.5, 24.9, 29.9, 40],
-            backgroundColor: ['blue', 'green', 'orange', 'red'],
-            needleValue: bmi, // 바늘을 위한 값 설정
-          },
-        ],
-      },
-      options: {
-        circumference: 180,
-        rotation: -90,
-        plugins: {
-          tooltip: { enabled: false },
-        },
-      },
-      plugins: [
-        {
-          // afterDraw: (chart) => {
-          //   var needleValue = chart.chart.config.data.datasets[0].needleValue;
-          //   var dataTotal = chart.chart.config.data.datasets[0].data.reduce((a, b) => a + b, 0);
-          //   var angle = Math.PI + (1 / dataTotal) * needleValue * Math.PI;
-          //   var ctx = chart.chart.ctx;
-          //   var cw = chart.chart.canvas.offsetWidth;
-          //   var ch = chart.chart.canvas.offsetHeight;
-          //   var cx = cw / 2;
-          //   var cy = ch - 6;
-          //   ctx.translate(cx, cy);
-          //   ctx.rotate(angle);
-          //   ctx.beginPath();
-          //   ctx.moveTo(0, -3);
-          //   ctx.lineTo(ch - 20, 0);
-          //   ctx.lineTo(0, 3);
-          //   ctx.fillStyle = 'rgb(0, 0, 0)';
-          //   ctx.fill();
-          //   ctx.rotate(-angle);
-          //   ctx.translate(-cx, -cy);
-          //   ctx.beginPath();
-          //   ctx.arc(cx, cy, 5, 0, Math.PI * 2);
-          //   ctx.fill();
-          // },
-        },
-      ],
-    });
-  });
-  $: chart && ((chart.data.datasets[0].needleValue = bmi), chart.update());
+  onMount(() => {});
 </script>
 
-<canvas id="bmiChart" width="400" height="200"></canvas>
+<div class="p-4 rounded-lg w-[90%]">
+  <div class="text-3xl font-semibold text-center">{bmi}</div>
+  <div class="mt-4 flex w-full h-3 rounded overflow-hidden">
+    {#each groupList as { range, title, color }}
+      <div
+        class={`flex-grow-0 h-full bg-gradient-to-r ${color.bg}`}
+        style="width: {calculateWidth(range[0], range[1])}%"
+      ></div>
+    {/each}
+  </div>
+</div>
+
+<style>
+  /* Additional styles can be placed here */
+</style>

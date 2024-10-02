@@ -17,6 +17,7 @@
     MyHealthPage,
     ProgressPage,
     SignUpProfilePage,
+    HistoryPage,
   } from '@/pages';
 
   // userStore.initialize();
@@ -62,6 +63,7 @@
     '/community/mystorage': MyStoragePage,
     '/myhealth': MyHealthPage,
     '/progress': ProgressPage,
+    '/history': HistoryPage,
 
     '/signup': SignUpPage,
     '/signup/profile': SignUpProfilePage,

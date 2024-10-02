@@ -1,11 +1,11 @@
 <script lang="ts">
   import FeedArticle from '@/components/cards/FeedArticle.svelte';
-  import Tabbar from '@/components/tabbar/Tabbar.svelte';
+  import Tabbar from '@components/common/Tabbar.svelte';
   import { replace } from 'svelte-spa-router';
   import Swal from 'sweetalert2';
   import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
   import { Card, Button, Avatar } from 'flowbite-svelte';
-  import BackButton from '@/components/buttons/BackButton.svelte';
+  import BackButton from '@components/buttons/BackButton.svelte';
 
   let dummyArticleList: {
     boardId: number;
