@@ -7,7 +7,7 @@
   import Swal from 'sweetalert2';
   import { replace } from 'svelte-spa-router';
   import BackButton from '@/components/buttons/BackButton.svelte';
-  import { Button, Input, GradientButton, Label, Card } from 'flowbite-svelte';
+  import { Button, Input, GradientButton, Label, Card, Spinner } from 'flowbite-svelte';
   import {
     LockSolid,
     LockOpenSolid,
@@ -46,20 +46,58 @@
   ];
   let latLngMessage: string = latLngMessageList[0];
 
+  // 내 위치 가져오기
+  let currentLat: number = 0;
+  let currentLng: number = 0;
+
+  function handlePosition(position: GeolocationPosition) {
+    currentLat = position.coords.latitude;
+    currentLng = position.coords.longitude;
+    console.log(currentLat, currentLng);
+  }
+
+  function failPosition() {
+    console.log('geolocation api error');
+  }
+
+  const positionOption = {
+    enableHighAccuracy: true,
+    timeout: 5000, // 5 seconds
+    maximumAge: 60000, // 1 minute
+  };
+
   //초기 렌더링
   onMount(() => {
-    //지도 생성
-    map = L.map('map', { zoomControl: false }).setView([36.3593, 127.3416], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap',
-      crossOrigin: 'anonymous',
-    }).addTo(map);
+    // 현재 위치 지정
+    window.navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // 성공 시 현재 위치를 처리
+        handlePosition(position);
 
-    //지도 재계산
-    setTimeout(() => {
-      map.invalidateSize();
-    }, 100);
+        // 지도 생성
+        map = L.map('map', { zoomControl: false }).setView([currentLat, currentLng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap',
+          crossOrigin: 'anonymous',
+        }).addTo(map);
+
+        // 지도 재계산
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 100);
+
+        // 지도 상호작용 적용
+        map.on('mousemove', onMouseMove);
+        map.on('mousedown', onMouseDown);
+        map.on('mouseup', onMouseUp);
+        map.getContainer().addEventListener('touchstart', onTouchStart, { passive: false });
+        map.getContainer().addEventListener('touchmove', onTouchMove, { passive: false });
+        map.getContainer().addEventListener('touchend', onTouchEnd, { passive: false });
+      },
+      failPosition, // 위치 가져오기 실패 시 처리
+      positionOption
+    );
   });
 
   // Chapter 1 -----------------------------------------------/
@@ -171,6 +209,7 @@
 
   // 터치 움직일 때
   function onTouchMove(e) {
+    e.preventDefault();
     const touch = e.touches[0]; // 터치 위치 가져오기
     const latlng = map.mouseEventToLatLng(touch); // 터치 좌표를 지도 좌표로 변환
     onMouseMove({ latlng }); // 마우스 움직임과 동일하게 처리
@@ -217,7 +256,11 @@
       rightLng: southEast.lng,
     };
     Swal.fire({
-      title: '루트를 생성중입니다...',
+      title: "<div class='text-lg'>" + '루트를 생성중입니다...' + '</div>',
+      imageUrl: '/running.gif',
+      imageWidth: 300,
+      imageHeight: 200,
+      imageAlt: 'running',
       showConfirmButton: false,
       didOpen: async () => {
         // 루트생성 API 요청
@@ -239,15 +282,6 @@
     });
   }
 
-  onMount(() => {
-    map.on('mousemove', onMouseMove);
-    map.on('mousedown', onMouseDown);
-    map.on('mouseup', onMouseUp);
-    map.getContainer().addEventListener('touchstart', onTouchStart, { passive: false });
-    map.getContainer().addEventListener('touchmove', onTouchMove, { passive: false });
-    map.getContainer().addEventListener('touchend', onTouchEnd, { passive: false });
-  });
-
   // Chapter 2 -----------------------------------------------/
 
   let isConfirm: boolean = false;
@@ -255,7 +289,7 @@
   let inputName = '';
   let isLoading: boolean = false;
   let routeInfo: {
-    routeId: number;
+    routeId: string;
     artImage: string;
     distance: number;
     predictTime: number;
@@ -333,9 +367,9 @@
         const svgCropY = (svgSizeY - 350) / 2;
 
         // 지도 그리기
-        ctx.drawImage(mapImg, cropX, cropY, 350, 350, 0, 0, 350, 350);
+        ctx.drawImage(mapImg, cropX, cropY - 50, 350, 350, 0, 0, 350, 350);
         // SVG 그리기
-        ctx.drawImage(svgImg, svgCropX, svgCropY, 350, 350, 0, 0, 350, 350);
+        ctx.drawImage(svgImg, svgCropX, svgCropY - 50, 350, 350, 0, 0, 350, 350);
 
         // 결과 이미지를 Base64로 변환하여 반환
         finalImage = finalCanvas.toDataURL('image/png');
@@ -350,10 +384,9 @@
 
   async function nameConfirm() {
     // 캡쳐하기
-    mapCapture('#map')
+    return mapCapture('#map')
       .then(async (finalImage) => {
         isSubmit = true;
-        isLoading = true;
         await submitRoute();
       })
       .catch((error) => {
@@ -381,23 +414,26 @@
     } else {
       errorMessage = '';
       Swal.fire({
-        title: '루트를 저장중입니다...',
+        title: "<div class='text-lg'>" + '루트를 저장중입니다...' + '</div>',
+        imageUrl: '/saveroute.gif',
+        imageWidth: 300,
+        imageHeight: 200,
+        imageAlt: 'running',
         showConfirmButton: false,
-        didOpen: async () => {
-          try {
-            await nameConfirm(); // 비동기 작업을 대기
-            Swal.close(); // 작업이 완료된 후에 닫기
-          } catch (error) {
-            console.error(error);
-            Swal.fire({
-              icon: 'error',
-              title: '오류가 발생했습니다',
-              text: '루트를 저장하는 도중 문제가 발생했습니다.',
+        didOpen: () => {
+          nameConfirm()
+            .then(() => {
+              Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+            })
+            .catch((error) => {
+              console.error(error);
+              Swal.fire({
+                icon: 'error',
+                title: '오류가 발생했습니다',
+                text: '루트를 저장하는 도중 문제가 발생했습니다.',
+              });
             });
-          }
         },
-      }).then(() => {
-        isLoading = false;
       });
     }
   }
@@ -435,6 +471,7 @@
       time={routeInfo.predictTime}
       image={routeInfo.artImage}
       isRoute={true}
+      routeId={routeInfo.routeId}
     />
   {/if}
   <div id="makeroute-footer" class="flex flex-col items-center justify-end pb-3">
@@ -478,7 +515,7 @@
         {#if !isConfirm && !isSubmit}
           <p class="mb-3">위 루트로 진행하시겠습니까?</p>
           <div id="controls">
-            <GradientButton color="pinkToOrange" size="sm" on:click={() => redraw(true)} pill>
+            <GradientButton color="pinkToOrange" size="sm" on:click={() => redraw(false)} pill>
               <RedoOutline class="me-2" size="sm" />다시그리기
             </GradientButton>
             <GradientButton color="purpleToBlue" size="sm" on:click={routeConfirm} pill>

@@ -436,7 +436,7 @@
     margin-bottom: 10vh;
   }
   #homepage-drawing {
-    height: 28vh;
+    height: 27vh;
     padding-top: 0%;
     width: 90%;
     margin-left: 5%;
@@ -444,7 +444,7 @@
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    margin-bottom: 5vh;
+    margin-bottom: 4vh;
     border-radius: 3%;
     background-color: rgba(255, 255, 255, 0.8);
     --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -465,7 +465,7 @@
   }
 
   #homepage-chart {
-    height: 28vh;
+    height: 27vh;
     gap: 1vh;
     display: flex;
     justify-content: center;

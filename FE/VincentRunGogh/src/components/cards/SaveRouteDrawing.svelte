@@ -8,6 +8,12 @@
   export let time: number;
   export let image: string;
   export let isRoute: boolean;
+  export let routeId: string;
+
+  function startDrawing() {
+    let startURL = `/drawingmap?routeId=${routeId}`;
+    replace(startURL);
+  }
 </script>
 
 <div id="route-result">
@@ -109,7 +115,7 @@
     </div>
     {#if isRoute}
       <div>
-        <GradientButton color="greenToBlue" size="sm" pill>
+        <GradientButton color="greenToBlue" size="sm" on:click={startDrawing} pill>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="1.22em"

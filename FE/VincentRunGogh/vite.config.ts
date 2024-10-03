@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { VitePWA } from 'vite-plugin-pwa';
+import fs from 'fs';
 import path from 'path';
 import Icons from 'unplugin-icons/vite';
 
@@ -61,6 +62,11 @@ export default defineConfig({
     include: ['@fullcalendar/common'],
   },
   server: {
+    https: {
+    key: fs.readFileSync(path.resolve(__dirname, 'localhost-key.pem')),
+    cert: fs.readFileSync(path.resolve(__dirname, 'localhost-cert.pem'))
+  },
+  host: '192.168.173.1', // 실제 IP 주소
     port: 5173,
   },
 });
