@@ -59,7 +59,11 @@ public class DrawingService {
 
         //드로잉 디테일에서 평균 속력이랑 총 거리 구하기
         double avgSpeed = drawingDetailRepository.findByDrawingAverageSpeed(drawing);
-        int distance = drawingDetailRepository.findByDrawingSumDistance(drawing);
+//        int distance = drawingDetailRepository.findByDrawingSumDistance(drawing);
+        int distance = 0;
+        if(drawing.getRoute()!=null) {
+            distance = drawing.getRoute().getDistance();
+        }
 
         return DrawingResponseDto.createDrawingResponseDto(drawing,  avgSpeed, distance);
     }
