@@ -3,16 +3,22 @@
   import { replace } from 'svelte-spa-router';
   import { RedoOutline } from 'flowbite-svelte-icons';
   import { formatSecToMMSS } from '@/utils/formatter';
+  import { resetDrawingStore } from '@/stores/drawingStore';
   export let title: string;
   export let distance: number;
   export let time: number;
   export let image: string;
   export let isRoute: boolean;
-  export let routeId: string;
+  export let routeId: string | null;
 
   function startDrawing() {
     let startURL = `/drawingmap?routeId=${routeId}`;
     replace(startURL);
+  }
+  function handleGoHome() {
+    resetDrawingStore();
+
+    replace('/');
   }
 </script>
 
@@ -109,7 +115,7 @@
     class="w-full flex justify-center items-center mb-3 absolute bottom-0 left-1/2 transform -translate-x-1/2 gap-4"
   >
     <div>
-      <GradientButton color="redToYellow" size="sm" on:click={() => replace('/')} pill>
+      <GradientButton color="redToYellow" size="sm" on:click={handleGoHome} pill>
         <RedoOutline class="me-2" size="sm" /> 홈으로
       </GradientButton>
     </div>

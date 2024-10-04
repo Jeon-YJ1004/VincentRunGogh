@@ -1,9 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { PlayOutline, StopOutline, PauseOutline, ArrowLeftOutline } from 'flowbite-svelte-icons';
+  import { get } from 'svelte/store';
   import { drawingStore } from '@/stores/drawingStore';
-  export let modalType: string;
 
+  export let modalType: string;
   const dispatch = createEventDispatcher();
   const modalData = {
     pause: {
@@ -12,17 +13,17 @@
         {
           icon: StopOutline,
           action: () => dispatch('confirm', { modalType: 'complete' }),
-          color: 'red ',
+          color: 'red',
           text: '완성',
         },
-        {
+        get(drawingStore).routeId && {
           icon: PauseOutline,
           action: () => dispatch('confirm', { modalType: 'save' }),
-          color: 'yellow ',
+          color: 'yellow',
           text: '임시저장',
         },
         { icon: PlayOutline, action: () => dispatch('continue'), color: 'green', text: '계속' },
-      ],
+      ].filter(Boolean),
     },
     save: {
       title: '드로잉 임시저장 모달',

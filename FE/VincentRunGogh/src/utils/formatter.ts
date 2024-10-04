@@ -11,7 +11,7 @@ export function formatTimeToHMS(): string {
 
   return `${hours}:${minutes}:${seconds}`;
 }
-export function formatSecToMMSS(seconds: number) {
+export function formatSecToMMSS(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
 

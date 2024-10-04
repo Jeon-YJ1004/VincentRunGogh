@@ -16,6 +16,8 @@
     updateDrawingInfo,
     setDrawingPos,
     updateDistanceAndSpeed,
+    resetDrawingStore,
+    drawingStore,
   } from '@/stores/drawingStore';
   import DrawingPauseModal from '@/components/modals/DrawingPauseModal.svelte';
   import { userStore } from '@/stores/userStore';
@@ -64,17 +66,21 @@
         firstLocationFound.set(true);
         startPos = new L.LatLng(lat, lng);
         const data = { lat: lat, lng: lng, time: startTime };
-        console.log(data);
-        console.log(options);
+
         startDrawing(
           options,
           data,
           async (response) => {
-            console.log('api 연결 후 드로잉 데이터:', response);
-            updateDrawingInfo(response.data.data); // 스토어를 업데이트
-            //TODO - 루트의 좌표 값들을 url의 routeId 파람으로 조회
-            //이전에 한 드로잉은 다른 색으로 보여주기
+            updateDrawingInfo({ ...response.data.data, routeId }); // 스토어를 업데이트
+            console.log('api 연결 후 드로잉 데이터:', get(drawingStore));
 
+            if (routeLineLayers) {
+              routeLineLayers.remove();
+            }
+            if (response.data.data.routePositionList) {
+              routeLineLayers = createRouteLines(response.data.data.routePositionList);
+              routeLineLayers.addTo(map);
+            }
             try {
               await connectWebSocket();
               console.log('WebSocket connected successfully');
@@ -94,7 +100,6 @@
           console.log('소켓 데이터 보내기!');
           const currentUser = get(userStore);
           const nickname = currentUser ? currentUser.nickname : '';
-          console.log(nickname);
           sendRealTimePosition({ lat, lng }, nickname);
           updateDistanceAndSpeed($posList);
         }
@@ -291,6 +296,16 @@ fill="#000000" stroke="none">
   let lineLayers: Polyline;
   let routeLineLayers: Polyline;
 
+  function createRouteLines(positions) {
+    const latlngs = positions.map((pos) => new L.LatLng(pos.lat, pos.lng));
+    console.log(latlngs);
+    return L.polyline(latlngs, {
+      color: 'gray',
+      weight: 5,
+      opacity: 0.7,
+      dashArray: '10, 20',
+    });
+  }
   function mapAction() {
     map = createMap();
     toolbar.addTo(map);
@@ -384,7 +399,7 @@ fill="#000000" stroke="none">
     // Update options inside the reactive statement
     options = {
       ...(drawingId ? { drawingId } : {}),
-      ...(routeId ? { rootId: routeId } : {}),
+      ...(routeId ? { routeId: routeId.toString() } : {}),
     };
   }
 
@@ -395,8 +410,8 @@ fill="#000000" stroke="none">
   onDestroy(() => {
     if (map) {
       map.remove();
-      // clearInterval(timerIntervalId);
-      // clearInterval(trackingIntervalId);
+      clearInterval(timerIntervalId);
+      clearInterval(trackingIntervalId);
     }
     disconnectWebSocket();
   });

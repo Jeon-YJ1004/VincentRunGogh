@@ -34,6 +34,7 @@
   --yellow-main-color: #ffb800;
   --green-main-color: #5e8358;
   --bg-main-color: #f9f8ef;
+  --blue-select-color: rgba(139, 162, 231, 0.68);
   /* Gradient colors */
   --yellow-linear-start: #fafdb1;
   --yellow-linear-end: #ffc326;
@@ -264,4 +265,161 @@ button:focus-visible {
 
 .leaflet-center.leaflet-middle {
   transform: translate(-50%, -50%);
+}
+
+/* calendar global.css 내용 */
+.fc .fc-media-screen .fc-direction-ltr .fc-theme-standard {
+  width: 80%;
+
+  display: flex;
+  justify-content: center;
+  margin-top: 10vh;
+  padding: 1rem;
+}
+.fc {
+  height: 100%;
+}
+/* 네비게이션 폰트 설정 */
+.fc .fc-toolbar-title {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+/* 네비게이션 비활성화 됐을 때 스타일 */
+.fc-prev-button:disabled,
+.fc-next-button:disabled {
+  background-color: white;
+  color: var(--black-color-200,);
+}
+
+/* 요일 밑줄 제거 및 요일 글꼴 */
+.fc .fc-col-header-cell-cushion {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: rgba(52, 72, 94, 0.54);
+}
+.fc .fc-daygrid-day-number {
+  color: #7c86a2;
+  text-align: center;
+  font-size: 0.8rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+/* 일요일에만 빨간 폰트 */
+.fc-day-sun {
+  color: #ff4040;
+  text-decoration: none;
+}
+/* 토요일 컬러 */
+.fc-day-sat a {
+  color: #747bff;
+}
+
+#calendar .fc-day-today {
+  background: none;
+}
+.fc-daygrid-day .fc-event-title {
+  color: var(--blue-select-color, rgba(139, 162, 231));
+  font-size: 0.7rem;
+}
+.fc .fc-daygrid-day:hover .fc-event-title,
+.fc .fc-daygrid-day:focus .fc-event-title,
+.fc .fc-daygrid-day.fc-day-selected .fc-event-title {
+  color: var(--white-color-100) !important;
+}
+.fc-day-today .fc-event .fc-event-title {
+  cursor: pointer;
+  margin-bottom: 5px;
+  border-radius: 55px;
+  width: 30px !important;
+  height: 10px;
+  overflow: visible;
+}
+/* 선택한 날짜 스타일 적용 */
+.fc-daygrid-day:hover,
+.fc-daygrid-day:focus,
+.fc-daygrid-day.fc-day-selected {
+  border-radius: 10px;
+  background: var(--blue-select-color, rgba(139, 162, 231, 0.68)) !important;
+}
+#calendar .fc-button {
+  background-color: transparent;
+  color: #000000;
+  border: none;
+}
+
+#calendar .fc-button-primary span {
+  font-weight: 500;
+  font-size: 28px;
+}
+
+/* 오늘 버튼 스타일 */
+.today-button {
+  position: absolute;
+  right: 7%;
+  top: 6%;
+  width: 18%;
+  height: 1.5rem;
+  text-align: center;
+  line-height: 1.6rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+#calendar .fc-daygrid-day-events {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: auto;
+  width: 100%;
+}
+.fc-daygrid-event-harness {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#calendar .fc-event {
+  cursor: pointer;
+  margin-bottom: 5px;
+  border-radius: 55px;
+  width: 10px;
+  height: 10px;
+}
+
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid table {
+  border: none;
+}
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border: none;
+  padding-top: 3.5px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+/* 날짜 글자  */
+.fc .fc-daygrid-day-top {
+  display: flex;
+  justify-content: center;
+}
+.fc-daygrid-day-frame {
+  padding: 2px; /* 패딩을 줄여 더 컴팩트하게 만듦 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+.fc-basic-view .fc-body .fc-row {
+  height: 1em;
+}
+.fc tr {
+  line-height: 8px !important;
+}
+.fc td {
+  height: unset !important;
 }

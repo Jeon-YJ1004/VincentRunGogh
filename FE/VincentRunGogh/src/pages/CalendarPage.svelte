@@ -31,7 +31,8 @@
     drawingTime: number;
     drawingDistance: number;
   }
-  let date = writable(new Date());
+  let today = new Date();
+
   let monthInfo = writable<MonthInfo | null>(null);
   let selectedDayInfo = writable<DayInfo | null>(null);
   let selectedYear = writable<number | null>(null);
@@ -40,11 +41,11 @@
 
   function getEventColor(day) {
     if (day.isDrawing) {
-      return 'yellow';
+      return 'var(--yellow-main-color)';
     } else if (day.isRun) {
-      return 'green';
+      return 'var(--green-main-color)';
     }
-    return 'gray';
+    return 'transparent';
   }
 
   function handleDateClick(info) {
@@ -66,116 +67,101 @@
     getMonthInfo();
   }
   const getMonthInfo = async () => {
-    //FIXME - api 연결
-    // getMonthData(
-    //   $selectedYear,
-    //   $selectedMonth,
-    //   (response) => {
-    //     monthInfo.set({ ...response.data.data });
-    //   },
-    //   (error) => {}
-    // );
-  };
-  onMount(() => {
-    const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + 1; // JavaScript에서 월은 0부터 시작하므로 +1
 
     selectedYear.set(year);
     selectedMonth.set(month);
+    //FIXME - api 연결, 오늘 이벤트 추가
+    $selectedMonth = getMonthData(
+      $selectedYear,
+      $selectedMonth,
+      (response) => {
+        let data = response.data.data;
+        monthInfo.set({ ...response.data.data });
+      },
+      (error) => {}
+    );
+  };
+  onMount(() => {
     getMonthInfo();
-    monthInfo.set({
-      monthTotalTime: 78061,
-      monthTotalDistance: 32553,
-      dayList: [
-        {
-          date: '2024-09-13',
-          isRun: true,
-          isDrawing: false,
-          dayTotalTime: 4120,
-          dayTotalDistance: 2612,
-          drawingList: [
-            {
-              drawingId: 123,
-              drawingName: '마루는 강쥐',
-              drawingTime: 620,
-              drawingDistance: 503,
-            },
-            {
-              drawingId: 112,
-              drawingName: '고래 그림',
-              drawingTime: 546,
-              drawingDistance: 806,
-            },
-            {
-              drawingId: 154,
-              drawingName: '거북이 그림',
-              drawingTime: 442,
-              drawingDistance: 336,
-            },
-          ],
-        },
-        {
-          date: '2024-09-14',
-          isRun: true,
-          isDrawing: true,
-          dayTotalTime: 4120,
-          dayTotalDistance: 2612,
-          drawingList: [
-            {
-              drawingId: 123,
-              drawingName: '마루는 강쥐',
-              drawingTime: 620,
-              drawingDistance: 503,
-            },
-          ],
-        },
-      ],
-    });
   });
   $: if ($monthInfo) {
     options = {
       initialView: 'dayGridMonth',
       plugins: [daygridPlugin, interactionPlugin],
       dateClick: handleDateClick,
-      events: $monthInfo.dayList.map((day) => ({
-        date: day.date,
-        color: getEventColor(day),
-      })),
+      events: [
+        {
+          date: today.toISOString().slice(0, 10), // 오늘 날짜
+          title: '오늘', // '오늘'이라는 제목
+          color: 'transparent',
+        },
+        ...$monthInfo.dayList.map((day) => ({
+          date: day.date,
+          color: getEventColor(day),
+        })),
+      ],
+      eventOrder: (a, b) => {
+        // '오늘' 이벤트가 항상 먼저 오도록 정렬
+        if (a.title === '오늘') return -1;
+        if (b.title === '오늘') return 1;
+        return 0;
+      },
       datesSet: handleDatesSet,
+      headerToolbar: {
+        left: 'prev',
+        center: 'title,today',
+        right: 'next ',
+      },
+      buttonText: {
+        today: '오늘',
+      },
 
+      dayCellContent: function (arg) {
+        const dayNumber = arg.dayNumberText.replace('일', '');
+        return dayNumber;
+      },
       displayEventTime: false,
       locale: 'ko',
       selectable: true,
       showNonCurrentDates: false,
       fixedWeekCount: false,
+      // contentHeight: 400,
     };
   }
 </script>
 
-<FullCalendar {options} />
-
-{#if $selectedDayInfo}
-  <div>
-    <h2>Day Details:</h2>
-    <p>Total Time: {$selectedDayInfo.dayTotalTime} seconds</p>
-    <p>Total Distance: {$selectedDayInfo.dayTotalDistance} meters</p>
-    <h3>Drawings:</h3>
-    <ul>
-      {#each $selectedDayInfo.drawingList as drawing}
-        <a use:link href="/drawingdetail?id={drawing.drawingId}&date={$selectedDayInfo.date}">
-          <li>
-            {drawing.drawingName} - Time: {drawing.drawingTime}, Distance: {drawing.drawingDistance}
-          </li>
-        </a>
-      {/each}
-    </ul>
+<div class="flex flex-col items-center h-screen">
+  <div id="calendar" class="h-[80vh]">
+    <FullCalendar {options} />
   </div>
-{:else if $monthInfo}
-  <h2>{$selectedYear}년 {$selectedMonth}월 통계</h2>
-  <DrawingSummaryInfo
-    time={$monthInfo.monthTotalTime}
-    averagePace={null}
-    distance={$monthInfo.monthTotalDistance}
-  />
-{/if}
+
+  {#if $selectedDayInfo}
+    <div>
+      <h2>Day Details:</h2>
+      <p>Total Time: {$selectedDayInfo.dayTotalTime} seconds</p>
+      <p>Total Distance: {$selectedDayInfo.dayTotalDistance} meters</p>
+      <h3>Drawings:</h3>
+      <ul>
+        {#each $selectedDayInfo.drawingList as drawing}
+          <a use:link href="/drawingdetail?id={drawing.drawingId}&date={$selectedDayInfo.date}">
+            <li>
+              {drawing.drawingName} - Time: {drawing.drawingTime}, Distance: {drawing.drawingDistance}
+            </li>
+          </a>
+        {/each}
+      </ul>
+    </div>
+  {:else if $monthInfo}
+    <h2>{$selectedYear}년 {$selectedMonth}월 통계</h2>
+    <DrawingSummaryInfo
+      time={$monthInfo.monthTotalTime}
+      averagePace={null}
+      distance={$monthInfo.monthTotalDistance}
+    />
+  {/if}
+</div>
+
+<style>
+</style>

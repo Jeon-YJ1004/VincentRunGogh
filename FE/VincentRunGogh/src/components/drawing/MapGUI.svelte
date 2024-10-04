@@ -101,7 +101,6 @@
   <div class="text-center mt-4">
     <div class="text-4xl font-bold text-gray-800">{formatSecToMMSS($elapsedTime)}</div>
     <div class="mt-4 space-x-4 flex justify-center items-center">
-      <!-- Display dynamic data in an organized manner -->
       <div class=" flex flex-col items-center justify-center">
         <span class="text-sm"> 이동거리 </span>
         <div>
@@ -113,8 +112,7 @@
       <div class=" flex flex-col items-center justify-center">
         <span class="text-sm"> 페이스 </span>
         <div>
-          <span class="text-lg text-gray-700 text-2xl font-bold">{Math.round(3.4 * 10) / 10} </span>
-          km/h
+          <span class="text-lg text-gray-700 text-2xl font-bold">{$currentPace} </span>
         </div>
       </div>
       {#if hasRoute}

@@ -20,6 +20,7 @@
   import { startDrawing, completeDrawing, saveDrawing } from '@/api/drawingApi';
   import SaveRouteDrawing from '@components/cards/SaveRouteDrawing.svelte';
 
+  let drawingInfo = get(drawingStore);
   let isLoading = false;
   // 폼 형태 변수 임시저장 or 완료
   let isComplete = $querystring?.split('=')[1] === 'complete';
@@ -68,6 +69,7 @@
         weight: 5,
         opacity: 0.8,
       }).addTo(map);
+      // map.fitBounds(polyline.getBounds());
     });
   }
   // route 배열에 있는 좌표를 기준으로 점선 스타일로 선을 그리기
@@ -100,12 +102,10 @@
     drawLinesOnMap(map);
 
     // posList에 있는 모든 좌표에 맞게 지도의 위치 및 줌 조정
-    const posListData = get(posList).map((item: any) => item.latlng);
-    const bounds = L.latLngBounds(posListData);
-    map.fitBounds(bounds, { padding: [50, 50] });
+    // const posListData = get(posList).map((item: any) => item.latlng);
+    // const bounds = L.latLngBounds(posListData);
+    // map.fitBounds(bounds, { padding: [50, 50] });
   }
-
-  let imgData1, imgData2;
 
   async function changeMapWithSingleColor() {
     // posList 선을 단일 색상으로 그리기 위해 기존의 선 제거 후 재생성
@@ -131,22 +131,21 @@
 
   async function submitDrawing() {
     isLoading = true;
-    const { endInfo } = get(drawingStore);
 
     const data = {
       drawingImage: $drawingImage,
       drawingDetailImage: $drawingDetailImage,
       step: 0,
-      ...endInfo,
+      ...drawingInfo.endInfo,
     };
     if (isComplete) {
       data.title = inputName;
     }
 
-    console.log(data);
+    console.log(drawingInfo);
     if (isComplete) {
       completeDrawing(
-        get(drawingStore).drawingId,
+        drawingInfo.drawingId,
         data,
         (response) => {
           isLocked = true;
@@ -158,7 +157,7 @@
       );
     } else {
       saveDrawing(
-        get(drawingStore).drawingId,
+        drawingInfo.drawingId,
         data,
         (response) => {
           isLoading = false;
@@ -263,7 +262,8 @@
   //초기 렌더링
   onMount(() => {
     initializeMap();
-    // console.log(get(drawingStore));
+
+    console.log(get(drawingStore));
   });
 </script>
 
@@ -320,7 +320,7 @@
   {:else}
     <SaveRouteDrawing
       title={inputName}
-      distance={$totalDistance}
+      distance={Number($totalDistance.toFixed(2))}
       time={$elapsedTime}
       image={$showingImage}
       isRoute={false}

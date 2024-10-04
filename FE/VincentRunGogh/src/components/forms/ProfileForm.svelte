@@ -18,8 +18,8 @@
 
   async function handleCheckNickname() {
     const currentUser = get(userStore);
-
-    if ($values.nickname.length > 0 && $values.nickname !== currentUser['nickname']) {
+    console.log(currentUser.nickname, $values.nickname);
+    if ($values.nickname.length > 0 && $values.nickname !== currentUser.nickname) {
       await checkNicknameAvailability($values.nickname);
     }
   }
@@ -27,7 +27,6 @@
   onMount(() => {
     userStore.subscribe(($user) => {
       if ($user) {
-        // $user가 null이 아닐 때만 값 할당
         values.update((v) => ({
           ...v,
           nickname: $user.nickname,

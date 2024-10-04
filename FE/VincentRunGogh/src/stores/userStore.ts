@@ -30,6 +30,7 @@ function createUserStore() {
   function logout() {
     try {
       localStorage.removeItem('user');
+      localStorage.removeItem('accessToken');
       set(null);
     } catch (error) {
       console.error('Failed to remove user from localStorage:', error);

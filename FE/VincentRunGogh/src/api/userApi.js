@@ -15,7 +15,7 @@ async function updatePw(password, success, fail) {
 }
 
 async function logout(success, fail) {
-  await http.post(`/auth/logout/${loginId}`).then(success).catch(fail);
+  await http.post(`/auth/logout`).then(success).catch(fail);
 }
 
 // 일주일 운동 정보 조회
