@@ -73,6 +73,21 @@ public class Route {
                 .build();
     }
 
+    // 게시글에서 드로잉 루트화하는 과정
+    public static Route createaDrawingToRoute(User user, String title, String artImage, String accumulatedDrawingImage, DataSaveRouteResponseDto responseDto) {
+        return Route.builder()
+                .id(responseDto.getRouteId())
+                .user(user)
+                .title(title)
+                .centerLat(responseDto.getCenterLat())
+                .centerLng(responseDto.getCenterLng())
+                .distance(responseDto.getDistance())
+                .artImage(artImage)
+                .created(LocalDateTime.now())
+                .accumulatedDrawingImage(accumulatedDrawingImage)
+                .build();
+    }
+
     public void updateCenter(Double centerLat, Double centerLng, int distance) {
         this.centerLat = centerLat;
         this.centerLng = centerLng;

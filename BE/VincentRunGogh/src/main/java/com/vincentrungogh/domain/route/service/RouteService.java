@@ -23,6 +23,12 @@ public class RouteService {
         return route;
     }
 
+    public Route saveRoute(User user, String title, String artImage, String drawingImage, DataSaveRouteResponseDto responseDto) {
+        Route route = Route.createaDrawingToRoute(user, title, artImage, drawingImage, responseDto);
+        routeRepository.save(route);
+        return route;
+    }
+
     //루트를 업데이트
 //    public void updateRoute(Route route, double centerLat, double centerLng, int distance) {
 //        route.updateCenter(centerLat, centerLng, distance);
