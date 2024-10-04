@@ -31,5 +31,5 @@ interface UserAuth {
 interface User extends UserAuth {
   height: number | null;
   weight: number | null;
-  profileImage: string | null;
+  profile: string | null;
 }
