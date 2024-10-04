@@ -27,11 +27,16 @@ public class SaveRouteResponseDto {
         int meterDistance  = route.getDistance();
         Double distance = Math.round((meterDistance / 1000.0) * 100) / 100.0;
 
+        int predictTime = 0;
+        if(averageSpeed > 0) {
+            predictTime = (int)(route.getDistance() / (averageSpeed * (5.0 / 18.0)));
+        }
+
         return SaveRouteResponseDto.builder()
                 .routeId(route.getId())
                 .artImage(route.getArtImage())
                 .distance(distance)
-                .predictTime((int) (route.getDistance() / (averageSpeed * (5.0 / 18.0))))
+                .predictTime(predictTime)
                 .build();
     }
 }

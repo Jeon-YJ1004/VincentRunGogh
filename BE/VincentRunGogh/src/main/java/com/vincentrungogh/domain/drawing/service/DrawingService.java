@@ -65,7 +65,7 @@ public class DrawingService {
             distance = drawing.getRoute().getDistance();
         }
 
-        return DrawingResponseDto.createDrawingResponseDto(drawing,  avgSpeed, distance);
+        return DrawingResponseDto.createDrawingResponseDto(drawing, avgSpeed, distance);
     }
 
     @Transactional

@@ -51,7 +51,7 @@ public class MyHealth {
         return MyHealth.builder()
                 .totalTime(0)
                 .totalDistance(0)
-                .averageSpeed(1) //초기 0으로 할경우 0 div 에러 발생
+                .averageSpeed(0)
                 .totalStep(0)
                 .user(user)
                 .build();
