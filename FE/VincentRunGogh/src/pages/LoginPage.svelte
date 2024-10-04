@@ -18,7 +18,10 @@
       async (response: Promise<Response>) => {
         if (response.data.status === 200) {
           localStorage.setItem('accessToken', response.data.data.accessToken);
-          await userStore.login({ nickname: response.data.data.nickname }); // 로그인 상태 업데이트
+          await userStore.login({
+            nickname: response.data.data.nickname,
+            profile: response.data.data.profile,
+          }); // 로그인 상태 업데이트
           if (response.data.data.isChanged) {
             replace('/changepassword');
           } else {

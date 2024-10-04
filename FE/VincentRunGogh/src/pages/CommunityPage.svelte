@@ -31,8 +31,7 @@
   // 유저정보 가져오기
   userStore.initialize();
   let userInfo = get(userStore);
-  console.log(userStore);
-
+  console.log(userInfo);
   // 내 위치 가져오기
   let currentLat: number = 0;
   let currentLng: number = 0;
@@ -58,13 +57,14 @@
 
   function searchCondition() {
     Swal.fire({
-      title: '검색 범위를 조절해주세요!',
+      title: "<div class='text-lg'>" + '검색 범위를 조절해주세요!' + '</div>',
       html: `
     <input type="range" min="1" max="10" step="1" class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer" id="range-input" value="${range}">
     <div id="range-value">반경 ${range}km 까지 검색합니다.</div>
   `,
       showCancelButton: true,
       confirmButtonText: '확인',
+      confirmButtonColor: '#FFB800',
       cancelButtonText: '취소',
       preConfirm: () => {
         return range; // 범위 값을 반환
@@ -164,7 +164,7 @@
     {#each articleList as article}
       {#if article.distanceFromUser <= range}
         <Card class="mb-5">
-          <div class="flex mb-3 items-center">
+          <div class="flex mb-3 items-center text-center">
             <img src={article.profile} alt="" style="width: 50px;" />
             <p class="ml-5 font-bold">{article.nickname}</p>
           </div>
@@ -175,7 +175,7 @@
             distance={article.distance}
             time={article.time}
           />
-          <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
+          <p class="mt-2 mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
             {article.comment}
           </p>
           <div class="flex justify-between items-center">

@@ -82,6 +82,14 @@
   font-weight: 700;
   font-style: normal;
 }
+
+@font-face {
+  font-family: 'Brush Script MT';
+  src: url('/BRUSH.ttf') format('ttf');
+  font-weight: 800;
+  font-style: normal;
+}
+
 html,
 body,
 div,
