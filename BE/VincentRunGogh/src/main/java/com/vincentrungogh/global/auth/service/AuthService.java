@@ -75,7 +75,7 @@ public class AuthService {
         User user = userRepository.findById(userPrincipal.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return LoginResponse.createLoginResponse(accessToken, user.getIsChanged(), user.getNickname());
+        return LoginResponse.createLoginResponse(accessToken, user.getIsChanged(), user.getNickname(), user.getProfile());
     }
 
     @Transactional
