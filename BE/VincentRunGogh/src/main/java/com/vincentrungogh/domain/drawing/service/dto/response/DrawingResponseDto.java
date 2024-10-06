@@ -27,7 +27,7 @@ public class DrawingResponseDto {
         Double distance = Math.round((meterDistance / 1000.0) * 100) / 100.0;
         int avgPace = 0;
         if(avgSpeed > 0) {
-            avgPace = (int) Math.round((60.0 / (avgSpeed * 3.6)) * 60);
+            avgPace = (int) Math.round((60.0 / (avgSpeed)) * 60);
         }
 
         return DrawingResponseDto.builder()
