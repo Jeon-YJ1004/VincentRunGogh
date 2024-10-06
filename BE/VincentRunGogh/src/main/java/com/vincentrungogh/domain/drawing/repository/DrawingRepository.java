@@ -1,13 +1,14 @@
 package com.vincentrungogh.domain.drawing.repository;
 
 import com.vincentrungogh.domain.drawing.entity.Drawing;
+import com.vincentrungogh.domain.drawing.entity.DrawingTitleArtImage;
 import com.vincentrungogh.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface DrawingRepository extends JpaRepository<Drawing, Integer> {
+public interface DrawingRepository extends JpaRepository<Drawing, Integer>, DrawingRepositoryCustom {
 
     List<Drawing> findAllByUser(User user);
 
@@ -16,4 +17,7 @@ public interface DrawingRepository extends JpaRepository<Drawing, Integer> {
     List<Drawing> findAllByUserAndIsCreatedBoard(User user, Boolean isCreatedBoard);
 
     int countAllByUserAndIsCompleted(User user, Boolean isCompleted);
+
+    @Override
+    DrawingTitleArtImage findTitleAndArtImageById(int drawingId);
 }

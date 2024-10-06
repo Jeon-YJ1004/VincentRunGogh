@@ -1,11 +1,7 @@
 package com.vincentrungogh.domain.calendar.service;
 
-import com.vincentrungogh.domain.calendar.service.dto.response.DayCalendarResponse;
-import com.vincentrungogh.domain.calendar.service.dto.response.DrawingLastDayResponse;
-import com.vincentrungogh.domain.calendar.service.dto.response.MonthCalendarResponse;
-import com.vincentrungogh.domain.drawing.entity.Drawing;
-import com.vincentrungogh.domain.drawing.entity.DrawingDetail;
-import com.vincentrungogh.domain.drawing.entity.DrawingDetailGroup;
+import com.vincentrungogh.domain.calendar.service.dto.response.*;
+import com.vincentrungogh.domain.drawing.entity.*;
 import com.vincentrungogh.domain.drawing.repository.DrawingDetailRepository;
 import com.vincentrungogh.domain.drawing.repository.DrawingRepository;
 import com.vincentrungogh.domain.user.entity.User;
@@ -103,5 +99,44 @@ public class CalendarService {
 
         // 5. MonthCalendarResponse 객체 리턴
         return MonthCalendarResponse.createMonthCalendarResponse(monthTotalTime, monthTotalDistance, dayList);
+    }
+
+    // 드로잉 디테일 상세 정보 조회
+    @Transactional
+    public DrawingDetailListOnSameDayResponse getDrawingDetails(int userId, int drawingId, String date) {
+
+        // 0. DrawingDetailListOnSameDayResponse 객체 생성을 위한 field 초기값 세팅
+        String title = null;
+        String routeImage = null;
+        List<DrawingDetailForListOnSameDayResponse> drawingDetailList = new ArrayList<>();
+
+        // 1. 유저 아이디로 유저 엔티티 특정하기
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+
+        // 2-1. 드로잉 아이디로 QueryDSL
+        DrawingTitleArtImage drawingTitleArtImage = drawingRepository.findTitleAndArtImageById(drawingId);
+        title = drawingTitleArtImage.getTitle();
+        routeImage = drawingTitleArtImage.getRouteImage();
+
+        // 2-2. 할당된 유저 엔티티, 드로잉 아이디, 드로잉 디테일 완료날짜로 QueryDSL
+        List<DrawingDetailSameDay> drawingDetailSameDays = drawingDetailRepository.findByDrawingIdAndDay(user, drawingId, date);
+
+        // 3. QueryDSL을 받기 위한 클래스에서 내가 보내야할 Response DTO로 변환하는 작업
+        for (DrawingDetailSameDay drawingDetailSameDay : drawingDetailSameDays) {
+            String drawingDetailId = drawingDetailSameDay.getDrawingDetailId();
+            String drawingDetailImage = drawingDetailSameDay.getDrawingDetailImage();
+            int drawingDetailDistance = drawingDetailSameDay.getDrawingDetailDistance();
+            double kDrawingDetailDistance = Math.round((drawingDetailDistance / 1000.0) * 100.0) / 100.0;
+            int drawingDetailTime = drawingDetailSameDay.getDrawingDetailTime();
+            double drawingDetailSpeed = drawingDetailSameDay.getDrawingDetailSpeed();
+            int drawingDetailAvgPace = (int) Math.round(3600 / drawingDetailSpeed);
+            LocalDateTime drawingDetailCreateTime = drawingDetailSameDay.getDrawingDetailCreateTime();
+            drawingDetailList.add(DrawingDetailForListOnSameDayResponse.createDrawingDetailForListOnSameDayResponse(drawingDetailId, drawingDetailImage, kDrawingDetailDistance, drawingDetailTime, drawingDetailAvgPace, drawingDetailCreateTime));
+        }
+
+        // 4. DrawingDetailListOnSameDayResponse 객체 리턴
+        return DrawingDetailListOnSameDayResponse.createDrawingDetailListOnSameDayResponse(title, routeImage, drawingDetailList);
     }
 }

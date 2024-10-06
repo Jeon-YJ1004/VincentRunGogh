@@ -7,11 +7,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.vincentrungogh.domain.drawing.entity.Drawing;
-import com.vincentrungogh.domain.drawing.entity.DrawingDetailGroup;
-import com.vincentrungogh.domain.drawing.entity.QDrawing;
-import com.vincentrungogh.domain.drawing.entity.DrawingDetail;
-import com.vincentrungogh.domain.drawing.entity.QDrawingDetail;
+import com.vincentrungogh.domain.drawing.entity.*;
 import com.vincentrungogh.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,6 +98,30 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                                 .from(drawing)
                                 .where(drawing.user.eq(user)) // user 필터링
                 ).and(drawingDetail.created.between(start.atTime(LocalTime.MIN), end.atTime(LocalTime.MAX))))
+                .fetch();
+    }
+
+    @Override
+    public List<DrawingDetailSameDay> findByDrawingIdAndDay(User user, int drawingId, String date) {
+        /** where절에서 사용 : 파라미터로 전달된 String date로 LocalDateTime 만들기 */
+        // 해당 날짜의 가장 처음 시점 (00:00:00)
+        LocalDateTime startOfDay = LocalDateTime.parse(date + "T00:00:00");
+        // 해당 날짜의 가장 마지막 시점 (23:59:59)
+        LocalDateTime endOfDay = LocalDateTime.parse(date + "T23:59:59");
+        return queryFactory
+                .select(Projections.constructor(DrawingDetailSameDay.class,
+                        drawingDetail.id.as("drawingDetailId"),
+                        drawingDetail.currentDrawingImage.as("drawingDetailImage"),
+                        drawingDetail.distance.as("drawingDetailDistance"),
+                        drawingDetail.time.as("drawingDetailTime"),
+                        drawingDetail.speed.as("drawingDetailSpeed"),
+                        drawingDetail.created.as("drawingDetailCreateTime")
+                        ))
+                .from(drawingDetail)
+                .join(drawingDetail.drawing, drawing)
+                .where(drawing.user.eq(user)
+                        .and(drawing.id.eq(drawingId))
+                        .and(drawingDetail.created.between(startOfDay, endOfDay)))
                 .fetch();
     }
 }

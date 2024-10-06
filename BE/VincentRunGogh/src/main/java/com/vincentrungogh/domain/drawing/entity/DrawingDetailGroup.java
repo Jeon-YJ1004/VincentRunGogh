@@ -4,8 +4,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 
-// QueryDSL를 받기 위한 클래스를 이렇게 만들게 되면, 굳이 response DTO에서 DrawingLastDayResponse가 필요한지 의문.
-// 추후에 DrawingLastDayResponse class를 삭제하도록 하자. -> 정말로 그럴까?
+// 월별 드로잉 데이터 조회에서 QueryDSL를 받기 위한 클래스
 
 @Slf4j
 @Getter
