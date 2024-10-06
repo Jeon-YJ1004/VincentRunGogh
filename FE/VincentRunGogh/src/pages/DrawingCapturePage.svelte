@@ -19,7 +19,8 @@
   import { elapsedTime, posList, route, totalDistance, drawingStore } from '@/stores/drawingStore';
   import { startDrawing, completeDrawing, saveDrawing } from '@/api/drawingApi';
   import SaveRouteDrawing from '@components/cards/SaveRouteDrawing.svelte';
-
+  import { formatDistanceFix2 } from '@/utils/formatter';
+  import { loadingAlert } from '@/utils/notificationAlert';
   let drawingInfo = get(drawingStore);
   let isLoading = false;
   // 폼 형태 변수 임시저장 or 완료
@@ -102,9 +103,9 @@
     drawLinesOnMap(map);
 
     // posList에 있는 모든 좌표에 맞게 지도의 위치 및 줌 조정
-    // const posListData = get(posList).map((item: any) => item.latlng);
-    // const bounds = L.latLngBounds(posListData);
-    // map.fitBounds(bounds, { padding: [50, 50] });
+    const posListData = get(posList).map((item: any) => item.latlng);
+    const bounds = L.latLngBounds(posListData);
+    map.fitBounds(bounds, { padding: [50, 50] });
   }
 
   async function changeMapWithSingleColor() {
@@ -141,33 +142,36 @@
     if (isComplete) {
       data.title = inputName;
     }
-
     console.log(drawingInfo);
-    if (isComplete) {
-      completeDrawing(
-        drawingInfo.drawingId,
-        data,
-        (response) => {
-          isLocked = true;
-          isLoading = false;
-        },
-        (error) => {
-          isLoading = false;
-        }
-      );
-    } else {
-      saveDrawing(
-        drawingInfo.drawingId,
-        data,
-        (response) => {
-          isLoading = false;
-          isLocked = true;
-        },
-        (error) => {
-          isLoading = false;
-        }
-      );
-    }
+    loadingAlert('드로잉을 저장중입니다...', '/saveroute.gif', () => {
+      if (isComplete) {
+        completeDrawing(
+          drawingInfo.drawingId,
+          data,
+          (response) => {
+            isLocked = true;
+            isLoading = false;
+            Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+          },
+          (error) => {
+            isLoading = false;
+          }
+        );
+      } else {
+        saveDrawing(
+          drawingInfo.drawingId,
+          data,
+          (response) => {
+            isLoading = false;
+            isLocked = true;
+            Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+          },
+          (error) => {
+            isLoading = false;
+          }
+        );
+      }
+    });
   }
   //지도 잠그기
   let errorMessage: string = '';
@@ -274,7 +278,10 @@
     <h2 class="font-bold">드로잉 임시저장</h2>
   {/if}
 </div>
-<div class="make-route">
+<div
+  class="make-route flex items-center justify-center
+"
+>
   {#if !isLocked}
     <div bind:this={mapRef} id="map"></div>
     <div id="makeroute-footer" class="flex flex-col items-center justify-end">
@@ -320,10 +327,11 @@
   {:else}
     <SaveRouteDrawing
       title={inputName}
-      distance={Number($totalDistance.toFixed(2))}
+      distance={Number(formatDistanceFix2($totalDistance))}
       time={$elapsedTime}
       image={$showingImage}
       isRoute={false}
+      routeId={null}
     />
   {/if}
 </div>
@@ -344,12 +352,6 @@
       rgba(255, 255, 255, 0.6) 90%,
       rgba(255, 255, 255, 0) 100%
     );
-  }
-
-  #make-route {
-    display: flex;
-    flex-direction: column;
-    place-items: center;
   }
 
   #map {

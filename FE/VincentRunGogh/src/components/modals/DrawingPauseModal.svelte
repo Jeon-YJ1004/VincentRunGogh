@@ -16,7 +16,7 @@
           color: 'red',
           text: '완성',
         },
-        get(drawingStore).routeId && {
+        get(drawingStore).routePositionList && {
           icon: PauseOutline,
           action: () => dispatch('confirm', { modalType: 'save' }),
           color: 'yellow',

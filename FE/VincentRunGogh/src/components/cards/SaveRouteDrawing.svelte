@@ -2,7 +2,7 @@
   import { Card, GradientButton } from 'flowbite-svelte';
   import { replace } from 'svelte-spa-router';
   import { RedoOutline } from 'flowbite-svelte-icons';
-  import { formatSecToMMSS } from '@/utils/formatter';
+  import { formatSecToHMS } from '@/utils/formatter';
   import { resetDrawingStore } from '@/stores/drawingStore';
   export let title: string;
   export let distance: number;
@@ -101,12 +101,12 @@
       {#if isRoute}
         <div>
           예상 소요 시간 <br /> <br />
-          <span class="font-bold">{formatSecToMMSS(time)}</span>
+          <span class="font-bold">{formatSecToHMS(time)}</span>
         </div>
       {:else}
         <div>
           소요 시간 <br /> <br />
-          <span class="font-bold">{formatSecToMMSS(time)}</span>
+          <span class="font-bold">{formatSecToHMS(time)}</span>
         </div>
       {/if}
     </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Tabs, TabItem } from 'flowbite-svelte';
+  import { Tabs, TabItem, Group, GroupItem } from 'flowbite-svelte';
   import { PaletteOutline, FloppyDiskOutline } from 'flowbite-svelte-icons';
   import { link } from 'svelte-spa-router';
   import BackButton from '@/components/buttons/BackButton.svelte';
@@ -203,6 +203,9 @@
           <FloppyDiskOutline size="md" />
           완료한 드로잉
         </div>
+        <Group date="January 13th, 2022">
+          <GroupItem timelines={groupTimelines} />
+        </Group>
         {#each drawingAriticle as article}
           <a use:link href="/drawingdetail?id={article.drawingId}&date={article.date}">
             <li>

@@ -17,6 +17,9 @@
   import { Select } from 'flowbite-svelte';
   import type { SelectOptionType } from 'flowbite-svelte';
 
+  import Header from '@components/common/Header.svelte';
+  import { formatSecToH, formatDistanceFix2 } from '@/utils/formatter';
+  import { getPace } from '@/utils/calculateFuc';
   ChartJS.register(
     LinearScale,
     CategoryScale,
@@ -149,58 +152,58 @@
   });
 </script>
 
-<Select items={yearItem} bind:value={selectedYear} on:change={onChangeYear} />
-{#if $activeCategory === 'completed'}
-  <Chart type="bar" {options} data={$chartData} />
-{:else}
-  <Chart type="line" {options} data={$chartData} />
-{/if}
+<div class="flex flex-col items-center bg-bg-main h-screen">
+  <Header title="통계" />
+  <Select items={yearItem} bind:value={selectedYear} on:change={onChangeYear} />
+  {#if $activeCategory === 'completed'}
+    <Chart type="bar" {options} data={$chartData} />
+  {:else}
+    <Chart type="line" {options} data={$chartData} />
+  {/if}
 
-<div>
-  <button class="categoryBtn" on:click={() => activeCategory.set('walk')}>
-    <div class="categoryTitle">
-      <span>걸음수</span>
+  <div class="flex items-center align-center">
+    <button class="categoryBtn" on:click={() => activeCategory.set('walk')}>
+      <div class="categoryTitle">
+        <span>걸음수</span>
+      </div>
       <span class="chartSum">{$categoryData.totalWalk}</span>
-      <span>번</span>
-    </div>
-  </button>
-  <button class="categoryBtn" on:click={() => activeCategory.set('distance')}>
-    <div class="categoryTitle">
-      <span>거리</span><span class="chartSum">{$categoryData.totalDistance}</span>
-      <span>M</span>
-    </div>
-  </button>
-  <button class="categoryBtn" on:click={() => activeCategory.set('time')}>
-    <div class="categoryTitle">
-      <span>시간</span><span class="chartSum">{$categoryData.totalTime}</span>
-      <span>초</span>
-    </div>
-  </button>
-  <button class="categoryBtn" on:click={() => activeCategory.set('completed')}>
-    <div class="categoryTitle">
-      <span>완성</span><span class="chartSum">{$categoryData.totalCompletedDrawing}</span>
-      <span>번</span>
-    </div>
-  </button>
+    </button>
+    <button class="categoryBtn" on:click={() => activeCategory.set('distance')}>
+      <div class="categoryTitle">
+        <span>거리</span>
+      </div>
+      <span class="chartSum">{formatDistanceFix2($categoryData.totalDistance)}</span>
+    </button>
+    <button class="categoryBtn" on:click={() => activeCategory.set('time')}>
+      <div class="categoryTitle">
+        <span>시간(h)</span>
+      </div>
+      <span class="chartSum">{formatSecToH($categoryData.totalTime)}</span>
+    </button>
+    <button class="categoryBtn" on:click={() => activeCategory.set('completed')}>
+      <div class="categoryTitle">
+        <span>완성(개)</span>
+      </div>
+      <span class="chartSum">{$categoryData.totalCompletedDrawing}</span>
+    </button>
+  </div>
 </div>
 
 <style>
   .categoryBtn {
-    width: 162.429px;
-    height: 98.526px;
-    flex-shrink: 0;
+    width: 40vw;
+    height: 20vh;
     border-radius: 20px;
     background: #fff;
   }
 
   .categoryTitle {
-    width: 49.33px;
+    width: 100%;
     height: 11.184px;
     flex-shrink: 0;
   }
   .categoryTitle span {
-    color: var(--gray-color-100, #bebaba);
-    font-family: Roboto;
+    color: var(--gray-color-200, #bebaba);
     font-size: 18px;
     font-style: normal;
     font-weight: 300;

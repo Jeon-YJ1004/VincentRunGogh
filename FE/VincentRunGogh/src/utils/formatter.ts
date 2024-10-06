@@ -11,12 +11,27 @@ export function formatTimeToHMS(): string {
 
   return `${hours}:${minutes}:${seconds}`;
 }
-export function formatSecToMMSS(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
+export function formatSecToHMS(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
 
-  const minutesString = minutes.toString().padStart(2, '0');
+  const hoursString = hours > 0 ? `${hours}:` : '';
+  const minutesString = minutes < 10 && hours > 0 ? `0${minutes}` : minutes.toString();
   const secondsString = secs.toString().padStart(2, '0');
 
-  return `${minutesString}:${secondsString}`;
+  return `${hoursString}${minutesString}:${secondsString}`;
+}
+
+export function formatSecToH(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return `${hours > 0 ? hours + 'h' : ''} ${minutes < 10 ? '0' + minutes : minutes}${minutes > 0 ? 'min' : ''}`;
+}
+
+export function formatDistanceFix2(number: number): string {
+  if (number % 1 === 0) {
+    return number.toString();
+  }
+  return parseFloat(number.toFixed(2)).toString();
 }

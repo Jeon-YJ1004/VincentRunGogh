@@ -40,6 +40,23 @@
   let startTime: string | null = null;
   let firstLocationFound = writable(false); // 최초 위치 찾기 상태
 
+  let routeId = writable(null);
+  let drawingId = writable(null);
+  let options = writable({});
+  $: if ($querystring) {
+    const params = new URLSearchParams($querystring);
+    const newRouteId = params.get('routeId');
+    const newDrawingId = params.get('drawingId');
+    routeId.set(newRouteId);
+    drawingId.set(newDrawingId);
+
+    // 옵션 객체 업데이트
+    options.set({
+      ...(newDrawingId ? { drawingId: newDrawingId } : {}),
+      ...(newRouteId ? { routeId: newRouteId } : {}),
+    });
+  }
+
   function createMap(): LeafletMap {
     const m = L.map('map', { preferCanvas: true });
     m.locate({ setView: true, maxZoom: 16 });
@@ -66,12 +83,15 @@
         firstLocationFound.set(true);
         startPos = new L.LatLng(lat, lng);
         const data = { lat: lat, lng: lng, time: startTime };
-
         startDrawing(
           options,
           data,
           async (response) => {
-            updateDrawingInfo({ ...response.data.data, routeId }); // 스토어를 업데이트
+            updateDrawingInfo({
+              ...response.data.data,
+              routeId: get(routeId),
+              drawingId: get(drawingId),
+            }); // 스토어를 업데이트
             console.log('api 연결 후 드로잉 데이터:', get(drawingStore));
 
             if (routeLineLayers) {
@@ -387,21 +407,6 @@ fill="#000000" stroke="none">
     console.log('타이머 끝 ');
     toggleTracking();
   }
-  let routeId, drawingId;
-  let options = {};
-
-  // Reactive statement to update routeId and drawingId whenever querystring changes
-  $: if ($querystring) {
-    const params = new URLSearchParams($querystring);
-    routeId = params.get('routeId');
-    drawingId = params.get('drawingId');
-
-    // Update options inside the reactive statement
-    options = {
-      ...(drawingId ? { drawingId } : {}),
-      ...(routeId ? { routeId: routeId.toString() } : {}),
-    };
-  }
 
   onMount(() => {
     userStore.initialize(); // 스토어에서 사용자 정보 초기화
@@ -414,6 +419,7 @@ fill="#000000" stroke="none">
       clearInterval(trackingIntervalId);
     }
     disconnectWebSocket();
+    $elapsedTime = 0;
   });
 </script>
 

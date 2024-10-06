@@ -33,3 +33,25 @@ interface User extends UserAuth {
   weight: number | null;
   profile: string | null;
 }
+
+interface MonthInfo {
+  monthTotalTime: number;
+  monthTotalDistance: number;
+  dayList: DayInfo[];
+}
+
+interface DayInfo {
+  date: string;
+  isRun: boolean;
+  isDrawing: boolean;
+  dayTotalTime: number;
+  dayTotalDistance: number;
+  drawingList: Drawing[];
+}
+
+interface Drawing {
+  drawingId: number;
+  drawingName: string;
+  drawingTime: number;
+  drawingDistance: number;
+}

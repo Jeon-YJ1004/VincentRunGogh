@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatSecToMMSS } from '@/utils/formatter';
+  import { formatSecToHMS } from '@/utils/formatter';
   import { Carousel, Indicator } from 'flowbite-svelte';
 
   export let title;
@@ -67,7 +67,7 @@
             /></svg
           >
         </span>
-        <span>{formatSecToMMSS(time)}</span>
+        <span>{formatSecToHMS(time)}</span>
       </div>
     </div>
   {/if}

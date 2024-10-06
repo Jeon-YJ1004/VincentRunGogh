@@ -58,3 +58,15 @@ export const toastAlert = (title, width, isSuccess = true) => {
     width: width || '20em',
   });
 };
+
+export const loadingAlert = (title, imgUrl, didOpen, confirmFuc) => {
+  Swal.fire({
+    title: "<div class='text-lg'>" + `${title}` + '</div>',
+    imageUrl: imgUrl,
+    imageWidth: 300,
+    imageHeight: 200,
+    imageAlt: 'running',
+    showConfirmButton: false,
+    didOpen: didOpen
+  }).then(confirmFuc);
+}

@@ -2,6 +2,7 @@ import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { LatLng } from 'leaflet';
 import L from 'leaflet';
+import { getPace } from '@/utils/calculateFuc';
 
 // 데이터 타입 정의
 interface Position {
@@ -56,7 +57,6 @@ export const elapsedTime = writable(loadFromLocalStorage('elapsedTime', 0));
 
 // 스토어 구독하여 변경 시 로컬 스토리지에 저장
 drawingStore.subscribe((value) => {
-  console.log('드러잉 스토어 변경 ' + JSON.stringify(value));
   localStorage.setItem('drawingStore', JSON.stringify(value));
 });
 
@@ -99,7 +99,7 @@ export function updateDistanceAndSpeed(posList: PositionData[]) {
         const paceMinutes = Math.floor(paceSeconds / 60);
         const remainingSeconds = Math.round(paceSeconds % 60);
 
-        currentPace.set(`${paceMinutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`);
+        currentPace.set(getPace(distance, timeDiff));
       }
 
       return currentDistance + distance;
@@ -114,6 +114,7 @@ export function setDrawingPos(data: Object): void {
     return current;
   });
 }
+
 // drawingStore 초기화 함수
 export function resetDrawingStore(): void {
   drawingStore.set({ ...initialState });

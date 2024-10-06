@@ -3,7 +3,7 @@
   import BackButton from '@/components/buttons/BackButton.svelte';
   import Header from '@/components/common/Header.svelte';
   import RouteDetail from '@/components/modals/RouteDetail.svelte';
-  import { formatSecToMMSS } from '@/utils/formatter';
+  import { formatSecToHMS } from '@/utils/formatter';
   import { Tabs, TabItem, Card, Button } from 'flowbite-svelte';
   import {
     PaletteOutline,
@@ -220,7 +220,7 @@
                             class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                           >
                             <span class="text-xs">예상 소요 시간</span>
-                            {formatSecToMMSS(route.predictTime)}
+                            {formatSecToHMS(route.predictTime)}
                           </p>
                         </div>
                       </div>
@@ -279,7 +279,7 @@
                             class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                           >
                             <span class="text-xs">예상 소요 시간</span>
-                            {formatSecToMMSS(route.predictTime)}
+                            {formatSecToHMS(route.predictTime)}
                           </p>
                         </div>
                       </div>
@@ -338,7 +338,7 @@
                             class="font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                           >
                             <span class="text-xs">예상 소요 시간</span>
-                            {formatSecToMMSS(route.predictTime)}
+                            {formatSecToHMS(route.predictTime)}
                           </p>
                         </div>
                       </div>

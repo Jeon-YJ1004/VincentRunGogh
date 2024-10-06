@@ -20,6 +20,7 @@
   import { Canvg, SVGElement } from 'canvg';
   import { makeRoute, sendArtLine } from '@/api/routeApi';
   import SaveRouteDrawing from '@/components/cards/SaveRouteDrawing.svelte';
+  import { loadingAlert } from '@/utils/notificationAlert';
 
   //진행 상태 변수
   let isChapterOne = true;
@@ -255,14 +256,10 @@
       rightLat: southEast.lat,
       rightLng: southEast.lng,
     };
-    Swal.fire({
-      title: "<div class='text-lg'>" + '루트를 생성중입니다...' + '</div>',
-      imageUrl: '/running.gif',
-      imageWidth: 300,
-      imageHeight: 200,
-      imageAlt: 'running',
-      showConfirmButton: false,
-      didOpen: async () => {
+    loadingAlert(
+      '루트를 생성중입니다...',
+      '/running.gif',
+      async () => {
         // 루트생성 API 요청
         try {
           let routeResponse = await sendArtLine(drawForm);
@@ -276,10 +273,11 @@
           }
         }
       },
-    }).then((result) => {
-      // 지도에 받은거 그리기
-      isChapterOne = false;
-    });
+      () => {
+        // 지도에 받은거 그리기
+        isChapterOne = false;
+      }
+    );
   }
 
   // Chapter 2 -----------------------------------------------/
@@ -413,27 +411,19 @@
       });
     } else {
       errorMessage = '';
-      Swal.fire({
-        title: "<div class='text-lg'>" + '루트를 저장중입니다...' + '</div>',
-        imageUrl: '/saveroute.gif',
-        imageWidth: 300,
-        imageHeight: 200,
-        imageAlt: 'running',
-        showConfirmButton: false,
-        didOpen: () => {
-          nameConfirm()
-            .then(() => {
-              Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
-            })
-            .catch((error) => {
-              console.error(error);
-              Swal.fire({
-                icon: 'error',
-                title: '오류가 발생했습니다',
-                text: '루트를 저장하는 도중 문제가 발생했습니다.',
-              });
+      loadingAlert('루트를 저장중입니다...', '/saveroute.gif', () => {
+        nameConfirm()
+          .then(() => {
+            Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+          })
+          .catch((error) => {
+            console.error(error);
+            Swal.fire({
+              icon: 'error',
+              title: '오류가 발생했습니다',
+              text: '루트를 저장하는 도중 문제가 발생했습니다.',
             });
-        },
+          });
       });
     }
   }
