@@ -20,12 +20,25 @@ function createAuthFormStore() {
     confirmPassword: { message: '비밀번호를 다시 입력해주세요', color: 'gray' },
   };
 
-  const values = writable<AuthFormValues>(initialValues);
+  const values = writable<AuthFormValues>(loadFromLocalStorage('authFormValues', initialValues));
   const helpers = writable<{ [key in keyof AuthFormValues]: HelperMessage }>(initialHelpers);
+  values.subscribe(($values) => {
+    saveToLocalStorage('authFormValues', $values);
+  });
 
   function reset() {
     values.set(initialValues);
     helpers.set(initialHelpers);
+    localStorage.removeItem('authFormValues');
+  }
+
+  function loadFromLocalStorage(key: string, defaultValue: any) {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultValue;
+  }
+
+  function saveToLocalStorage(key: string, value: any) {
+    localStorage.setItem(key, JSON.stringify(value));
   }
 
   function validateEmail(value: string) {
@@ -90,7 +103,6 @@ function createAuthFormStore() {
   }
 
   const allValid = derived(helpers, ($helpers) => {
-    console.log($helpers);
     return (
       $helpers.email.color === 'green' &&
       $helpers.password.color === 'green' &&

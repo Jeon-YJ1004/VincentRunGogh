@@ -72,12 +72,10 @@
                 <CalendarWeekSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
               </span>
             </svelte:fragment>
-            <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
-              Get access to over 20+ pages including a dashboard layout, charts, kanban board,
-              calendar, and pre-order E-commerce & Marketing pages.
-            </p>
-            <Button color="alternative">Learn more<ArrowRightOutline class="ms-2 w-5 h-5" /></Button
-            >
+            <!-- <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+              
+            </p> -->
+            <Button color="alternative">상세 보기<ArrowRightOutline class="ms-2 w-5 h-5" /></Button>
           </TimelineItem>
         </Timeline>
       {/each}

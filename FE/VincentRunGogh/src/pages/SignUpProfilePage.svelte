@@ -19,6 +19,7 @@
   };
 
   const handleSubmit = () => {
+    console.log($authValues, $profileValues);
     if (
       !$authValues.email ||
       !$authValues.password ||

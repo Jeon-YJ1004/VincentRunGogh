@@ -1,5 +1,7 @@
 <script lang="ts">
-  import './app.css';
+  import './styles/app.css';
+  import './styles/calendar.css';
+
   import Router, { replace } from 'svelte-spa-router';
   import { userStore } from '@/stores/userStore';
   import {

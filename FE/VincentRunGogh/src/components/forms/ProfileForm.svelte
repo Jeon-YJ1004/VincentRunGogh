@@ -12,14 +12,13 @@
     validateNickname,
     validateHeight,
     validateWeight,
-    validateProfileImage,
     checkNicknameAvailability,
   } = profileFormStore;
 
   async function handleCheckNickname() {
     const currentUser = get(userStore);
-    console.log(currentUser.nickname, $values.nickname);
-    if ($values.nickname.length > 0 && $values.nickname !== currentUser.nickname) {
+    console.log(currentUser?.nickname, $values?.nickname);
+    if ($values.nickname.length > 0 && $values.nickname !== currentUser?.nickname) {
       await checkNicknameAvailability($values.nickname);
     }
   }

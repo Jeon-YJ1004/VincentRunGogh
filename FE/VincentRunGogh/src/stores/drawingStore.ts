@@ -35,8 +35,8 @@ const initialState: DrawingInfo = {
 export const isLockScreen = writable<boolean>(false);
 export const isPause = writable(false);
 export const currentPace = writable('00:00');
-export const posList = writable([]);
 export const route = writable([]);
+export const posList = writable([]);
 
 // 로컬 스토리지에서 데이터 가져오기
 function loadFromLocalStorage(key, defaultValue) {

@@ -17,7 +17,7 @@
   import { LockSolid, LockOpenSolid } from 'flowbite-svelte-icons';
 
   import { elapsedTime, posList, route, totalDistance, drawingStore } from '@/stores/drawingStore';
-  import { startDrawing, completeDrawing, saveDrawing } from '@/api/drawingApi';
+  import { completeDrawing, saveDrawing } from '@/api/drawingApi';
   import SaveRouteDrawing from '@components/cards/SaveRouteDrawing.svelte';
   import { formatDistanceFix2 } from '@/utils/formatter';
   import { loadingAlert } from '@/utils/notificationAlert';
@@ -103,9 +103,21 @@
     drawLinesOnMap(map);
 
     // posList에 있는 모든 좌표에 맞게 지도의 위치 및 줌 조정
+
     const posListData = get(posList).map((item: any) => item.latlng);
-    const bounds = L.latLngBounds(posListData);
-    map.fitBounds(bounds, { padding: [50, 50] });
+    if (posListData.length > 0) {
+      console.log(posListData);
+      const bounds = L.latLngBounds(posListData);
+      map.fitBounds(bounds, { padding: [50, 50] });
+    } else {
+      const { lat, lng } = get(drawingStore).endInfo;
+
+      const southWest = L.latLng(lat - 0.001, lng - 0.001); // 남서쪽 경계 좌표
+      const northEast = L.latLng(lat + 0.001, lng + 0.001); // 북동쪽 경계 좌표
+      const bounds = L.latLngBounds(southWest, northEast);
+
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
   }
 
   async function changeMapWithSingleColor() {
