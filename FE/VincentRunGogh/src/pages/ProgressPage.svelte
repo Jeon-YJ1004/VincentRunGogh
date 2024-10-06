@@ -160,15 +160,14 @@
   {:else}
     <Chart type="line" {options} data={$chartData} />
   {/if}
-
-  <div class="flex items-center align-center">
-    <button class="categoryBtn" on:click={() => activeCategory.set('walk')}>
+  <div class="grid grid-flow-row-dense grid-cols-3 grid-rows-3">
+    <button class="categoryBtn col-span-2" on:click={() => activeCategory.set('walk')}>
       <div class="categoryTitle">
         <span>걸음수</span>
       </div>
       <span class="chartSum">{$categoryData.totalWalk}</span>
     </button>
-    <button class="categoryBtn" on:click={() => activeCategory.set('distance')}>
+    <button class="categoryBtn col-span-2" on:click={() => activeCategory.set('distance')}>
       <div class="categoryTitle">
         <span>거리</span>
       </div>

@@ -80,6 +80,7 @@
       (response) => {
         let data = response.data.data;
         monthInfo.set({ ...response.data.data });
+        console.log(get(monthInfo));
       },
       (error) => {}
     );

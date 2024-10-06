@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Card, Button, Toggle } from 'flowbite-svelte';
+  import { formatSecToHMS } from '@/utils/formatter';
 
   import DrawingSummaryInfo from '@components/calendar/DrawingSummaryInfo.svelte';
   export let time: number;
@@ -11,7 +12,7 @@
 <div>
   <div class="space-y-4">
     <Card img={imgSrc} horizontal size="md">
-      <DrawingSummaryInfo {time} {averagePace} {distance} />
+      <DrawingSummaryInfo {time} averagePace={formatSecToHMS(averagePace)} {distance} />
     </Card>
   </div>
 </div>

@@ -12,7 +12,7 @@
     pane = new CupertinoPane(container, {
       initialBreak: 'middle',
       breaks: {
-        middle: { enabled: true, height: 400 },
+        middle: { enabled: true, height: 200 },
         bottom: { enabled: true, height: 100 },
       },
 

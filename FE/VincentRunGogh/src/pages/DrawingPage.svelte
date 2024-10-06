@@ -47,8 +47,12 @@
     const params = new URLSearchParams($querystring);
     const newRouteId = params.get('routeId');
     const newDrawingId = params.get('drawingId');
-    routeId.set(newRouteId);
-    drawingId.set(newDrawingId);
+    if (newRouteId) {
+      routeId.set(newRouteId);
+    }
+    if (newDrawingId) {
+      drawingId.set(newDrawingId);
+    }
 
     // 옵션 객체 업데이트
     options.set({
@@ -83,15 +87,21 @@
         firstLocationFound.set(true);
         startPos = new L.LatLng(lat, lng);
         const data = { lat: lat, lng: lng, time: startTime };
+        console.log(data, get(options));
         startDrawing(
-          options,
+          get(options),
           data,
           async (response) => {
-            updateDrawingInfo({
-              ...response.data.data,
+            const responseData = response.data.data;
+            const updateData = {
+              ...responseData,
               routeId: get(routeId),
-              drawingId: get(drawingId),
-            }); // 스토어를 업데이트
+            };
+            if (!responseData.drawingId) {
+              updateData.drawingId = get(drawingId);
+            }
+            updateDrawingInfo(updateData); // 스토어를 업데이트
+
             console.log('api 연결 후 드로잉 데이터:', get(drawingStore));
 
             if (routeLineLayers) {
