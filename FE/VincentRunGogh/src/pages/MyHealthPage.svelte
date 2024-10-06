@@ -234,20 +234,22 @@
     <Card class="w-[80vw] pb-1 pt-3 flex flex-col items-center rounded-3xl bg-[#F0F8EC] shadow-md">
       <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">BMI</h5>
       <BMIChart bmi={$bmi.toFixed(0)} />
-      <span class="flex gap-1">
-        <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
-          {$nickname}님의 체질량지수는
+      <div class="flex flex-col justify-center items-center gap-2">
+        <span class="flex gap-1">
+          <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">
+            {$nickname}님의 체질량지수는
+          </p>
+          <p class="text-gray-800 dark:text-gray-400 leading-tight font-bold">
+            {getBMICategory($bmi)}
+          </p>
+          <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">입니다.</p>
+        </span>
+        <p
+          class="font-normal text-gray-400 dark:text-gray-200 overflow-hidden text-ellipsis text-center break-keep"
+        >
+          BMI는 근육량, 유전적 원인, 다른 개인적 차이를 반영하지 않습니다.
         </p>
-        <p class="text-gray-800 dark:text-gray-400 leading-tight font-bold">
-          {getBMICategory($bmi)}
-        </p>
-        <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight">입니다.</p>
-      </span>
-      <p
-        class="font-normal text-gray-400 dark:text-gray-200 overflow-hidden text-ellipsis text-center break-keep"
-      >
-        BMI는 근육량, 유전적 원인, 다른 개인적 차이를 반영하지 않습니다.
-      </p>
+      </div>
     </Card>
     <!-- //!SECTION - menu -->
     <div class="w-full pl-12 pr-12">

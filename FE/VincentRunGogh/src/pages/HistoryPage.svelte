@@ -27,9 +27,9 @@
   });
 </script>
 
-<div id="community-body">
+<div class="bg-bg-main h-screen">
   <Header title="히스토리" />
-  <Tabs defaultClass="flex justify-between" tabStyle="underline">
+  <Tabs defaultClass="flex justify-around" tabStyle="underline">
     <TabItem defaultClass="tab-item font-bold text-xs gap-2" open>
       <div slot="title" class="flex items-center gap-1">
         <PaletteOutline size="md" />
@@ -57,28 +57,28 @@
         <FloppyDiskOutline size="md" />
         완료한 드로잉
       </div>
-      {#each drawingAriticle as article}
-        <!-- <a use:link href="/drawingdetail?id={article.drawingId}&date={article.date}">
-          <li>
-            {article.title} - Time: {article.updated}
-          </li>
-        </a> -->
-        <Timeline order="vertical">
-          <TimelineItem title={article.title} date={formatToKoreanTime(article.updated, true)}>
-            <svelte:fragment slot="icon">
-              <span
-                class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900"
+      <div class="gap-8 m-4">
+        {#each drawingAriticle as article}
+          <Timeline order="vertical" class="flex justify-between m-4">
+            <TimelineItem title={article.title} date={formatToKoreanTime(article.updated, true)}>
+              <svelte:fragment slot="icon">
+                <span
+                  class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900"
+                >
+                  <CalendarWeekSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                </span>
+              </svelte:fragment>
+
+              <Button color="alternative"
+                >상세 보기<ArrowRightOutline class="ms-2 w-5 h-5" /></Button
               >
-                <CalendarWeekSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
-              </span>
-            </svelte:fragment>
-            <!-- <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
-              
-            </p> -->
-            <Button color="alternative">상세 보기<ArrowRightOutline class="ms-2 w-5 h-5" /></Button>
-          </TimelineItem>
-        </Timeline>
-      {/each}
+            </TimelineItem>
+            <div class="w-[30vw]">
+              <img src={article.drawingImage} alt="" />
+            </div>
+          </Timeline>
+        {/each}
+      </div>
     </TabItem>
   </Tabs>
 </div>

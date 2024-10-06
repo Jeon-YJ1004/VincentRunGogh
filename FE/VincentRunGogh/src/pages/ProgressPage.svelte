@@ -67,10 +67,10 @@
         datasets = [
           {
             label: '걸음 수',
-
             data: $categoryData.walkList,
-            borderColor: 'blue',
-            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+            fill: true,
+            borderColor: 'yellow',
+            backgroundColor: '#ffb800',
           },
         ];
         break;
@@ -80,7 +80,7 @@
             label: '이동 거리',
             data: $categoryData.distanceList,
             borderColor: 'green',
-            backgroundColor: 'rgba(0, 128, 0, 0.5)',
+            backgroundColor: '#5e8358',
           },
         ];
         break;
@@ -90,7 +90,7 @@
             label: '활동 시간',
             data: $categoryData.timeList,
             borderColor: 'red',
-            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+            backgroundColor: '#ff9693',
           },
         ];
         break;
@@ -116,6 +116,8 @@
   });
 
   let options = {
+    responsive: true,
+
     scales: {
       y: {
         beginAtZero: true,

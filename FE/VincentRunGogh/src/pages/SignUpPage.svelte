@@ -30,7 +30,6 @@
     $helpers.email.message = '';
     //TODO - 이메일 중복 조회
     if (loading) return;
-    console.log('이메일체크');
     loading = true;
     checkEmailDuplication(
       $values.email,

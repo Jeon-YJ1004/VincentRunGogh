@@ -36,7 +36,7 @@
   }
 </script>
 
-<div class="flex flex-col items-center w-[60vw] bg-white shadow-lg rounded-lg p-4">
+<div class="flex flex-col items-center w-[60vw] h-[30vh] bg-white shadow-lg rounded-lg p-4">
   <div>
     <button
       class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-main p-2 rounded-full focus:outline-none h-14 w-14"
@@ -83,17 +83,23 @@
       </svg>
     </button>
     <button type="button" on:click={clickLockScreen} class="lock-btn">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="2.2em"
-        height="2.2em"
-        viewBox="0 0 24 24"
-        {...$$props}
-      >
-        <path
-          fill="black"
-          d="M9.85 16q-.35 0-.6-.25t-.25-.6v-3.3q0-.35.25-.6t.6-.25H10v-1q0-.825.588-1.412T12 8t1.413.588T14 10v1h.15q.35 0 .6.25t.25.6v3.3q0 .35-.25.6t-.6.25zM11 11h2v-1q0-.425-.287-.712T12 9t-.712.288T11 10zM7 23q-.825 0-1.412-.587T5 21V3q0-.825.588-1.412T7 1h10q.825 0 1.413.588T19 3v18q0 .825-.587 1.413T17 23zm0-5h10V6H7z"
-        />
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" {...$$props}>
+        <g
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.85"
+          color="#ee2f2f"
+        >
+          <path
+            fill="#ee2f2f"
+            d="m8.5 14l-.543.517A.75.75 0 0 0 9.25 14zm-2.217-2.329l.544-.517l-.047-.045zM3.877 14.09l.599-.453l-.01-.011zm3.282 4.335l-.598.452zm-3.29-6.519l-.592-.46zM7.602 22a.75.75 0 0 0 1.5 0zm.61-1.884l.717-.223zm-.039-.119l.707-.251zM12 9.5h-.75a.75.75 0 0 0 .783.75zm6 2.56a.75.75 0 0 0 1-1.12zm-8.957 1.423l-2.216-2.329l-1.087 1.034l2.217 2.33zM3.28 14.54l3.282 4.335l1.196-.905l-3.281-4.335zm-.002-3.095a2.53 2.53 0 0 0 .011 3.107l1.179-.928a1.03 1.03 0 0 1-.005-1.26zm3.503-.337a2.4 2.4 0 0 0-3.503.337l1.185.919a.9.9 0 0 1 1.325-.132zM9.102 22c0-.913.008-1.526-.173-2.107l-1.432.445c.097.314.105.658.105 1.662zM6.56 18.876c.599.792.796 1.066.906 1.373l1.413-.503c-.205-.575-.58-1.056-1.123-1.775zm2.368 1.017l-.05-.147l-1.412.503l.03.09zM7.75 3.75V14h1.5V3.75zm3.5 0V9.5h1.5V3.75zm-2 0a1 1 0 0 1 1-1v-1.5a2.5 2.5 0 0 0-2.5 2.5zm1-1a1 1 0 0 1 1 1h1.5a2.5 2.5 0 0 0-2.5-2.5zm1.783 7.5c1.563-.07 4.089.13 5.967 1.81l1-1.12c-2.324-2.076-5.348-2.264-7.033-2.19z"
+          />
+          <path
+            stroke="#ee2f2f"
+            d="M14.5 19.5c0-.935 0-1.402.201-1.75a1.5 1.5 0 0 1 .549-.549C15.598 17 16.065 17 17 17h1c.935 0 1.402 0 1.75.201a1.5 1.5 0 0 1 .549.549c.201.348.201.815.201 1.75s0 1.402-.201 1.75a1.5 1.5 0 0 1-.549.549C19.402 22 18.935 22 18 22h-1c-.935 0-1.402 0-1.75-.201a1.5 1.5 0 0 1-.549-.549c-.201-.348-.201-.815-.201-1.75m1.5-4a1.5 1.5 0 0 1 3 0V17h-3z"
+          />
+        </g>
       </svg>
     </button>
   </div>
@@ -101,6 +107,7 @@
   <div class="text-center mt-4">
     <div class="text-4xl font-bold text-gray-800">{formatSecToMS($elapsedTime)}</div>
     <div class="mt-4 space-x-4 flex justify-center items-center">
+      <!-- Display dynamic data in an organized manner -->
       <div class=" flex flex-col items-center justify-center">
         <span class="text-sm"> 이동거리 </span>
         <div>
@@ -112,15 +119,16 @@
       <div class=" flex flex-col items-center justify-center">
         <span class="text-sm"> 페이스 </span>
         <div>
-          <span class="text-lg text-gray-700 text-2xl font-bold">{$currentPace} </span>
+          <span class="text-lg text-gray-700 text-2xl font-bold">{Math.round(3.4 * 10) / 10} </span>
+          km/h
         </div>
       </div>
       {#if hasRoute}
         <div class=" flex flex-col items-center justify-center">
           <span class="text-sm"> 남은 거리 </span>
           <div>
-            <span class="text-lg text-gray-700 text-2xl font-bold">
-              <!-- {Math.round(5.6 * 10) / 10} -->
+            <span class="text-lg text-gray-700 text-2xl font-bold"
+              >{Math.round(5.6 * 10) / 10}
             </span>km
           </div>
         </div>
