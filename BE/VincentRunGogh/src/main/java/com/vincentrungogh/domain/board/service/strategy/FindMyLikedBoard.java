@@ -8,11 +8,13 @@ import com.vincentrungogh.domain.board.service.dto.common.FindBoard;
 import com.vincentrungogh.domain.board.service.dto.response.FindBoardResponseDto;
 import com.vincentrungogh.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service("FindMyLikedBoard")
 @RequiredArgsConstructor
 public class FindMyLikedBoard implements BoardStrategy {
@@ -23,9 +25,21 @@ public class FindMyLikedBoard implements BoardStrategy {
     @Override
     public FindBoardResponseDto findBoard(User user, double lat, double lng) {
 
-        // 내가 좋아요한 게시글 모두 가져와서 반환하기
-        List<FindBoard> findBoardList = userLikeRepository.findAllByUser(user).stream()
-                .map(userLike -> FindBoard.createFindBoard(userLike.getBoard(), lat, lng))
+        // 우선 사용자가 좋아요한 userLike 목록 조회하기
+        List<Board> likedBoardList = userLikeRepository.findAllByUser(user).stream()
+                .map(userLike -> userLike.getBoard())
+                .filter(board -> !board.getIsDelete())
+                .filter(Objects::nonNull) // null 값 제거
+                .toList();
+
+        log.info("likedBoardList: " + likedBoardList);
+
+        // findBoard로 변경하기
+        List<FindBoard> findBoardList = likedBoardList.stream()
+                .map(board -> {
+                            boolean isLiked = true;
+                            return FindBoard.createFindBoard(board, lat, lng, isLiked);
+                        })
                 .filter(Objects::nonNull)
                 .toList();
 

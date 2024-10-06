@@ -1,5 +1,6 @@
 package com.vincentrungogh.domain.board.controller;
 
+import com.vincentrungogh.domain.board.service.BoardService;
 import com.vincentrungogh.domain.board.service.dto.request.SaveBoardRequestDto;
 import com.vincentrungogh.domain.board.service.facade.BoardFacade;
 import com.vincentrungogh.domain.board.service.dto.response.FindBoardResponseDto;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
 
     private final BoardFacade boardFacade;
+    private final BoardService boardService;
 
     // 게시글 전체 조회
 
@@ -71,6 +73,44 @@ public class BoardController {
         boardFacade.createBoard(userPrincipal, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(ResultDto.res(HttpStatus.OK.value(), "게시글 생성 완료되었습니다.",null));
+    }
+
+    // 게시글 좋아요
+    @Operation(summary = "게시글 좋아요 실행", description = "커뮤니티 게시글 좋아요")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "좋아요에 성공했습니다.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class))),
+            @ApiResponse(responseCode = "500", description = "좋아요 처리에 실패했습니다.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class)))
+    })
+    @CommonSwaggerResponse.CommonResponses
+    @PostMapping("/likes/{boardId}")
+    public ResponseEntity<?> addLikeBoard(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                           @PathVariable int boardId) {
+        log.info("addLikesBoard 메소드가 호출되었습니다. boardId: " + boardId);
+
+        boardService.addLike(userPrincipal, boardId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResultDto.res(HttpStatus.OK.value(), "좋아요에 성공했습니다.", null));
+    }
+
+    // 게시글 좋아요 취소
+    @Operation(summary = "게시글 좋아요 취소", description = "커뮤니티 게시글 좋아요 취소")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "좋아요 취소에 성공했습니다.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class))),
+            @ApiResponse(responseCode = "500", description = "좋아요 취소 처리에 실패했습니다.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class)))
+    })
+    @CommonSwaggerResponse.CommonResponses
+    @DeleteMapping("/likes/{boardId}")
+    public ResponseEntity<?> deleteLikeBoard(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                           @PathVariable int boardId) {
+        log.info("deleteLikeBoard 메소드가 호출되었습니다. boardId: " + boardId);
+
+        boardService.deleteLike(userPrincipal, boardId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResultDto.res(HttpStatus.OK.value(), "좋아요 취소에 성공했습니다.", null));
     }
 
 }

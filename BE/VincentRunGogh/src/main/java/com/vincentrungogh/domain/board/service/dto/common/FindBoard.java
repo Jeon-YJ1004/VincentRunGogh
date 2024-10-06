@@ -21,7 +21,7 @@ public class FindBoard {
     private String artImage;
     private String comment;
     private int likeCount;
-    private boolean isLiked;
+    private Boolean isLiked;
     private double distance;
     private int time;
     private LocalDateTime created;
@@ -44,7 +44,7 @@ public class FindBoard {
         this.distanceFromUser = distanceFromUser;
     }
 
-    public static FindBoard createFindBoard(Board board, Double lat, Double lng){
+    public static FindBoard createFindBoard(Board board, Double lat, Double lng, boolean isLiked){
 
         // 해당 루트와 연결된 유저 정보 가져오기
         User writer = board.getRoute().getUser();
@@ -63,9 +63,9 @@ public class FindBoard {
                 .drawingImage(board.getRoute().getAccumulatedDrawingImage())
                 .artImage(board.getRoute().getArtImage())
                 .comment(board.getComment())
-                .isLiked(false) //좋아요 구현 후 추가
+                .isLiked(isLiked)
                 .likeCount(board.getLikeCount())
-                .distance(board.getRoute().getDistance())
+                .distance(Math.round((double) board.getRoute().getDistance() / 1000.0 * 100.0) / 100.0)
                 .time(300) //드로잉 디테일 집계 작성 후 추가
                 .created(board.getCreated())
                 .distanceFromUser(distanceUser)

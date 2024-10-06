@@ -14,4 +14,6 @@ public interface BoardRepository extends JpaRepository<Board,Integer> {
 
     List<Board> findByRouteUser(User user);
 
+    Board findById(int id);
+
 }
