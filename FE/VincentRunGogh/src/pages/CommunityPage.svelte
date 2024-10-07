@@ -169,7 +169,7 @@
     class="absolute top-5 right-3"
     on:click={() => replace('/community/mystorage')}
   >
-    <Avatar src={userInfo.profile} dot={{ color: 'green' }} />
+    <Avatar rounded src={userInfo.profile} dot={{ color: 'green' }} />
   </div>
   <div id="search-control">
     <Button size="sm" on:click={searchCondition}>검색 반경 설정</Button>

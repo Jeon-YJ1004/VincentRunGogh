@@ -12,7 +12,7 @@ export function formatTimeToHMS(): string {
   return `${hours}:${minutes}:${seconds}`;
 }
 export function formatSecToHMS(seconds: number): string {
-  if (seconds < 60) return `${seconds}`;
+  if (seconds < 60) return `${seconds}초`;
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;

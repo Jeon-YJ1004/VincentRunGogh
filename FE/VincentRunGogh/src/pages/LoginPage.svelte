@@ -40,7 +40,7 @@
 
 <div class="relative">
   <div id="login-header">
-    <h1 style="font-family: 'Brush Script MT'; font-size:30px; margin-top:auto; z-index: 10;">
+    <h1 style="font-family: 'BRUSH'; font-size:30px; margin-top:auto; z-index: 10;">
       Vincent Run Gogh
     </h1>
   </div>

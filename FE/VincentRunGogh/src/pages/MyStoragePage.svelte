@@ -157,7 +157,7 @@
       cancelButtonColor: '#697386',
       confirmButtonText: '삭제',
       cancelButtonText: '취소',
-      didOpen: () => {
+      preConfirm: () => {
         deleteArticle(boardId)
           .then(() => {
             articleList = articleList.filter((article) => article.boardId != boardId);
@@ -165,6 +165,7 @@
               title: '삭제 완료!',
               text: '등록한 게시글을 삭제하였습니다',
               icon: 'success',
+              confirmButtonColor: '#FFB800',
             });
           })
           .catch((error) => {
@@ -244,7 +245,7 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-interactive-supports-focus -->
   <div id="community-mystorage" role="button" class="absolute top-5 right-3">
-    <Avatar src={userInfo.profile} dot={{ color: 'green' }} />
+    <Avatar rounded src={userInfo.profile} dot={{ color: 'green' }} />
   </div>
   <div id="search-control">
     <Button size="sm" on:click={searchCondition}>검색 반경 설정</Button>
