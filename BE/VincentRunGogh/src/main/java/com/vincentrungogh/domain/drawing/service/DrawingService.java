@@ -72,7 +72,12 @@ public class DrawingService {
     }
 
     @Transactional
-    public StartDrawingResponse startDrawing(int userId, StartDrawingRequest request) {
+    public StartDrawingResponse startDrawing(int userId, StartDrawingRequest request, String type) {
+
+        if(!(type.equals("free") || type.equals("route"))) {
+            throw new CustomException(ErrorCode.INVALID_PARAM_TYPE);
+        }
+
         // 0. 레디스 저장
         String routeId = request.getRouteId();
         redisService.removeRunning(userId);
@@ -82,9 +87,13 @@ public class DrawingService {
         User user = userService.getUserById(userId);
 
         // 2. route 여부
-        if(routeId == null) {
+        if(type.equals("free")) {
             // 자유 달리기
             return freeRunning(user);
+        }
+
+        if(request.getRouteId() == null){
+            throw new CustomException(ErrorCode.ROUTE_IS_NULL);
         }
         return drawingRunning(routeId, user);
     }

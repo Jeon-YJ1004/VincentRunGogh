@@ -83,16 +83,19 @@ public class DrawingController {
                     content = @Content(schema = @Schema(implementation = StartDrawingResponse.class))),
             @ApiResponse(responseCode = "400", description = "3개의 드로잉이 진행 중입니다. 진행 중인 드로잉을 완료해주세요.",
                     content = @Content(schema = @Schema(implementation = ResultDto.class))),
+            @ApiResponse(responseCode = "404", description = "루트가 null입니다. 루트 드로잉을 시작할 수 없습니다",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class))),
             @ApiResponse(responseCode = "500", description = "드로잉을 시작하는데 실패했습니다.",
                     content = @Content(schema = @Schema(implementation = ResultDto.class)))
     })
     @CommonSwaggerResponse.CommonResponses
     @PostMapping("/start")
-    public ResponseEntity<?> startDrawing(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody StartDrawingRequest request){
+    public ResponseEntity<?> startDrawing(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                          @RequestBody StartDrawingRequest request,
+                                          @RequestParam String type){
 
         log.info("루트 아이디 "+ request.getRouteId());
-
-        StartDrawingResponse response = drawingService.startDrawing(userPrincipal.getId(), request);
+        StartDrawingResponse response = drawingService.startDrawing(userPrincipal.getId(), request, type);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResultDto.res(HttpStatus.OK.value(), "드로잉이 시작되었습니다.", response));
