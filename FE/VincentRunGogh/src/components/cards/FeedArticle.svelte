@@ -15,24 +15,28 @@
       <span>{title}</span>
     </div>
   </div>
-  <Carousel
-    class="w-full"
-    images={[
-      { src: drawingImage, alt: 'drawingImage' },
-      { src: artImage, alt: 'artImage' },
-    ]}
-    let:Indicators
-  >
-    <Indicators
-      let:selected
-      class="flex absolute bottom-5 start-3/4 z-30 space-x-3 rtl:space-x-reverse -translate-x-1/2 rtl:translate-x-1/2 float-right mr-4"
+  {#if artImage}
+    <Carousel
+      class="w-full"
+      images={[
+        { src: drawingImage, alt: 'drawingImage' },
+        { src: artImage, alt: 'artImage' },
+      ]}
+      let:Indicators
     >
-      <Indicator
-        color={selected ? 'red' : 'gray'}
-        class={selected ? 'opacity-100' : 'opacity-80'}
-      />
-    </Indicators>
-  </Carousel>
+      <Indicators
+        let:selected
+        class="flex absolute bottom-5 start-3/4 z-30 space-x-3 rtl:space-x-reverse -translate-x-1/2 rtl:translate-x-1/2 float-right mr-4"
+      >
+        <Indicator
+          color={selected ? 'red' : 'gray'}
+          class={selected ? 'opacity-100' : 'opacity-80'}
+        />
+      </Indicators>
+    </Carousel>
+  {:else}
+    <img src={drawingImage} alt="drawingImage" style="min-height: 10vh;" />
+  {/if}
   {#if distance && time}
     <div class="absolute bottom-0.5 -left-13 z-30">
       <div

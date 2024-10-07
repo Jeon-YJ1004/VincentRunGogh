@@ -160,6 +160,7 @@
       didOpen: () => {
         deleteArticle(boardId)
           .then(() => {
+            articleList = articleList.filter((article) => article.boardId != boardId);
             Swal.fire({
               title: '삭제 완료!',
               text: '등록한 게시글을 삭제하였습니다',
@@ -183,14 +184,20 @@
     if (isLiked) {
       // 이미 좋아요상태 -> 취소
       await dislikeArticle(boardId);
+      let index = articleList.findIndex((article) => article.boardId === boardId);
+      articleList[index].isLiked = !articleList[index].isLiked;
+      articleList[index].likeCount--;
     } else {
       // 좋아요상태가 아님 -> 등록
       await likeArticle(boardId);
+      let index = articleList.findIndex((article) => article.boardId === boardId);
+      articleList[index].isLiked = !articleList[index].isLiked;
+      articleList[index].likeCount++;
     }
   }
 
   // 게시글 생성 버튼 클릭
-  function clickPost(article) {
+  function clickPost(article: {}) {
     Swal.fire({
       html: '<div id="post-article"></div>',
       showConfirmButton: false,
@@ -257,56 +264,48 @@
         </div>
         <div id="mystorage-content" class="space-y-4" on:touchmove>
           {#if articleList.length === 0}
-            <h1>주변 {range}km 내에 루트가 없습니다!</h1>
+            <h1>등록한 게시물이 없습니다!</h1>
           {:else}
             {#each articleList as article}
-              {#if article.distanceFromUser <= range}
-                <div class="mb-3 relative z-10 text-center">
-                  <Card size="sm" class="mb-5 p-1 grow">
-                    <div class="flex ms-1 mt-1 mb-3 items-center">
-                      <img src={article.profile} alt="" style="width: 50px;" />
-                      <p class="ml-5">{article.nickname}</p>
-                      <button
-                        class="absolute top-5 right-3"
-                        on:click={() => clickDeleteArticle(article.boardId)}
-                      >
-                        <TrashBinSolid size="md" color="red" />
-                      </button>
+              <div class="mb-3 relative z-10 text-center">
+                <Card size="sm" class="mb-5 p-1 grow">
+                  <div class="flex ms-1 mt-1 mb-3 items-center">
+                    <img src={article.profile} alt="" style="width: 50px; height: 50px;" />
+                    <p class="ml-5">{article.nickname}</p>
+                    <button
+                      class="absolute top-5 right-3"
+                      on:click={() => clickDeleteArticle(article.boardId)}
+                    >
+                      <TrashBinSolid size="md" color="red" />
+                    </button>
+                  </div>
+                  <FeedArticle
+                    title={article.title}
+                    artImage={article.artImage}
+                    drawingImage={article.drawingImage}
+                    distance={article.distance}
+                    time={article.time}
+                  />
+                  <p class="mt-2 mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
+                    {article.comment}
+                  </p>
+                  <div class="me-2 flex justify-end items-center">
+                    <div class="flex justify-between items-center">
+                      {#if article.isLiked}
+                        <button on:click={() => clickLiked(article.isLiked, article.boardId)}>
+                          <HeartSolid size="lg" color={'red'} />
+                        </button>
+                        <p>{article.likeCount}</p>
+                      {:else}
+                        <button on:click={() => clickLiked(article.isLiked, article.boardId)}>
+                          <HeartOutline size="lg" />
+                        </button>
+                        <p>{article.likeCount}</p>
+                      {/if}
                     </div>
-                    <FeedArticle
-                      title={article.title}
-                      artImage={article.artImage}
-                      drawingImage={article.drawingImage}
-                      distance={article.distance}
-                      time={article.time}
-                    />
-                    <p class="mt-2 mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-                      {article.comment}
-                    </p>
-                    <div class="me-2 flex justify-end items-center">
-                      <div class="flex justify-between items-center">
-                        {#if article.isLiked}
-                          <button
-                            on:click={() => clickLiked(article.isLiked, article.boardId)}
-                            color={article.isLiked ? 'red' : 'blue'}
-                          >
-                            <HeartSolid size="lg" color={'red'} />
-                          </button>
-                          <p>{article.likeCount}</p>
-                        {:else}
-                          <button
-                            on:click={() => clickLiked(article.isLiked, article.boardId)}
-                            color={article.isLiked ? 'red' : 'blue'}
-                          >
-                            <HeartOutline size="lg" />
-                          </button>
-                          <p>{article.likeCount}</p>
-                        {/if}
-                      </div>
-                    </div>
-                  </Card>
-                </div>
-              {/if}
+                  </div>
+                </Card>
+              </div>
             {/each}
           {/if}
         </div>
@@ -323,7 +322,7 @@
           찜한 루트
         </div>
         <div id="mystorage-content" class="space-y-4" on:touchmove>
-          {#if articleList.length === 0}
+          {#if articleList.filter((article) => article.distanceFromUser <= range).length === 0}
             <h1>찜한 루트가 아직 없습니다!</h1>
           {:else}
             {#each articleList as article}
@@ -331,7 +330,7 @@
                 <div class="mb-3 relative z-10">
                   <Card size="sm" class="mb-5 p-1 grow">
                     <div class="flex mb-3 items-center justify-between">
-                      <img src={article.profile} alt="" style="width: 50px;" />
+                      <img src={article.profile} alt="" style="width: 50px;  height: 50px;" />
                       <p class="ml-5">{article.nickname}</p>
                     </div>
                     <FeedArticle
@@ -347,18 +346,12 @@
                     <div class="me-2 flex justify-end items-center">
                       <div class="flex justify-between items-center">
                         {#if article.isLiked}
-                          <button
-                            on:click={() => clickLiked(article.isLiked, article.boardId)}
-                            color={article.isLiked ? 'red' : 'blue'}
-                          >
+                          <button on:click={() => clickLiked(article.isLiked, article.boardId)}>
                             <HeartSolid size="lg" color={'red'} />
                           </button>
                           <p>{article.likeCount}</p>
                         {:else}
-                          <button
-                            on:click={() => clickLiked(article.isLiked, article.boardId)}
-                            color={article.isLiked ? 'red' : 'blue'}
-                          >
+                          <button on:click={() => clickLiked(article.isLiked, article.boardId)}>
                             <HeartOutline size="lg" />
                           </button>
                           <p>{article.likeCount}</p>
@@ -385,7 +378,7 @@
         </div>
         <div id="mystorage-content" class="space-y-4" on:touchmove>
           {#if unpostArticles.length === 0}
-            <h1>주변 {range}km 내에 루트가 없습니다!</h1>
+            <h1>게시할 드로잉이 없습니다!</h1>
           {:else}
             {#each unpostArticles as article}
               <div class="mb-3 relative z-10">

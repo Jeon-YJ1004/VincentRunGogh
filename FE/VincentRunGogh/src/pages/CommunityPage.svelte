@@ -10,7 +10,7 @@
   import { userStore } from '@/stores/userStore';
   import { get } from 'svelte/store';
   import { onMount } from 'svelte';
-  import { getArticleList } from '@/api/communityApi';
+  import { dislikeArticle, getArticleList, likeArticle } from '@/api/communityApi';
 
   let articleList: {
     boardId: number;
@@ -126,7 +126,22 @@
     }
   }
 
-  // 좋아요
+  // 좋아요버튼 클릭
+  async function clickLiked(isLiked: boolean, boardId: number) {
+    if (isLiked) {
+      // 이미 좋아요상태 -> 취소
+      await dislikeArticle(boardId);
+      let index = articleList.findIndex((article) => article.boardId === boardId);
+      articleList[index].isLiked = !articleList[index].isLiked;
+      articleList[index].likeCount--;
+    } else {
+      // 좋아요상태가 아님 -> 등록
+      await likeArticle(boardId);
+      let index = articleList.findIndex((article) => article.boardId === boardId);
+      articleList[index].isLiked = !articleList[index].isLiked;
+      articleList[index].likeCount++;
+    }
+  }
 
   onMount(() => {
     // 유저정보 저장
@@ -161,6 +176,9 @@
     <p class="my-3 font-bold">반경 {range}km내의 루트만 표시됩니다.</p>
   </div>
   <div id="community-content">
+    {#if articleList.filter((article) => article.distanceFromUser <= range).length === 0}
+      반경 {range}km 내 게시글이 없습니다!
+    {/if}
     {#each articleList as article}
       {#if article.distanceFromUser <= range}
         <Card class="mb-5">
@@ -182,12 +200,12 @@
             {timeAgo(new Date(article.created))}
             <div class="flex justify-between items-center">
               {#if article.isLiked}
-                <button color={article.isLiked ? 'red' : 'blue'}>
+                <button on:click={() => clickLiked(article.isLiked, article.boardId)}>
                   <HeartSolid size="lg" color={'red'} />
                 </button>
                 <p>{article.likeCount}</p>
               {:else}
-                <button color={article.isLiked ? 'red' : 'blue'}>
+                <button on:click={() => clickLiked(article.isLiked, article.boardId)}>
                   <HeartOutline size="lg" />
                 </button>
                 <p>{article.likeCount}</p>
