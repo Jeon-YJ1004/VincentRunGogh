@@ -38,21 +38,24 @@
   const calculateWidth = (min: number, max: number): number => {
     return ((max - min) / (MAX_BMI - MIN_BMI)) * 100; // returns a percentage
   };
-  const markerPosition = (): string => {
+
+  // Reactive declarations
+  $: markerPosition = () => {
     if (bmi < MIN_BMI) return '0%'; // 최소 범위 이하일 때
     if (bmi > MAX_BMI) return '100%'; // 최대 범위 이상일 때
-
-    const position = ((bmi - MIN_BMI) / (MAX_BMI - MIN_BMI)) * 100;
-    return `${position}%`;
+    return `${((bmi - MIN_BMI) / (MAX_BMI - MIN_BMI)) * 100}%`;
   };
-  let currentCategory =
+
+  $: currentCategory =
     groupList.find((category) => bmi >= category.range[0] && bmi < category.range[1]) ??
     groupList[0];
-  let markerStyle = `left: ${markerPosition()};`;
+  $: markerStyle = `left: ${markerPosition()};`;
 </script>
 
-<div class="p-4 rounded-lg w-[90%] h-[120px] flex flex-col items-center justify-between">
-  <div class="text-3xl font-semibold text-center">{bmi}</div>
+<div class="pt-1 p-4 rounded-lg w-[90%] h-[120px] flex flex-col items-center justify-between">
+  <div class=" text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+    {bmi}
+  </div>
   <div class="flex w-full h-3 rounded overflow-visible relative">
     <div
       class="absolute top-[-1.5rem] -translate-y-1/2 transform -translate-x-1/2"

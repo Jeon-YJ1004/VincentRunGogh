@@ -22,34 +22,54 @@ window.addEventListener("deviceorientation", function (e) {
 
 
 export async function getMotion() {
-  if (!window.DeviceMotionEvent || !window.DeviceMotionEvent.requestPermission) {
-    return alert("Your current device does not have access to the DeviceMotion event");
+  if (!window.DeviceMotionEvent) {
+    return alert("Your device does not support motion detection.");
   }
-  // Accelerometer를 사용해 걸음 수 측정하기
+
+  let stepCount = 0;
+  let lastReading = { x: 0, y: 0, z: 0 };
+  const threshold = 1.2;
+
+  const updateStepCount = (x, y, z) => {
+    const deltaX = Math.abs(x - lastReading.x);
+    const deltaY = Math.abs(y - lastReading.y);
+    const deltaZ = Math.abs(z - lastReading.z);
+
+    if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
+      stepCount++;
+      console.log(`걸음 수: ${stepCount}`);
+    }
+
+    lastReading = { x, y, z };
+  };
+
+  // Accelerometer 사용 시
   if ('Accelerometer' in window) {
     const accelerometer = new Accelerometer({ frequency: 10 });
-
-    let stepCount = 0;
-    let lastReading = { x: 0, y: 0, z: 0 };
-
     accelerometer.addEventListener('reading', () => {
-      const deltaX = Math.abs(accelerometer.x - lastReading.x);
-      const deltaY = Math.abs(accelerometer.y - lastReading.y);
-      const deltaZ = Math.abs(accelerometer.z - lastReading.z);
-
-      const threshold = 1.2;
-
-      if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
-        stepCount++;
-        console.log(`걸음 수: ${stepCount}`);
-      }
-
-      lastReading = { x: accelerometer.x, y: accelerometer.y, z: accelerometer.z };
+      updateStepCount(accelerometer.x, accelerometer.y, accelerometer.z);
     });
-
     accelerometer.start();
+  } else if (DeviceMotionEvent.requestPermission) {
+    // DeviceMotion 사용 시 (iOS 13+)
+    const permission = await DeviceMotionEvent.requestPermission();
+    if (permission === 'granted') {
+      window.addEventListener('devicemotion', (event) => {
+        if (event.accelerationIncludingGravity) {
+          const { x, y, z } = event.accelerationIncludingGravity;
+          updateStepCount(x, y, z);
+        }
+      }, true);
+    } else {
+      alert("Permission to access motion sensors was denied.");
+    }
   } else {
-    console.error("Accelerometer가 지원되지 않습니다.");
+    // 기타 경우
+    window.addEventListener('devicemotion', (event) => {
+      if (event.accelerationIncludingGravity) {
+        const { x, y, z } = event.accelerationIncludingGravity;
+        updateStepCount(x, y, z);
+      }
+    }, true);
   }
-
 }

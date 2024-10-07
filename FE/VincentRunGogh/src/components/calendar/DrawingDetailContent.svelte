@@ -54,14 +54,16 @@
       {date} &nbsp;
       {drawingDetail?.title}
     </h5>
-    <button
-      class="flex items-center justify-center p-2 rounded bg-gray-200 hover:bg-gray-300"
-      on:click={showImageModal}
-    >
-      <PaletteOutline
-        class="w-6 h-6 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"
-      />
-    </button>
+    {#if drawingDetail.routeImage}
+      <button
+        class="flex items-center justify-center p-2 rounded bg-gray-200 hover:bg-gray-300"
+        on:click={showImageModal}
+      >
+        <PaletteOutline
+          class="w-6 h-6 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"
+        />
+      </button>
+    {/if}
   </div>
 
   <ul class="space-y-4 mt-4">
