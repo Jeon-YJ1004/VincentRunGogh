@@ -4,6 +4,7 @@ import com.vincentrungogh.domain.calendar.service.dto.response.*;
 import com.vincentrungogh.domain.drawing.entity.*;
 import com.vincentrungogh.domain.drawing.repository.DrawingDetailRepository;
 import com.vincentrungogh.domain.drawing.repository.DrawingRepository;
+import com.vincentrungogh.domain.route.entity.Route;
 import com.vincentrungogh.domain.user.entity.User;
 import com.vincentrungogh.domain.user.repository.UserRepository;
 import com.vincentrungogh.global.exception.CustomException;
@@ -106,7 +107,7 @@ public class CalendarService {
     public DrawingDetailListOnSameDayResponse getDrawingDetails(int userId, int drawingId, String date) {
 
         // 0. DrawingDetailListOnSameDayResponse 객체 생성을 위한 field 초기값 세팅
-        String title = null;
+        String title;
         String routeImage = null;
         List<DrawingDetailForListOnSameDayResponse> drawingDetailList = new ArrayList<>();
 
@@ -115,10 +116,20 @@ public class CalendarService {
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
+        /**
         // 2-1. 드로잉 아이디로 QueryDSL
         DrawingTitleArtImage drawingTitleArtImage = drawingRepository.findTitleAndArtImageById(drawingId);
         title = drawingTitleArtImage.getTitle();
         routeImage = drawingTitleArtImage.getRouteImage();
+         */
+        // 2-1. 드로잉 이름, 아트 이미지(자유드로잉일 때는 null) 구하기
+        Drawing drawing = drawingRepository.findById(drawingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
+        title = drawing.getTitle();
+        Route route = drawing.getRoute();
+        if(route != null) {
+            routeImage = route.getArtImage();
+        }
 
         // 2-2. 할당된 유저 엔티티, 드로잉 아이디, 드로잉 디테일 완료날짜로 QueryDSL
         List<DrawingDetailSameDay> drawingDetailSameDays = drawingDetailRepository.findByDrawingIdAndDay(user, drawingId, date);

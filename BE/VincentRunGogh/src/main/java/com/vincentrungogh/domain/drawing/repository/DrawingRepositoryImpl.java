@@ -26,18 +26,18 @@ public class DrawingRepositoryImpl implements DrawingRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    @Override
-    public DrawingTitleArtImage findTitleAndArtImageById(int drawingId) {
-        return queryFactory
-                .select(Projections.constructor(DrawingTitleArtImage.class,
-                        drawing.title.as("title"),
-                        route.artImage.as("routeImage")
-                        ))
-                .from(drawing)
-                .join(drawing.route, route)
-                .where(drawing.id.eq(drawingId))
-                .fetchOne();
-    }
+//    @Override
+//    public DrawingTitleArtImage findTitleAndArtImageById(int drawingId) {
+//        return queryFactory
+//                .select(Projections.constructor(DrawingTitleArtImage.class,
+//                        drawing.title.as("title"),
+//                        route.artImage.as("routeImage")
+//                        ))
+//                .from(drawing)
+//                .join(drawing.route, route)
+//                .where(drawing.id.eq(drawingId))
+//                .fetchOne();
+//    }
 
     @Override
     public List<EachMonthRouteFreeCount> findRouteFreeCountByYearEachMonth(User user, int year) {
