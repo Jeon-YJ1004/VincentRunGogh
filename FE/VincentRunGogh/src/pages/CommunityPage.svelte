@@ -183,7 +183,11 @@
       {#if article.distanceFromUser <= range}
         <Card class="mb-5">
           <div class="flex mb-3 items-center text-center">
-            <img src={article.profile} alt="" style="width: 50px;" />
+            <img
+              src={article.profile}
+              alt=""
+              style="width: 50px; height: 50px; border-radius:50%;"
+            />
             <p class="ml-5 font-bold">{article.nickname}</p>
           </div>
           <FeedArticle

@@ -66,7 +66,7 @@ export default defineConfig({
     //   key: fs.readFileSync(path.resolve(__dirname, 'localhost-key.pem')),
     //   cert: fs.readFileSync(path.resolve(__dirname, 'localhost-cert.pem')),
     // },
-    // host: '192.168.173.1', // 실제 IP 주소
+    // host: '192.168.132.1', // 실제 IP 주소
     port: 5173,
   },
 });

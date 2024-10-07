@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import L, { latLng } from 'leaflet';
+  import L, { latLng, Map } from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import 'leaflet-draw';
   import 'leaflet-draw/dist/leaflet.draw.css';
@@ -21,6 +21,7 @@
   import { makeRoute, sendArtLine } from '@/api/routeApi';
   import SaveRouteDrawing from '@/components/cards/SaveRouteDrawing.svelte';
   import { loadingAlert } from '@/utils/notificationAlert';
+  import MapToolbar from '@/components/drawing/MapToolbar.svelte';
 
   //진행 상태 변수
   let isChapterOne = true;
@@ -88,6 +89,24 @@
           map.invalidateSize();
         }, 100);
 
+        // 내 위치로 이동 버튼 생성
+        let toolbar = new L.Control({ position: 'topright' });
+        let toolbarComponent: MapToolbar | null = null;
+        toolbar.onAdd = (map: Map) => {
+          const nowbtn = L.DomUtil.create('div');
+          toolbarComponent = new MapToolbar({
+            target: nowbtn,
+            props: { isMakeRoute: true },
+          });
+
+          toolbarComponent.$on('click-reset', () => {
+            if (currentLat && currentLatLngs)
+              map.setView({ lat: currentLat, lng: currentLng }, 16, { animate: true });
+          });
+
+          return nowbtn;
+        };
+        toolbar.addTo(map);
         // 지도 상호작용 적용
         map.on('mousemove', onMouseMove);
         map.on('mousedown', onMouseDown);
@@ -365,9 +384,9 @@
         const svgCropY = (svgSizeY - 350) / 2;
 
         // 지도 그리기
-        ctx.drawImage(mapImg, cropX, cropY - 50, 350, 350, 0, 0, 350, 350);
+        ctx.drawImage(mapImg, cropX, cropY - 100, 350, 350, 0, 0, 350, 350);
         // SVG 그리기
-        ctx.drawImage(svgImg, svgCropX, svgCropY - 50, 350, 350, 0, 0, 350, 350);
+        ctx.drawImage(svgImg, svgCropX, svgCropY - 100, 350, 350, 0, 0, 350, 350);
 
         // 결과 이미지를 Base64로 변환하여 반환
         finalImage = finalCanvas.toDataURL('image/png');

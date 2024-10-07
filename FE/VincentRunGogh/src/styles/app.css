@@ -85,7 +85,7 @@
 
 @font-face {
   font-family: 'BRUSH';
-  src: url('/BRUSH.ttf') format('truetype');
+  src: url('/BRUSH.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }

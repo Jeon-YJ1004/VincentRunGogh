@@ -35,7 +35,11 @@
       </Indicators>
     </Carousel>
   {:else}
-    <img src={drawingImage} alt="drawingImage" style="min-height: 10vh;" />
+    <img
+      src={drawingImage}
+      alt="drawingImage"
+      style="width: 100%; height: 30vh; object-fit:cover; border-radius:3%"
+    />
   {/if}
   {#if distance && time}
     <div class="absolute bottom-0.5 -left-13 z-30">

@@ -245,7 +245,7 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-interactive-supports-focus -->
   <div id="community-mystorage" role="button" class="absolute top-5 right-3">
-    <Avatar rounded src={userInfo.profile} dot={{ color: 'green' }} />
+    <Avatar src={userInfo.profile} dot={{ color: 'green' }} />
   </div>
   <div id="search-control">
     <Button size="sm" on:click={searchCondition}>검색 반경 설정</Button>
@@ -271,7 +271,11 @@
               <div class="mb-3 relative z-10 text-center">
                 <Card size="sm" class="mb-5 p-1 grow">
                   <div class="flex ms-1 mt-1 mb-3 items-center">
-                    <img src={article.profile} alt="" style="width: 50px; height: 50px;" />
+                    <img
+                      src={article.profile}
+                      alt=""
+                      style="width: 50px; height: 50px; border-radius:50%;"
+                    />
                     <p class="ml-5">{article.nickname}</p>
                     <button
                       class="absolute top-5 right-3"

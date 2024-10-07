@@ -4,13 +4,17 @@
   import Tabbar from '@/components/common/Tabbar.svelte';
   import { Chart, Card, ImagePlaceholder } from 'flowbite-svelte';
   import { onMount } from 'svelte';
-  import { userStore } from '@/stores/userStore';
   import { resetDrawingStore } from '@/stores/drawingStore';
+  import { ongoing } from '@/stores/ongoingStore';
   import Swal from 'sweetalert2';
-  import { writable } from 'svelte/store';
   import RouteDetail from '@/components/modals/RouteDetail.svelte';
 
   let isLoad: boolean = false;
+  let ongoingLength: number = 0;
+
+  const unsubscribe = ongoing.subscribe((value) => {
+    ongoingLength = value;
+  });
 
   // 로컬스토리지에서 유저정보 가져오기
   let user: {
@@ -80,6 +84,8 @@
           ongoingDrawingList = [...ongoingDrawingList, responseOngoing.data.findDrawingList[i]];
         }
       }
+      ongoing.set(ongoingDrawingList.length);
+      console.log(ongoingLength);
     } catch (error) {
       {
         throw error;

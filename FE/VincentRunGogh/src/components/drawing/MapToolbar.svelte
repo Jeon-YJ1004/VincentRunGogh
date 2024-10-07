@@ -1,6 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
 
+  export let isMakeRoute: boolean | null = null;
+
   // Dispatching events
   const dispatch = createEventDispatcher<{
     'click-reset': void;
