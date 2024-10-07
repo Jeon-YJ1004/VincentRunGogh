@@ -131,7 +131,12 @@ public class CalendarService {
             double kDrawingDetailDistance = Math.round((drawingDetailDistance / 1000.0) * 100.0) / 100.0;
             int drawingDetailTime = drawingDetailSameDay.getDrawingDetailTime();
             double drawingDetailSpeed = drawingDetailSameDay.getDrawingDetailSpeed();
-            int drawingDetailAvgPace = (int) Math.round(3600 / drawingDetailSpeed);
+            int drawingDetailAvgPace;
+            if (drawingDetailSpeed > 0.0) {
+                drawingDetailAvgPace = (int) Math.round(3600 / drawingDetailSpeed);
+            } else {
+                drawingDetailAvgPace = 0;
+            }
             LocalDateTime drawingDetailCreateTime = drawingDetailSameDay.getDrawingDetailCreateTime();
             drawingDetailList.add(DrawingDetailForListOnSameDayResponse.createDrawingDetailForListOnSameDayResponse(drawingDetailId, drawingDetailImage, kDrawingDetailDistance, drawingDetailTime, drawingDetailAvgPace, drawingDetailCreateTime));
         }

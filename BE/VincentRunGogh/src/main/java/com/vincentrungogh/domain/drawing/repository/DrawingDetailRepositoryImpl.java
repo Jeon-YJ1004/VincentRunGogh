@@ -124,4 +124,28 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                         .and(drawingDetail.created.between(startOfDay, endOfDay)))
                 .fetch();
     }
+
+    @Override
+    public List<EachMonthWalkDistanceTime> findWalkDistanceTimeByYearEachMonth(User user, int year) {
+        /** where절에서 사용 : 파라미터로 전달된 int year로 LocalDateTime 만들기 */
+        // 해당 연도의 가장 처음 시점 (1월 1일 00:00:00)
+        LocalDateTime startOfYear = LocalDateTime.of(year, 1, 1, 0, 0, 0);
+        // 해당 연도의 가장 마지막 시점 (12월 31일 23:59:59)
+        LocalDateTime endOfYear = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+        /** groupBy절에서 사용 : 연도-월 기준으로 LocalDateTime 필드에서 추출하여 그룹화 */
+        DateTemplate<String> monthGroupBy = Expressions.dateTemplate(String.class, "DATE_FORMAT({0}, '%Y-%m')", drawingDetail.created);
+        return queryFactory
+                .select(Projections.constructor(EachMonthWalkDistanceTime.class,
+                        monthGroupBy.as("whatYearAndMonth"),
+                        drawingDetail.step.sum().as("monthStep"),
+                        drawingDetail.distance.sum().as("monthDistance"),
+                        drawingDetail.time.sum().as("monthTime")
+                        ))
+                .from(drawingDetail)
+                .join(drawingDetail.drawing, drawing)
+                .where(drawing.user.eq(user)
+                        .and(drawingDetail.created.between(startOfYear, endOfYear)))
+                .groupBy(monthGroupBy)
+                .fetch();
+    }
 }
