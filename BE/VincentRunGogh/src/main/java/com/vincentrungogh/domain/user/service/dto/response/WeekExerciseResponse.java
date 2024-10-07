@@ -11,16 +11,16 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WeekExerciseResponse {
 
-    private int[] distance = new int[7];
+    private double[] distance = new double[7];
     private int[] time = new int[7];
 
     @Builder
-    private WeekExerciseResponse(int[] distance, int[] time) {
+    private WeekExerciseResponse(double[] distance, int[] time) {
         this.distance = distance;
         this.time = time;
     }
 
-    public static WeekExerciseResponse createWeekExerciseResponse(int[] distance, int[] time) {
+    public static WeekExerciseResponse createWeekExerciseResponse(double[] distance, int[] time) {
         return WeekExerciseResponse.builder()
                 .distance(distance)
                 .time(time)

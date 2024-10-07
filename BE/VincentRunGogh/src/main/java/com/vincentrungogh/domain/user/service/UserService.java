@@ -121,7 +121,7 @@ public class UserService implements UserDetailsService {
         );
 
         // 5.일주일 정보 리스트 생성
-        int[] distance = new int[7];
+        double[] distance = new double[7];
         int[] time = new int[7];
 
         // 6. 저장
@@ -132,7 +132,13 @@ public class UserService implements UserDetailsService {
             time[6 - index] += drawingDetail.getTime();
         }
 
-        return WeekExerciseResponse.createWeekExerciseResponse(distance, time);
+        log.info("일주일 운동 정보(m)" + Arrays.toString(distance));
+        for(int i = 0; i < distance.length; i++){
+            distance[i] = Math.round((distance[i] / 1000.0) * 100.0) / 100.0;
+        }
+        log.info("일주일 운동 정보(km)" + Arrays.toString(distance));
+
+        return WeekExerciseResponse.createWeekExerciseResponse(distance , time);
     }
 
 

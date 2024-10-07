@@ -13,22 +13,22 @@ public class LoginResponse {
     private String accessToken;
     private Boolean isChange;
     private String nickname;
-    private String image;
+    private String profile;
 
     @Builder
-    private LoginResponse(String accessToken, Boolean isChange, String nickname, String image) {
+    private LoginResponse(String accessToken, Boolean isChange, String nickname, String profile) {
         this.accessToken = accessToken;
         this.isChange = isChange;
         this.nickname = nickname;
-        this.image = image;
+        this.profile = profile;
     }
 
-    public static LoginResponse createLoginResponse(String accessToken, Boolean isChange, String nickname, String image) {
+    public static LoginResponse createLoginResponse(String accessToken, Boolean isChange, String nickname, String profile) {
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .isChange(isChange)
                 .nickname(nickname)
-                .image(image)
+                .profile(profile)
                 .build();
     }
 }
