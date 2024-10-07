@@ -35,7 +35,8 @@ public class BoardService {
     // 게시글 좋아요 구현하기
     public void addLike(UserPrincipal userPrincipal, int boardId){
         User user = userService.getUserById(userPrincipal.getId());
-        Board board = boardRepository.findById(boardId);
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         // board의 좋아요 개수 추가
         board.addLike();
@@ -50,7 +51,8 @@ public class BoardService {
     // 게시글 좋아요 취소 구현하기
     public void deleteLike(UserPrincipal userPrincipal, int boardId){
         User user = userService.getUserById(userPrincipal.getId());
-        Board board = boardRepository.findById(boardId);
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         // board의 좋아요 개수 추가
         board.deleteLike();
@@ -62,6 +64,18 @@ public class BoardService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USERLIKE_BOARD_NOT_FOUND));
 
         userLikeRepository.delete(userLike);
+    }
+
+    // 게시글 삭제처리 진행
+    public void deleteBoard(int boardId){
+
+        // 해당하는 ID 찾고 db에 있는지 확인 후 없다면 errorcode 발생시키기
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        // board의 is_deleted true로 변환
+        board.deleteBoard();
+        boardRepository.save(board);
     }
 
 }

@@ -113,4 +113,22 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(ResultDto.res(HttpStatus.OK.value(), "좋아요 취소에 성공했습니다.", null));
     }
 
+    // 게시글 삭제
+    @Operation(summary = "게시글 삭제", description = "내가 작성한 게시글 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "게시글 삭제에 성공했습니다.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class))),
+            @ApiResponse(responseCode = "500", description = "게시글 삭제 처리에 실패했습니다.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class)))
+    })
+    @CommonSwaggerResponse.CommonResponses
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<?> deleteBoard(@PathVariable int boardId) {
+        log.info("deleteBoard 메소드가 호출되었습니다. boardId: " + boardId);
+
+        boardService.deleteBoard(boardId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResultDto.res(HttpStatus.OK.value(), "게시글 삭제에 성공했습니다.", null));
+    }
+
 }

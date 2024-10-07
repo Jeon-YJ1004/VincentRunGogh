@@ -1,6 +1,5 @@
 package com.vincentrungogh.domain.board.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vincentrungogh.domain.route.entity.Route;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -57,6 +56,11 @@ public class Board {
                 .created(LocalDateTime.now())
                 .route(route)
                 .build();
+    }
+
+    // 게시글 삭제
+    public void deleteBoard(){
+        this.isDelete = true;
     }
 
     // 좋아요 추가
