@@ -27,8 +27,6 @@
   </svg>
 </button>
 
-<!-- gps 데이터  -->
-
 <style>
   button {
     width: 2rem;

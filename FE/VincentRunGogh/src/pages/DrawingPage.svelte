@@ -293,8 +293,9 @@
 
   let marker = new Map<string, Marker>();
 
-  function markerIcon(): L.DivIcon {
-    const html = `<div class="map-marker"><svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+  function createMarker(loc: LatLngExpression, heading: number): Marker {
+    const iconHtml = `<div class="map-marker" style="transform: rotate(${heading}deg);">
+<div class="map-marker"><svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="2rem" height="2rem" viewBox="0 0 256.000000 256.000000"
  preserveAspectRatio="xMidYMid meet">
 
@@ -306,22 +307,13 @@ fill="#000000" stroke="none">
 777 1809 0 34 -29 59 -66 58 -16 -1 -425 -172 -909 -380z"/>
 </g>
 </svg>
-</div>`;
-    return L.divIcon({
-      html,
-      className: 'map-marker',
-    });
-  }
-
-  function createMarker(loc: LatLngExpression, heading: number): Marker {
-    const iconHtml = `<div class="map-marker" style="transform: rotate(${heading}deg);">
-      <svg ...></svg>
+</div>
     </div>`;
     const icon = new L.DivIcon({
       html: iconHtml,
       className: 'map-marker',
     });
-    return L.marker(loc, { icon }).addTo(map);
+    if (map) return L.marker(loc, { icon }).addTo(map);
   }
 
   window.addEventListener('deviceorientation', function (event) {
@@ -439,6 +431,7 @@ fill="#000000" stroke="none">
 
   onMount(() => {
     userStore.initialize(); // 스토어에서 사용자 정보 초기화
+    // resetDrawingStore();
     countdown = 3;
     getMotion();
   });
@@ -449,7 +442,6 @@ fill="#000000" stroke="none">
       clearInterval(trackingIntervalId);
     }
     disconnectWebSocket();
-    $elapsedTime = 0;
   });
 </script>
 
@@ -504,7 +496,7 @@ fill="#000000" stroke="none">
   }
 
   .unlock-btn {
-    bottom: 24vh;
+    bottom: 19vh;
     left: 58vw;
     color: white;
     border: none;

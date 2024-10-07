@@ -36,7 +36,7 @@
   }
 </script>
 
-<div class="flex flex-col items-center w-[60vw] h-[30vh] bg-white shadow-lg rounded-lg p-4">
+<div class="flex flex-col items-center w-[60vw] h-[25vh] bg-white shadow-lg rounded-lg p-4">
   <div>
     <button
       class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-main p-2 rounded-full focus:outline-none h-14 w-14"
@@ -107,7 +107,6 @@
   <div class="text-center mt-4">
     <div class="text-4xl font-bold text-gray-800">{formatSecToMS($elapsedTime)}</div>
     <div class="mt-4 space-x-4 flex justify-center items-center">
-      <!-- Display dynamic data in an organized manner -->
       <div class=" flex flex-col items-center justify-center">
         <span class="text-sm"> 이동거리 </span>
         <div>
@@ -119,16 +118,15 @@
       <div class=" flex flex-col items-center justify-center">
         <span class="text-sm"> 페이스 </span>
         <div>
-          <span class="text-lg text-gray-700 text-2xl font-bold">{Math.round(3.4 * 10) / 10} </span>
-          km/h
+          <span class="text-lg text-gray-700 text-2xl font-bold">{$currentPace} </span>
         </div>
       </div>
       {#if hasRoute}
         <div class=" flex flex-col items-center justify-center">
           <span class="text-sm"> 남은 거리 </span>
           <div>
-            <span class="text-lg text-gray-700 text-2xl font-bold"
-              >{Math.round(5.6 * 10) / 10}
+            <span class="text-lg text-gray-700 text-2xl font-bold">
+              <!-- {Math.round(5.6 * 10) / 10} -->
             </span>km
           </div>
         </div>

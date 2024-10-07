@@ -1,4 +1,4 @@
-import { formatSecToHMS } from './formatter';
+import { formatSecToMS } from './formatter';
 
 export function getPace(distance: number, timeInSeconds: number) {
   if (distance <= 0 || timeInSeconds <= 0) {
@@ -6,5 +6,5 @@ export function getPace(distance: number, timeInSeconds: number) {
   }
 
   const paceInSeconds = timeInSeconds / distance; // 1킬로미터 달리는데 걸린 시간(초)
-  return formatSecToHMS(Math.floor(paceInSeconds));
+  return formatSecToMS(Math.floor(paceInSeconds));
 }
