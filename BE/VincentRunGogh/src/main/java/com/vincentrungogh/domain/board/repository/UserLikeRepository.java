@@ -14,4 +14,7 @@ public interface UserLikeRepository extends JpaRepository<UserLike, Integer> {
 
     // user-board like 관계 찾기
     Optional<UserLike> findByUserAndBoard(User user, Board board);
+
+    // 게시글 삭제 시 userlike에 boardId 싹 다 제거 추가 필요(루트 조회 시 userLike 기준 처리이므로 레코드 삭제 필요)
+    void deleteByBoardId(int boardId);
 }

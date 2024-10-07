@@ -76,6 +76,8 @@ public class BoardService {
         // board의 is_deleted true로 변환
         board.deleteBoard();
         boardRepository.save(board);
+        // userlike의 모든 boardId 행을 삭제함
+        userLikeRepository.deleteByBoardId(boardId);
     }
 
 }
