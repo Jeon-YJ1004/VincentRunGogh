@@ -128,6 +128,7 @@ export function resetDrawingStore(): void {
   posList.set([]);
   route.set([]);
   stepCount.set(0);
+  isRouteDrawing.set(false);
   localStorage.removeItem('drawingStore');
   localStorage.removeItem('totalDistance');
   localStorage.removeItem('elapsedTime');

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getDrawingInfo, getDrawingList } from '@/api/drawingApi2';
+  import { getDrawingInfo, getDrawingList } from '@/api/drawingApi';
   import { getWeeklyInfo } from '@/api/userApi';
   import Tabbar from '@/components/common/Tabbar.svelte';
   import { Chart, Card, ImagePlaceholder } from 'flowbite-svelte';

@@ -11,7 +11,7 @@
   import BackButton from '@/components/buttons/BackButton.svelte';
   import FeedArticle from '@/components/cards/FeedArticle.svelte';
   import { getRouteList } from '@/api/routeApi';
-  import { getDrawingList } from '@/api/drawingApi2';
+  import { getDrawingList } from '@/api/drawingApi';
   import Header from '@/components/common/Header.svelte';
   import { formatToKoreanTime } from '@/utils/formatter';
 
@@ -36,20 +36,24 @@
         내가 만든 루트
       </div>
       <div id="community-content">
-        {#each routeArticle as article}
-          <Card class="mb-5">
-            <FeedArticle
-              title={article.title}
-              artImage={article.artImage}
-              distance={article.distance}
-              time={article.predictTime}
-              drawingImage={null}
-            />
-          </Card>
-          <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
-            {article.comment}
-          </p>
-        {/each}
+        {#if routeArticle.length > 0}
+          {#each routeArticle as article}
+            <Card class="mb-5">
+              <FeedArticle
+                title={article.title}
+                artImage={article.artImage}
+                distance={article.distance}
+                time={article.predictTime}
+                drawingImage={null}
+              />
+            </Card>
+          {/each}
+        {:else}
+          <span class="gap-4 flex items-center flex-col justify-center mt-60">
+            <p class="text-gray-700 dark:text-gray-400 text-4xl">내가 만든 루트가 없습니다</p>
+            <p class="text-gray-700 dark:text-gray-400 text-xl">나만의 MAP ART를 만들어보세요</p>
+          </span>
+        {/if}
       </div>
     </TabItem>
     <TabItem defaultClass="tab-item font-bold text-xs gap-2">
@@ -62,9 +66,7 @@
           <Timeline order="vertical" class="flex justify-between m-4">
             <TimelineItem title={article.title} date={formatToKoreanTime(article.updated, true)}>
               <svelte:fragment slot="icon">
-                <span
-                  class="flex absolute -start-3 justify-center items-center w-6 h-6 bg-primary-200 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900"
-                >
+                <span class="flex absolute justify-center items-center w-6 h-6 -start-3">
                   <CalendarWeekSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
                 </span>
               </svelte:fragment>
@@ -85,7 +87,7 @@
 
 <style>
   #community-body {
-    justify-self: center;
+    justify-content: center;
     text-align: center;
     width: 100%;
     max-width: 1024px;
@@ -95,22 +97,28 @@
     flex-direction: column;
   }
 
-  #community-header {
+  #search-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     height: 10vh;
-    width: 100%;
+    z-index: 2;
   }
 
   #community-mystorage {
     width: 15%;
+    z-index: 20;
   }
 
   #community-content {
-    height: 75vh;
-    width: 100%;
+    height: 68vh;
+    width: 90%;
+    margin-left: 5%;
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
     align-items: center;
+    z-index: 2;
   }
 
   #community-content::-webkit-scrollbar {
@@ -118,6 +126,28 @@
   }
 
   #community-tabbar {
-    height: 15vh;
+    height: 12vh;
+    z-index: 2;
+  }
+  #background {
+    position: fixed;
+    bottom: 2%;
+    left: 25%;
+    transform: translateX(-50%);
+    z-index: 1;
+    opacity: 0.3;
+    overflow: visible;
+    transition: 800ms;
+  }
+
+  #background2 {
+    position: fixed;
+    top: 9%;
+    right: -50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    opacity: 0.3;
+    overflow: visible;
+    transition: 800ms;
   }
 </style>

@@ -52,10 +52,12 @@
     const newDrawingId = params.get('drawingId');
     if (newRouteId) {
       routeId.set(newRouteId);
+      console.log('루트 드로잉임!!!');
       isRouteDrawing.set(true);
     }
     if (newDrawingId) {
       drawingId.set(newDrawingId);
+      console.log('루트 드로잉임!!!');
       isRouteDrawing.set(true);
     }
 

@@ -15,7 +15,7 @@
       <span>{title}</span>
     </div>
   </div>
-  {#if artImage}
+  {#if artImage && drawingImage}
     <Carousel
       class="w-full"
       images={[
@@ -34,14 +34,20 @@
         />
       </Indicators>
     </Carousel>
-  {:else}
+  {:else if drawingImage}
     <img
       src={drawingImage}
       alt="drawingImage"
       style="width: 100%; height: 30vh; object-fit:cover; border-radius:3%"
     />
+  {:else}
+    <img
+      src={artImage}
+      alt="artImage"
+      style="width: 100%; height: 30vh; object-fit:cover; border-radius:3%"
+    />
   {/if}
-  {#if distance && time}
+  {#if distance && time !== null}
     <div class="absolute bottom-0.5 -left-13 z-30">
       <div
         class="text-left ms-3 mb-3 text-gray-700 dark:text-gray-400 leading-tight bg-gray-600 text-white bg-opacity-70 rounded-md p-1"

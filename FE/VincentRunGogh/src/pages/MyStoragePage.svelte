@@ -15,7 +15,7 @@
   import { userStore } from '@/stores/userStore';
   import { get } from 'svelte/store';
   import { deleteArticle, dislikeArticle, getArticleList, likeArticle } from '@/api/communityApi';
-  import { getDrawingList } from '@/api/drawingApi2';
+  import { getDrawingList } from '@/api/drawingApi';
   import { onMount } from 'svelte';
   import PostArticle from '@/components/modals/PostArticle.svelte';
 
