@@ -24,6 +24,7 @@ public class FindOthersRoute implements RouteStrategy {
         List<Route> routeList = routeRepository.findAllByUserIsNot(user);
 
         List<FindRoute> findRouteList = routeList.stream()
+                .filter(route -> route.getTitle() != null)
                 .map(route -> FindRoute.createFindRoute(route, lat, lng, averageSpeed)) // 람다식 사용
                 .filter(Objects::nonNull) // null 값 제거
                 .toList();

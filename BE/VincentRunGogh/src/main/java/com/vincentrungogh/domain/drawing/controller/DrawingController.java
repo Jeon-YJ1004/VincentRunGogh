@@ -90,6 +90,8 @@ public class DrawingController {
     @PostMapping("/start")
     public ResponseEntity<?> startDrawing(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody StartDrawingRequest request){
 
+        log.info("루트 아이디 "+ request.getRouteId());
+
         StartDrawingResponse response = drawingService.startDrawing(userPrincipal.getId(), request);
         return ResponseEntity
                 .status(HttpStatus.OK)

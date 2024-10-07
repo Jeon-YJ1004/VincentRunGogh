@@ -17,7 +17,7 @@ public interface DrawingRepository extends JpaRepository<Drawing, Integer>, Draw
 
     List<Drawing> findAllByUserAndIsCreatedBoard(User user, Boolean isCreatedBoard);
 
-    int countAllByUserAndIsCompleted(User user, Boolean isCompleted);
+    int countAllByUserAndIsCompletedAndTitleIsNotNull(User user, Boolean isCompleted);
 
     @Override
     DrawingTitleArtImage findTitleAndArtImageById(int drawingId);

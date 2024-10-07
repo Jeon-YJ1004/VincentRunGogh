@@ -100,7 +100,7 @@ public class DrawingService {
     private StartDrawingResponse drawingRunning(String routeId, User user) {
 
         // 0. 진행 중인 드로잉 개수
-        int count = drawingRepository.countAllByUserAndIsCompleted(user, false);
+        int count = drawingRepository.countAllByUserAndIsCompletedAndTitleIsNotNull(user, false);
         if(count >= 3){
             throw new CustomException(ErrorCode.MORE_THAN_THREE_DRAWINGS);
         }
