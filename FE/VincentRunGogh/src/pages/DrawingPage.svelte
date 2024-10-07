@@ -16,8 +16,9 @@
     updateDrawingInfo,
     setDrawingPos,
     updateDistanceAndSpeed,
-    resetDrawingStore,
     drawingStore,
+    getMotion,
+    isRouteDrawing,
   } from '@/stores/drawingStore';
   import DrawingPauseModal from '@/components/modals/DrawingPauseModal.svelte';
   import { userStore } from '@/stores/userStore';
@@ -49,9 +50,11 @@
     const newDrawingId = params.get('drawingId');
     if (newRouteId) {
       routeId.set(newRouteId);
+      isRouteDrawing.set(true);
     }
     if (newDrawingId) {
       drawingId.set(newDrawingId);
+      isRouteDrawing.set(true);
     }
 
     // 옵션 객체 업데이트
@@ -310,12 +313,28 @@ fill="#000000" stroke="none">
     });
   }
 
-  function createMarker(loc: LatLngExpression): Marker {
-    const icon = markerIcon();
-    if (map) return L.marker(loc, { icon }).addTo(map); // 마커를 지도에 추가
-    return L.marker(loc, { icon });
+  function createMarker(loc: LatLngExpression, heading: number): Marker {
+    const iconHtml = `<div class="map-marker" style="transform: rotate(${heading}deg);">
+      <svg ...></svg>
+    </div>`;
+    const icon = new L.DivIcon({
+      html: iconHtml,
+      className: 'map-marker',
+    });
+    return L.marker(loc, { icon }).addTo(map);
   }
 
+  window.addEventListener('deviceorientation', function (event) {
+    const heading = event.alpha;
+    // 마커의 방향 업데이트
+    if (marker.has('current')) {
+      const existingMarker = marker.get('current');
+      const newIconHtml = `<div class="map-marker" style="transform: rotate(${heading}deg);">
+          <svg ...></svg>
+        </div>`;
+      existingMarker.setIcon(L.divIcon({ html: newIconHtml, className: 'map-marker' }));
+    }
+  });
   function createLines(): Polyline {
     return L.polyline(
       $posList.map((p) => p.latlng),
@@ -421,6 +440,7 @@ fill="#000000" stroke="none">
   onMount(() => {
     userStore.initialize(); // 스토어에서 사용자 정보 초기화
     countdown = 3;
+    getMotion();
   });
   onDestroy(() => {
     if (map) {
@@ -501,5 +521,8 @@ fill="#000000" stroke="none">
     justify-content: center;
     flex-wrap: wrap;
     border-radius: 55px;
+  }
+  .map-marker {
+    transition: transform 0.3s ease-in-out; /* 부드러운 회전 효과 */
   }
 </style>

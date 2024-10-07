@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { PlayOutline, StopOutline, PauseOutline, ArrowLeftOutline } from 'flowbite-svelte-icons';
   import { get } from 'svelte/store';
-  import { drawingStore } from '@/stores/drawingStore';
+  import { isRouteDrawing } from '@/stores/drawingStore';
 
   export let modalType: string;
   const dispatch = createEventDispatcher();
@@ -16,7 +16,7 @@
           color: 'red',
           text: '완성',
         },
-        get(drawingStore).routePositionList > 0 && {
+        get(isRouteDrawing) && {
           icon: PauseOutline,
           action: () => dispatch('confirm', { modalType: 'save' }),
           color: 'yellow',
