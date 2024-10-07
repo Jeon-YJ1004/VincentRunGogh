@@ -7,6 +7,7 @@
     elapsedTime,
     totalDistance,
     currentPace,
+    stepCount,
   } from '@/stores/drawingStore';
   import { get } from 'svelte/store';
   import { formatSecToMS } from '@/utils/formatter';
@@ -18,6 +19,7 @@
   }>();
   $: $isLockScreen = $isLockScreen;
   $: $isPause = $isPause;
+  $: $stepCount = $stepCount;
 
   let isMute = false;
   let hasRoute = false;
@@ -121,16 +123,15 @@
           <span class="text-lg text-gray-700 text-2xl font-bold">{$currentPace} </span>
         </div>
       </div>
-      {#if hasRoute}
-        <div class=" flex flex-col items-center justify-center">
-          <span class="text-sm"> 남은 거리 </span>
-          <div>
-            <span class="text-lg text-gray-700 text-2xl font-bold">
-              <!-- {Math.round(5.6 * 10) / 10} -->
-            </span>km
-          </div>
+
+      <div class=" flex flex-col items-center justify-center">
+        <span class="text-sm"> 걸음수 </span>
+        <div>
+          <span class="text-lg text-gray-700 text-2xl font-bold">
+            <span class="text-lg text-gray-700 text-2xl font-bold">{$stepCount} </span>
+          </span>
         </div>
-      {/if}
+      </div>
     </div>
   </div>
 </div>

@@ -2,7 +2,7 @@ import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { LatLng } from 'leaflet';
 import L from 'leaflet';
-import { getPace } from '@/utils/calculateFuc';
+import { formatSecToMS } from '@/utils/formatter';
 
 // 데이터 타입 정의
 interface Position {
@@ -38,7 +38,7 @@ export const currentPace = writable('00:00');
 export const route = writable([]);
 export const posList = writable([]);
 export const isRouteDrawing = writable<boolean>(false);
-const stepCount = writable(0);
+export const stepCount = writable(0);
 
 // 로컬 스토리지에서 데이터 가져오기
 function loadFromLocalStorage(key, defaultValue) {
@@ -101,7 +101,7 @@ export function updateDistanceAndSpeed(posList: PositionData[]) {
         const paceMinutes = Math.floor(paceSeconds / 60);
         const remainingSeconds = Math.round(paceSeconds % 60);
 
-        currentPace.set(getPace(distance, timeDiff));
+        currentPace.set(formatSecToMS(paceSeconds));
       }
 
       return currentDistance + distance;

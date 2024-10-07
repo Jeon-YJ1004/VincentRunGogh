@@ -11,12 +11,19 @@
   import { Canvg } from 'canvg';
 
   import Swal from 'sweetalert2';
-  import { location, querystring } from 'svelte-spa-router';
+  import { querystring } from 'svelte-spa-router';
   import { get, writable } from 'svelte/store';
-  import { Button, Input, GradientButton, Label, Card } from 'flowbite-svelte';
-  import { LockSolid, LockOpenSolid } from 'flowbite-svelte-icons';
+  import { Input, GradientButton, Label, Card } from 'flowbite-svelte';
+  import { LockSolid } from 'flowbite-svelte-icons';
 
-  import { elapsedTime, posList, route, totalDistance, drawingStore } from '@/stores/drawingStore';
+  import {
+    stepCount,
+    elapsedTime,
+    posList,
+    route,
+    totalDistance,
+    drawingStore,
+  } from '@/stores/drawingStore';
   import { completeDrawing, saveDrawing } from '@/api/drawingApi';
   import SaveRouteDrawing from '@components/cards/SaveRouteDrawing.svelte';
   import { formatDistanceFix2 } from '@/utils/formatter';
@@ -148,7 +155,7 @@
     const data = {
       drawingImage: $drawingImage,
       drawingDetailImage: $drawingDetailImage,
-      step: 0,
+      step: $stepCount,
       ...drawingInfo.endInfo,
     };
     if (isComplete) {

@@ -3,7 +3,6 @@
   import { replace } from 'svelte-spa-router';
   import { RedoOutline } from 'flowbite-svelte-icons';
   import { formatSecToHMS } from '@/utils/formatter';
-  import { resetDrawingStore } from '@/stores/drawingStore';
   export let title: string;
   export let distance: number;
   export let time: number;
@@ -16,8 +15,6 @@
     replace(startURL);
   }
   function handleGoHome() {
-    resetDrawingStore();
-
     replace('/');
   }
 </script>
