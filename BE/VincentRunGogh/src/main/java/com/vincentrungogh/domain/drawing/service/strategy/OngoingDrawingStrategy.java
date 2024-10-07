@@ -25,7 +25,7 @@ public class OngoingDrawingStrategy implements DrawingStrategy {
     public DrawingListResponseDto findDrawingList(User user) {
 
         //완료되지 않는 현재 진행 중인 드로잉 조회
-        List<Drawing> drawingList = drawingRepository.findAllByUserAndIsCompleted(user, false);
+        List<Drawing> drawingList = drawingRepository.findAllByUserAndIsCompletedAndTitleIsNotNull(user, false);
 
         List<FindDrawing> findDrawingList = drawingList.stream()
                 .map(drawing -> {
