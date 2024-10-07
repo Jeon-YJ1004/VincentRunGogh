@@ -10,7 +10,10 @@
 <button
   type="button"
   class="single-click"
-  on:click={() => dispatch('click-reset')}
+  on:click={(e) => {
+    e.stopPropagation();
+    dispatch('click-reset');
+  }}
   title="Reset View"
 >
   <svg

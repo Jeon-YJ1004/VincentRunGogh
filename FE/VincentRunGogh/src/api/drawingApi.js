@@ -5,6 +5,12 @@ async function startDrawing(options, data, success, fail) {
   let url = '/drawings/start';
   if (drawingId) {
     url += `/${drawingId}`;
+  } else {
+    if (routeId) {
+      url += '?type=route';
+    } else {
+      url += '?type=free';
+    }
   }
   const body = routeId ? { routeId, ...data } : { ...data };
   await http.post(url, body).then(success).catch(fail);

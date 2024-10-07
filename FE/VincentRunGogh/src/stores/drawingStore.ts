@@ -2,7 +2,6 @@ import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { LatLng } from 'leaflet';
 import L from 'leaflet';
-import { formatSecToMS } from '@/utils/formatter';
 
 // 데이터 타입 정의
 interface Position {
@@ -100,10 +99,10 @@ export function updateDistanceAndSpeed(posList: PositionData[]) {
         const paceSeconds = 3600 / speed;
         const paceMinutes = Math.floor(paceSeconds / 60);
         const remainingSeconds = Math.round(paceSeconds % 60);
-
-        currentPace.set(formatSecToMS(paceSeconds));
-      }
-
+        const minutesString = paceMinutes.toString().padStart(2, '0');
+        const secondsString = remainingSeconds.toString().padStart(2, '0');
+        currentPace.set(`${minutesString}:${secondsString}`);
+      } else currentPace.set('-');
       return currentDistance + distance;
     }
     return currentDistance;

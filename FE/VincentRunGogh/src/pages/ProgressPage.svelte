@@ -19,7 +19,6 @@
 
   import Header from '@components/common/Header.svelte';
   import { formatSecToH, formatDistanceFix2 } from '@/utils/formatter';
-  import { getPace } from '@/utils/calculateFuc';
   ChartJS.register(
     LinearScale,
     CategoryScale,

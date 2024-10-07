@@ -19,7 +19,6 @@
   }>();
   $: $isLockScreen = $isLockScreen;
   $: $isPause = $isPause;
-  $: $stepCount = $stepCount;
 
   let isMute = false;
   let hasRoute = false;
@@ -123,7 +122,6 @@
           <span class="text-lg text-gray-700 text-2xl font-bold">{$currentPace} </span>
         </div>
       </div>
-
       <div class=" flex flex-col items-center justify-center">
         <span class="text-sm"> 걸음수 </span>
         <div>

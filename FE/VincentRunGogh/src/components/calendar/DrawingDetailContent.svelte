@@ -69,7 +69,7 @@
       {#each drawingDetail.drawingDetailList as detail}
         <li class="bg-gray-100 p-4 rounded-lg shadow">
           <p class="font-medium text-gray-600 text-[1.40rem] leading-7">
-            {formatToKoreanTime(detail.drawingDetailCreateTime)}
+            {formatToKoreanTime(detail.drawingDetailCreateTime, false)}
           </p>
           <DrawingInfoBox
             time={detail.drawingDetailTime}

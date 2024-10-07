@@ -26,6 +26,7 @@
   import { startDrawing } from '@/api/drawingApi';
   import { connectWebSocket, disconnectWebSocket, sendRealTimePosition } from '@/api/websocket';
   import { formatTimeToHMS } from '@/utils/formatter';
+  import { set } from 'date-fns';
   $: $isLockScreen = $isLockScreen;
   $: $isPause = $isPause;
   $: $elapsedTime = $elapsedTime;
@@ -40,7 +41,8 @@
   let startPos: LatLng | null = null;
   let startTime: string | null = null;
   let firstLocationFound = writable(false); // 최초 위치 찾기 상태
-
+  let isFocusMarker: boolean = true;
+  let zoomLevel: number = 16;
   let routeId = writable(null);
   let drawingId = writable(null);
   let options = writable({});
@@ -66,7 +68,7 @@
 
   function createMap(): LeafletMap {
     const m = L.map('map', { preferCanvas: true });
-    m.locate({ setView: true, maxZoom: 16 });
+    m.locate({ setView: true, maxZoom: zoomLevel });
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       // attribution: `&copy;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>,
@@ -83,6 +85,8 @@
 
     addPosition(lat, lng);
 
+    if (currPos && isFocusMarker) map.setView(currPos, zoomLevel, { animate: true });
+
     firstLocationFound.update((value) => {
       if (!value) {
         // 처음 위치 찾기
@@ -90,7 +94,7 @@
         firstLocationFound.set(true);
         startPos = new L.LatLng(lat, lng);
         const data = { lat: lat, lng: lng, time: startTime };
-        console.log(data, get(options));
+        // console.log(data, get(options));
         startDrawing(
           get(options),
           data,
@@ -105,7 +109,7 @@
             }
             updateDrawingInfo(updateData); // 스토어를 업데이트
 
-            console.log('api 연결 후 드로잉 데이터:', get(drawingStore));
+            // console.log('api 연결 후 드로잉 데이터:', get(drawingStore));
 
             if (routeLineLayers) {
               routeLineLayers.remove();
@@ -116,7 +120,7 @@
             }
             try {
               await connectWebSocket();
-              console.log('WebSocket connected successfully');
+              // console.log('WebSocket connected successfully');
             } catch (error) {
               console.error('Failed to connect WebSocket:', error);
             }
@@ -127,10 +131,10 @@
         );
       } else {
         // 주기적 위치 업데이트
-        console.log('주기적 found');
+        // console.log('주기적 found');
 
         if (!$isPause) {
-          console.log('소켓 데이터 보내기!');
+          // console.log('소켓 데이터 보내기!');
           const currentUser = get(userStore);
           const nickname = currentUser ? currentUser.nickname : '';
           sendRealTimePosition({ lat, lng }, nickname);
@@ -165,7 +169,8 @@
     });
 
     toolbarComponent.$on('click-reset', () => {
-      if (currPos) map.setView(currPos, 16, { animate: true });
+      if (currPos) map.setView(currPos, zoomLevel, { animate: true });
+      isFocusMarker = true;
     });
 
     return div;
@@ -354,6 +359,17 @@ fill="#000000" stroke="none">
     lineLayers = createLines();
     lineLayers.addTo(map);
 
+    map.on('dblclick', (e) => {
+      console.log('dblclick map');
+      isFocusMarker = true;
+    });
+    map.on('drag', (e) => {
+      console.log('drag map');
+      isFocusMarker = false;
+    });
+    map.on('zoom', (e) => {
+      zoomLevel = e.target._zoom;
+    });
     return {
       destroy: () => {
         if (map) {
@@ -381,7 +397,7 @@ fill="#000000" stroke="none">
   }
   async function toggleTracking() {
     const trackingActive = get(isPause);
-    map?.locate({ setView: true, maxZoom: 18 });
+    map?.locate({ setView: true, maxZoom: zoomLevel });
     map?.on('locationfound', handleLocationFound);
 
     map?.on('locationerror', (e: L.ErrorEvent) => {

@@ -19,7 +19,7 @@ export function connectWebSocket() {
     stompClient = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
-        console.log(str);
+        // console.log(str);
       },
       connectHeaders: headers,
       reconnectDelay: 5000,
@@ -50,7 +50,7 @@ export function sendRealTimePosition(location: Object, nickname: string) {
     const accessToken = localStorage.getItem('accessToken');
     const headers = { Authorization: `Bearer ${accessToken}` };
     const data = { ...location, time: formatTimeToHMS() };
-    console.log('Sending data:', data);
+    // console.log('Sending data:', data);
     stompClient.publish({
       destination: `/pub/running/${nickname}`,
       headers: headers,
