@@ -1,5 +1,6 @@
 package com.vincentrungogh.domain.myhealth.service;
 
+import com.vincentrungogh.domain.drawing.entity.DrawingDetailToday;
 import com.vincentrungogh.domain.drawing.entity.EachMonthRouteFreeCount;
 import com.vincentrungogh.domain.drawing.entity.EachMonthWalkDistanceTime;
 import com.vincentrungogh.domain.drawing.repository.DrawingDetailRepository;
@@ -7,6 +8,7 @@ import com.vincentrungogh.domain.drawing.repository.DrawingRepository;
 import com.vincentrungogh.domain.myhealth.entity.MyHealth;
 import com.vincentrungogh.domain.myhealth.repository.MyHealthRepository;
 import com.vincentrungogh.domain.myhealth.service.dto.response.EachMonthMyhealthResponse;
+import com.vincentrungogh.domain.myhealth.service.dto.response.TodayMyhealthResponse;
 import com.vincentrungogh.domain.user.entity.User;
 import com.vincentrungogh.domain.user.repository.UserRepository;
 import com.vincentrungogh.global.exception.CustomException;
@@ -105,5 +107,36 @@ public class MyHealthService {
 
         // 3. EachMonthMyhealthResponse 객체 리턴
         return EachMonthMyhealthResponse.createEachMonthMyhealthResponse(walkList, distanceList, timeList, completedRouteDrawingList, completedFreeDrawingList, totalWalk, totalDistance, totalTime, totalCompletedDrawing);
+    }
+
+    // 마이헬스 정보 조회
+    @Transactional
+    public TodayMyhealthResponse getToday(int userId) {
+
+        // 0. TodayMyhealthResponse 객체 생성을 위한 field 초기값 세팅
+        int todayRuntime = 0;
+        double todayDistance = 0.0;
+        int todayAvgPace = 0;
+        int todayStep = 0;
+
+        // 1. 유저 아이디로 유저 엔티티 특정하기
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+
+        // 2. 할당된 유저 엔티티로 QueryDSL
+        DrawingDetailToday drawingDetailToday = drawingDetailRepository.findTodayByUser(user);
+
+        // 3. QueryDSL을 받기 위한 클래스에서 내가 보내야할 Response DTO로 변환하는 작업
+        todayRuntime = drawingDetailToday.getTodayRuntime();
+        todayDistance = Math.round((drawingDetailToday.getTodayDistance() / 1000.0) * 100.0) / 100.0;
+        double todayAvgSpeed = drawingDetailToday.getTodayAvgSpeed();
+        if(todayAvgSpeed > 0.0) {
+            todayAvgPace = (int) Math.round(3600 / todayAvgSpeed);
+        }
+        todayStep = drawingDetailToday.getTodayStep();
+
+        // 4. TodayMyhealthResponse 객체 리턴
+        return TodayMyhealthResponse.createTodayMyhealthResponse(todayRuntime, todayDistance, todayAvgPace, todayStep);
     }
 }

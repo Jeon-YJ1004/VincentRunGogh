@@ -157,4 +157,25 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                 .groupBy(monthGroupBy)
                 .fetch();
     }
+
+    @Override
+    public DrawingDetailToday findTodayByUser(User user) {
+        /** 현재 시간 기준 날짜로 LocalDateTime 객체 생성하기 */
+        // 오늘의 가장 처음 시점
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+        // 오늘의 가장 마지막 시점
+        LocalDateTime endOfToday = LocalDate.now().atTime(LocalTime.of(23, 59, 59));
+        return queryFactory
+                .select(Projections.constructor(DrawingDetailToday.class,
+                        drawingDetail.time.sum().as("todayRuntime"),
+                        drawingDetail.distance.sum().as("todayDistance"),
+                        drawingDetail.speed.avg().as("todayAvgSpeed"),
+                        drawingDetail.step.sum().as("todayStep")
+                        ))
+                .from(drawingDetail)
+                .join(drawingDetail.drawing, drawing)
+                .where(drawing.user.eq(user)
+                        .and(drawingDetail.created.between(startOfToday, endOfToday)))
+                .fetchOne();
+    }
 }

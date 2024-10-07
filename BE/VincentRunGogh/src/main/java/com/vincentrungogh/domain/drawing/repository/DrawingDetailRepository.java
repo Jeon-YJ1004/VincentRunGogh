@@ -29,4 +29,7 @@ public interface DrawingDetailRepository extends JpaRepository<DrawingDetail, In
 
     @Override
     List<EachMonthWalkDistanceTime> findWalkDistanceTimeByYearEachMonth(User user, int year);
+
+    @Override
+    DrawingDetailToday findTodayByUser(User user);
 }

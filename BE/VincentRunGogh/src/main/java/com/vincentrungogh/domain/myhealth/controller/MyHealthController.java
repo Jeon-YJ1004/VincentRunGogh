@@ -2,6 +2,7 @@ package com.vincentrungogh.domain.myhealth.controller;
 
 import com.vincentrungogh.domain.myhealth.service.MyHealthService;
 import com.vincentrungogh.domain.myhealth.service.dto.response.EachMonthMyhealthResponse;
+import com.vincentrungogh.domain.myhealth.service.dto.response.TodayMyhealthResponse;
 import com.vincentrungogh.global.auth.service.dto.response.UserPrincipal;
 import com.vincentrungogh.global.util.CommonSwaggerResponse;
 import com.vincentrungogh.global.util.ResultDto;
@@ -44,5 +45,23 @@ public class MyHealthController {
                 .status(HttpStatus.OK)
                 .body(ResultDto.res(HttpStatus.OK.value(),
                         "드로잉 활동 정보 조회 요청이 성공했습니다.", response));
+    }
+
+    // 마이헬스 정보 조회
+    @Operation(summary = "마이헬스 정보 조회", description = "마이헬스 정보 조회하기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "마이헬스 정보 조회 요청이 성공했습니다.",
+                    content = @Content(schema = @Schema(implementation = TodayMyhealthResponse.class))),
+            @ApiResponse(responseCode = "500", description = "마이헬스 정보 조회 요청이 실패했습니다.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class)))
+    })
+    @CommonSwaggerResponse.CommonResponses
+    @GetMapping("/group")
+    public ResponseEntity<?> getToday(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        TodayMyhealthResponse response = myHealthService.getToday(userPrincipal.getId());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResultDto.res(HttpStatus.OK.value(),
+                        "마이헬스 정보 조회 요청이 성공했습니다.", response));
     }
 }
