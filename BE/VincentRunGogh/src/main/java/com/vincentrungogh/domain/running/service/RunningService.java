@@ -19,6 +19,4 @@ public class RunningService {
         redisService.saveRunning(userId, request);
 
     }
-
-
 }

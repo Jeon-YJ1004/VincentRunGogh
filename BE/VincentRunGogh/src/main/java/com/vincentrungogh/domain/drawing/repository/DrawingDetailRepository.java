@@ -13,6 +13,9 @@ public interface DrawingDetailRepository extends JpaRepository<DrawingDetail, In
     List<DrawingDetail> findAllByDrawing(Drawing drawing);
 
     @Override
+    Long countAllByDrawings(List<Drawing> drawings);
+
+    @Override
     double findByDrawingAverageSpeed(Drawing drawing);
 
     @Override

@@ -2,8 +2,7 @@ package com.vincentrungogh.domain.drawing.repository;
 
 import com.vincentrungogh.domain.drawing.entity.*;
 import com.vincentrungogh.domain.user.entity.User;
-import com.vincentrungogh.domain.user.entity.User;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import com.vincentrungogh.domain.drawing.entity.DrawingDetail;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,6 +19,8 @@ public interface DrawingDetailRepositoryCustom {
     List<DrawingDetail> findAllByUserAndCreatedBetweenDates(User user, LocalDate start, LocalDate end);
 
     List<DrawingDetailSameDay> findByDrawingIdAndDay(User user, int drawingId, String date);
+
+    Long countAllByDrawings(List<Drawing> drawings);
 
     List<EachMonthWalkDistanceTime> findWalkDistanceTimeByYearEachMonth(User user, int year);
 }

@@ -4,7 +4,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanTemplate;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.vincentrungogh.domain.drawing.entity.*;
@@ -123,6 +122,16 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                         .and(drawing.id.eq(drawingId))
                         .and(drawingDetail.created.between(startOfDay, endOfDay)))
                 .fetch();
+    }
+
+    @Override
+    public Long countAllByDrawings(List<Drawing> drawings) {
+
+        return queryFactory
+                .select(drawingDetail.id.count())
+                .from(drawingDetail)
+                .where(drawingDetail.drawing.in(drawings))
+                .fetchOne();
     }
 
     @Override
