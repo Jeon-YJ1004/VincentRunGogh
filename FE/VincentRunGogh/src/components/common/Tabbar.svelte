@@ -7,7 +7,7 @@
 
   function startDrawing() {
     Swal.fire({
-      title: '어떤 드로잉을 시작하실건가요?',
+      title: "<div class='text-lg'>" + '어떤 드로잉을 시작하실건가요?' + '</div>',
       html: '<div id="start-drawing"></div>',
       showConfirmButton: false,
       didOpen: () => {

@@ -5,10 +5,10 @@
 
   function clickBackButton() {
     Swal.fire({
-      title: '홈으로 이동하시겠습니까?',
+      title: "<div class='text-lg'>" + '홈으로 이동하시겠습니까?' + '</div>',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#5E8358',
+      cancelButtonColor: '#697386',
       confirmButtonText: '홈으로',
       cancelButtonText: '취소',
     }).then((result) => {
