@@ -99,9 +99,13 @@
       lng: currentLng,
       type: 'all',
     };
-
-    let responseAllArticle = await getArticleList(articleListParams);
-    articleList = responseAllArticle.data.boardList;
+    try {
+      let responseAllArticle = await getArticleList(articleListParams);
+      articleList = responseAllArticle.data.boardList;
+    } catch (error) {
+      replace('/');
+      throw error;
+    }
   }
 
   // 작성시간 파악 함수
