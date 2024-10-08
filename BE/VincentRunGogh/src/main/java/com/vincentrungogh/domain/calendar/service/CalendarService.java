@@ -116,12 +116,6 @@ public class CalendarService {
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
-        /**
-        // 2-1. 드로잉 아이디로 QueryDSL
-        DrawingTitleArtImage drawingTitleArtImage = drawingRepository.findTitleAndArtImageById(drawingId);
-        title = drawingTitleArtImage.getTitle();
-        routeImage = drawingTitleArtImage.getRouteImage();
-         */
         // 2-1. 드로잉 이름, 아트 이미지(자유드로잉일 때는 null) 구하기
         Drawing drawing = drawingRepository.findById(drawingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));

@@ -23,9 +23,6 @@ public interface DrawingRepository extends JpaRepository<Drawing, Integer>, Draw
 
     int countAllByUserAndIsCompletedAndTitleIsNotNull(User user, Boolean isCompleted);
 
-//    @Override
-//    DrawingTitleArtImage findTitleAndArtImageById(int drawingId);
-
     @Override
     List<EachMonthRouteFreeCount> findRouteFreeCountByYearEachMonth(User user, int year);
 

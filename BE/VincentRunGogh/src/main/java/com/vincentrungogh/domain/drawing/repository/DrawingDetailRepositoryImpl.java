@@ -82,7 +82,8 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                 .from(drawingDetail)
                 .join(drawingDetail.drawing, drawing)
                 .where(drawing.user.eq(user)
-                        .and(drawingDetail.created.between(startOfMonth, endOfMonth)))
+                        .and(drawingDetail.created.between(startOfMonth, endOfMonth))
+                        .and(drawing.title.isNotNull()))
                 .groupBy(drawingDetail.drawing, dateGroupBy)
                 .fetch();
     }
@@ -120,7 +121,8 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                 .join(drawingDetail.drawing, drawing)
                 .where(drawing.user.eq(user)
                         .and(drawing.id.eq(drawingId))
-                        .and(drawingDetail.created.between(startOfDay, endOfDay)))
+                        .and(drawingDetail.created.between(startOfDay, endOfDay))
+                        .and(drawing.title.isNotNull()))
                 .fetch();
     }
 
@@ -153,7 +155,8 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                 .from(drawingDetail)
                 .join(drawingDetail.drawing, drawing)
                 .where(drawing.user.eq(user)
-                        .and(drawingDetail.created.between(startOfYear, endOfYear)))
+                        .and(drawingDetail.created.between(startOfYear, endOfYear))
+                        .and(drawing.title.isNotNull()))
                 .groupBy(monthGroupBy)
                 .fetch();
     }
@@ -175,7 +178,8 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                 .from(drawingDetail)
                 .join(drawingDetail.drawing, drawing)
                 .where(drawing.user.eq(user)
-                        .and(drawingDetail.created.between(startOfToday, endOfToday)))
+                        .and(drawingDetail.created.between(startOfToday, endOfToday))
+                        .and(drawing.title.isNotNull()))
                 .fetchOne();
     }
 }
