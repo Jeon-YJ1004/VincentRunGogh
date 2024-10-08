@@ -27,23 +27,28 @@
   let drawingDetail: DrawingInfo;
 
   function showImageModal() {
-    Swal.fire({
-      imageUrl: drawingDetail?.routeImage,
-      imageAlt: 'Custom image',
-      background: '#fff',
-      width: 'auto',
-      padding: '20px',
-    });
+    if (drawingDetail && drawingDetail.routeImage) {
+      // drawingDetail 존재 확인
+      Swal.fire({
+        imageUrl: drawingDetail.routeImage,
+        imageAlt: 'Custom image',
+        background: '#fff',
+        width: 'auto',
+        padding: '20px',
+      });
+    }
   }
   onMount(() => {
     getDrawingDetail(
       drawingId,
       date,
       (response) => {
-        drawingDetail = response.data.data;
+        drawingDetail = response.data.data; // 데이터 할당
         console.log(drawingDetail);
       },
-      (error) => {}
+      (error) => {
+        console.error('Failed to fetch drawing details:', error);
+      }
     );
   });
 </script>
@@ -51,10 +56,9 @@
 <div class="p-4 bg-white shadow-lg rounded-lg overflow-hidden">
   <div class="flex flex-row justify-between items-center">
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-      {date} &nbsp;
-      {drawingDetail?.title}
+      {date} &nbsp; {#if drawingDetail}{drawingDetail.title}{/if}
     </h5>
-    {#if drawingDetail.routeImage}
+    {#if drawingDetail && drawingDetail.routeImage}
       <button
         class="flex items-center justify-center p-2 rounded bg-gray-200 hover:bg-gray-300"
         on:click={showImageModal}
@@ -67,7 +71,7 @@
   </div>
 
   <ul class="space-y-4 mt-4">
-    {#if drawingDetail?.drawingDetailList}
+    {#if drawingDetail && drawingDetail.drawingDetailList}
       {#each drawingDetail.drawingDetailList as detail}
         <li class="bg-gray-100 p-4 rounded-lg shadow">
           <p class="font-medium text-gray-600 text-[1.40rem] leading-7">

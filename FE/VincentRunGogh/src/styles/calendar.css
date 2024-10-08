@@ -162,3 +162,11 @@
 .fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
   margin: 0;
 }
+.fc-daygrid-day {
+  pointer-events: none;
+}
+
+/* 날짜 숫자가 아닌 날짜 셀 전체에 클릭 이벤트 적용 */
+.fc-daygrid-day-number {
+  pointer-events: auto;
+}
