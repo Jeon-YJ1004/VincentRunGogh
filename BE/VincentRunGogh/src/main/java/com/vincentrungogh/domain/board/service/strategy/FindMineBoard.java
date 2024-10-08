@@ -31,7 +31,7 @@ public class FindMineBoard implements BoardStrategy {
         MyHealth myHealth = myHealthRepository.findByUser(user)
                 .orElseThrow(() -> new CustomException(ErrorCode.MYHEALTH_NOT_FOUND));
 
-        double averageSpeed =  15;//myHealth.getAverageSpeed();
+        double averageSpeed = myHealth.getAverageSpeed();
         if(averageSpeed <= 0){
             throw new CustomException(ErrorCode.SPEED_DIVIDE_BY_ZERO);
         }
