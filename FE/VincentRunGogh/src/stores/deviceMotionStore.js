@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 const MIN_STEP_THRESHOLD = 18;
 const MAX_STEP_THRESHOLD = 30;
 const stepTimeout = 250; // in milliseconds
-const prevPoint = 150;
+const prevPoint = 75;
 // State and historic data
 let lastStepTime = 0;
 let historicMotion = { x: [], y: [], z: [] };
@@ -57,6 +57,7 @@ function calculateSteps() {
   const now = Date.now();
   if (now - lastStepTime > stepTimeout) {
     const movement = calculateAverageMovement(historicMotion, prevPoint);
+    alert(movement);
     if (movement > MIN_STEP_THRESHOLD && movement < MAX_STEP_THRESHOLD) {
       stepCount.update((n) => n + 1);
       lastStepTime = now;
