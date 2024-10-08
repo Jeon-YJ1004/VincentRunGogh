@@ -89,7 +89,7 @@ public class JwtService implements InitializingBean {
         response.addCookie(cookie);
     }
 
-    public String extractRefreahToken(HttpServletRequest request) {
+    public String extractRefreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {

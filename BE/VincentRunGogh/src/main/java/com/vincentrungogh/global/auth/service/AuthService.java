@@ -195,7 +195,7 @@ public class AuthService {
     public ReissueTokenResponse reissueAccessToken(HttpServletRequest request){
 
         // 1. 쿠키에서 refreshToken 재발급
-        String token = jwtService.extractRefreahToken(request);
+        String token = jwtService.extractRefreshToken(request);
 
         // 2. 유효성 검증
         if(!jwtService.validateToken(token)){
