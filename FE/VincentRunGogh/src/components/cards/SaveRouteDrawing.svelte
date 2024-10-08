@@ -4,6 +4,10 @@
   import { RedoOutline } from 'flowbite-svelte-icons';
   import { formatSecToHMS } from '@/utils/formatter';
   import { resetDrawingStore } from '@/stores/drawingStore';
+  import { ongoing } from '@/stores/ongoingStore';
+  import { get } from 'svelte/store';
+
+  let ongoingLength = get(ongoing);
 
   export let title: string;
   export let distance: number;
@@ -120,9 +124,15 @@
         <RedoOutline class="me-2" size="sm" /> 홈으로
       </GradientButton>
     </div>
-    {#if isRoute}
+    {#if isRoute && ongoingLength < 3}
       <div>
-        <GradientButton color="greenToBlue" size="sm" on:click={startDrawing} pill>
+        <GradientButton
+          color="greenToBlue"
+          size="sm"
+          on:click={startDrawing}
+          disabled={ongoingLength >= 3}
+          pill
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="1.22em"
@@ -135,6 +145,9 @@
             /></svg
           >드로잉 시작하기</GradientButton
         >
+        <p class="absolute -top-10 left-3 w-80" style="color:red;">
+          진행중인 드로잉이 3개 이상입니다.
+        </p>
       </div>
     {/if}
   </div>

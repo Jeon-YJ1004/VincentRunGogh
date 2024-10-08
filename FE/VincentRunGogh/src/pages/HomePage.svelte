@@ -339,6 +339,7 @@
   <div id="homepage-drawing">
     <p class="mt-2 font-bold">진행 중인 드로잉</p>
     <div id="drawing-list">
+      <p class="absolute top-3 right-3 text-bold">{ongoingLength} / 3</p>
       {#if ongoingDrawingList}
         {#each ongoingDrawingList as drawing}
           <Card
@@ -441,6 +442,7 @@
     margin-bottom: 10vh;
   }
   #homepage-drawing {
+    position: relative;
     height: 27vh;
     padding-top: 0%;
     width: 90%;
