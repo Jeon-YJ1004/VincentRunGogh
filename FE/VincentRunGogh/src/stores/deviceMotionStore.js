@@ -81,18 +81,27 @@ export const deviceOrientation = writable({ alpha: 0, beta: 0, gamma: 0 });
 export function setupMotionEventListeners() {
   window.addEventListener('deviceorientation', orientation);
 }
+let setpIntervalId; // 여기에서 intervalId를 선언
+
 export function setupStepEventListeners() {
   window.addEventListener('devicemotion', motion);
-  let intervalId = setInterval(updateStatus, 100);
+  setpIntervalId = window.setInterval(updateStatus, 100);
 
 }
 export function stopStepEventListeners() {
   window.removeEventListener('devicemotion', motion);
-  clearInterval(intervalId);
+  if (setpIntervalId) {
+    clearInterval(setpIntervalId); // intervalId를 사용하여 인터벌 중지
+    setpIntervalId = null; // intervalId를 재설정
+  }
 }
 export function clearMotionEventListeners() {
   window.removeEventListener('devicemotion', motion);
   window.removeEventListener('deviceorientation', orientation);
+  if (setpIntervalId) {
+    clearInterval(setpIntervalId); // intervalId를 사용하여 인터벌 중지
+    setpIntervalId = null; // intervalId를 재설정
+  }
   stepCount.set(0);
   deviceOrientation.set({ alpha: 0, beta: 0, gamma: 0 });
 }

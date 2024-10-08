@@ -75,7 +75,6 @@
       (response) => {
         let data = response.data.data;
         monthInfo.set({ ...response.data.data });
-        console.log(get(monthInfo));
       },
       (error) => {}
     );
@@ -98,6 +97,7 @@
           date: today.toISOString().slice(0, 10), // 오늘 날짜
           title: '오늘', // '오늘'이라는 제목
           color: 'transparent',
+          className: ['today_indicator'],
         },
         ...$monthInfo.dayList.map((day) => ({
           date: day.date,
