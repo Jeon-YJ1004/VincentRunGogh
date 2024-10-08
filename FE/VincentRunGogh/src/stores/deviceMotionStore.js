@@ -1,9 +1,9 @@
 import { writable } from 'svelte/store';
 
 // Threshold and timeout settings
-const stepThreshold = 2;
+const stepThreshold = 3;
 const stepTimeout = 250; // in milliseconds
-
+const prevPoint = 150;
 // State and historic data
 let lastStepTime = 0;
 let historicMotion = { x: [], y: [], z: [] };
@@ -55,7 +55,7 @@ function trimData(historic) {
 function calculateSteps() {
   const now = Date.now();
   if (now - lastStepTime > stepTimeout) {
-    const movement = calculateAverageMovement(historicMotion, 75);
+    const movement = calculateAverageMovement(historicMotion, prevPoint);
     if (movement > stepThreshold) {
       stepCount.update((n) => n + 1);
       lastStepTime = now;
