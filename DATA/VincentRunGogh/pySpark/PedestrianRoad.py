@@ -5,6 +5,9 @@ from pyspark.sql import types
 def road_data_processing(left_lat, left_lng, right_lat, right_lng, region):
     spark = SparkSession.builder.appName("RoadDataProcessing").getOrCreate()
 
+    # WARN 로그 추가
+    spark.sparkContext.setLogLevel("WARN")
+
     # 도로 데이터 설정하기
     def get_road_data(left_lat, left_lng, right_lat, right_lng, region):
         overpass_url = "http://overpass-api.de/api/interpreter"

@@ -30,7 +30,6 @@ async def save_drawing_detail(request: DataSaveDrawingDetailRequestDto):
     drawing_detail_coords = [(draws[0].lat, draws[0].lng)] # 초기값 설정
     # 만약 each_time이 유효하다면, 거리계산 해야함.
     # 유효하지 않다면 거리계산 필요 x (이 경우 거리 따로 빼서 계산하기)
-    print(f"draws {len(draws)}")
     for i in range(1, len(draws)):
         each_time = calculate_time(draws[i - 1].time, draws[i].time)
         drawing_detail_coords.append((draws[i].lat, draws[i].lng)) # 일단 다 받고, spark로 싹 다 계산하고, 나중에 일시정지만 빼기
@@ -46,7 +45,7 @@ async def save_drawing_detail(request: DataSaveDrawingDetailRequestDto):
     total_distance = calculate_total_distance(drawing_detail_coords) - temp_stop_distance
 
     # km/h
-    total_speed = (total_distance*0.001)/(total_time*60*60)
+    total_speed = (total_distance*0.001)/(total_time/(60*60))
 
         # 최종적으로 lat과 lng만 추출하여 dict로 변환
     position_list_dicts = [{"lat": positionTime.lat, "lng": positionTime.lng} for positionTime in

@@ -17,6 +17,10 @@ haversine_udf = udf(haversine)
 
 def calculate_total_distance(route_coords):
     spark = SparkSession.builder.appName("calc distance in spark").getOrCreate()
+
+    # WARN 로그 추가
+    spark.sparkContext.setLogLevel("WARN")
+
     # Spark DataFrame으로 변환하여 거리 계산
     matched_nodes_df = spark.createDataFrame(route_coords, ["lat", "lng"])
 
