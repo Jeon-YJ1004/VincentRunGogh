@@ -158,6 +158,9 @@
           } else {
             marker.setLatLng(currPos); // 기존 마커 위치 업데이트
           }
+          if (lineLayers) {
+            lineLayers?.addLatLng(currPos);
+          }
         }
       }
       return true;
