@@ -11,12 +11,16 @@
   let loading = false;
   const handleLogin = async (event: SubmitEvent) => {
     event.preventDefault();
+    if (loading) {
+      return;
+    }
     loading = true;
     login(
       id,
       password,
       async (response: Promise<Response>) => {
         if (response.data.status === 200) {
+          loading = false;
           localStorage.setItem('accessToken', response.data.data.accessToken);
           await userStore.login({
             nickname: response.data.data.nickname,

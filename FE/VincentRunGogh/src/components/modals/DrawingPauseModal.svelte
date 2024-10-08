@@ -26,7 +26,7 @@
       ].filter(Boolean),
     },
     save: {
-      title: '드로잉 임시저장 모달',
+      title: '드로잉 임시저장',
       buttons: [
         {
           icon: ArrowLeftOutline,
@@ -38,7 +38,7 @@
       ],
     },
     complete: {
-      title: '드로잉 완료 모달',
+      title: '드로잉 완료',
       buttons: [
         {
           icon: ArrowLeftOutline,

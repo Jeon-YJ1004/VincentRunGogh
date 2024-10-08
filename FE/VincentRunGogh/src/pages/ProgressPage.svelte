@@ -280,17 +280,17 @@
   });
 </script>
 
-<div class="flex flex-col items-center bg-bg-main h-screen">
+<div class="bg-bg-main h-screen">
   <Header title="통계" />
   <div class="flex w-full items-center justify-center">
-    <h5 class="mb-2 ttext-3xl font-semibold">{selectedYear}</h5>
+    <h5 class="mb-2 text-3xl font-semibold">{selectedYear}</h5>
 
     <Select
       items={yearItem}
       bind:value={selectedYear}
       on:change={onChangeYear}
       placeholder="연도"
-      class="w-28 absolute right-0"
+      class="w-28 absolute right-2"
     />
   </div>
   {#if $activeCategory === 'completed'}

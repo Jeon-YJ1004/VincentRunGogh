@@ -198,7 +198,7 @@
   async function lockMap() {
     if (isComplete) {
       if (inputName.length === 0) {
-        errorMessage = '루트 이름을 입력해 주세요.';
+        errorMessage = '드로잉 이름을 입력해 주세요.';
         Swal.fire({
           text: errorMessage,
           icon: 'error',
@@ -238,6 +238,7 @@
 
     const mapCanvas = await html2canvas(document.querySelector('#map'), {
       useCORS: true,
+      scale: 1,
     });
 
     svg.style.display = '';

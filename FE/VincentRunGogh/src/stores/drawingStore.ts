@@ -140,17 +140,27 @@ export async function getMotion() {
     return;
   }
 
-  const threshold = 1.2; // 변화를 감지할 가속도 임계값
+  const threshold = 2.0; // 변화를 감지할 가속도 임계값
   let lastReading = { x: 0, y: 0, z: 0 };
-
+  let lastIncrementTime = Date.now();
+  let stepDetectionTimeout = 250;
   function incrementStepCount(x, y, z) {
+    const now = Date.now();
+    const timeSinceLastIncrement = now - lastIncrementTime;
+
+    if (timeSinceLastIncrement < stepDetectionTimeout) {
+      return; // 너무 빠르게 걸음수가 증가하지 않도록 제한
+    }
+
     const deltaX = Math.abs(x - lastReading.x);
     const deltaY = Math.abs(y - lastReading.y);
     const deltaZ = Math.abs(z - lastReading.z);
 
     if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
       stepCount.update((n) => n + 1); // Svelte store의 값을 증가
+      lastIncrementTime = now; // 마지막 걸음 증가 시간 업데이트
     }
+
     console.log('stepCount: ' + get(stepCount));
     lastReading = { x, y, z };
   }
