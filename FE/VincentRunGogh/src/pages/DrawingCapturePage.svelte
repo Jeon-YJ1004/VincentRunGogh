@@ -16,14 +16,8 @@
   import { Input, GradientButton, Label, Card } from 'flowbite-svelte';
   import { LockSolid } from 'flowbite-svelte-icons';
 
-  import {
-    stepCount,
-    elapsedTime,
-    posList,
-    route,
-    totalDistance,
-    drawingStore,
-  } from '@/stores/drawingStore';
+  import { elapsedTime, posList, route, totalDistance, drawingStore } from '@/stores/drawingStore';
+  import { stepCount } from '@/stores/deviceMotionStore';
   import { completeDrawing, saveDrawing } from '@/api/drawingApi';
   import SaveRouteDrawing from '@components/cards/SaveRouteDrawing.svelte';
   import { formatDistanceFix2 } from '@/utils/formatter';

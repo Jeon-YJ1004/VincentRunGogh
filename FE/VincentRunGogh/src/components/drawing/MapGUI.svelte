@@ -7,8 +7,8 @@
     elapsedTime,
     totalDistance,
     currentPace,
-    stepCount,
   } from '@/stores/drawingStore';
+  import { stepCount } from '@/stores/deviceMotionStore';
   import { get } from 'svelte/store';
   import { formatSecToMS } from '@/utils/formatter';
 
@@ -19,6 +19,7 @@
   }>();
   $: $isLockScreen = $isLockScreen;
   $: $isPause = $isPause;
+  $: $stepCount = $stepCount;
 
   let isMute = false;
   let hasRoute = false;

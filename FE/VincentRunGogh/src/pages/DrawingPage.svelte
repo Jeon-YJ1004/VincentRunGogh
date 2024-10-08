@@ -17,9 +17,16 @@
     setDrawingPos,
     updateDistanceAndSpeed,
     drawingStore,
-    getMotion,
     isRouteDrawing,
   } from '@/stores/drawingStore';
+  import {
+    setupMotionEventListeners,
+    setupStepEventListeners,
+    stopStepEventListeners,
+    deviceOrientation,
+    clearMotionEventListeners,
+  } from '@/stores/deviceMotionStore';
+
   import DrawingPauseModal from '@/components/modals/DrawingPauseModal.svelte';
   import { userStore } from '@/stores/userStore';
 
@@ -30,6 +37,7 @@
   $: $isLockScreen = $isLockScreen;
   $: $isPause = $isPause;
   $: $elapsedTime = $elapsedTime;
+  $: $deviceOrientation, updateMarkerRotation();
 
   let countdown: number | null;
 
@@ -77,7 +85,7 @@
       // &copy;<a href="https://carto.com/attributions" target="_blank">CARTO</a>`,
       subdomains: 'abcd',
     }).addTo(m);
-
+    setupMotionEventListeners();
     return m;
   }
 
@@ -145,15 +153,10 @@
         setDrawingPos({ lat, lng, time: formatTimeToHMS() });
         if (map !== null) {
           // 마커가 이미 존재하면 업데이트하고, 없으면 새로 추가
-          if (marker.has('current')) {
-            const existingMarker = marker.get('current');
-            existingMarker?.setLatLng(currPos); // 기존 마커 위치 업데이트
+          if (!marker) {
+            marker = createMarker(currPos); // 새 마커 생성
           } else {
-            const newMarker = createMarker(currPos); // 새 마커 생성
-            marker.set('current', newMarker); // 새 마커를 저장
-          }
-          if (lineLayers) {
-            lineLayers?.addLatLng(currPos);
+            marker.setLatLng(currPos); // 기존 마커 위치 업데이트
           }
         }
       }
@@ -298,10 +301,10 @@
     }
   };
 
-  let marker = new Map<string, Marker>();
+  let marker: Marker | null = null; // 마커 객체를 저장할 변수
 
-  function createMarker(loc: LatLngExpression, heading: number): Marker {
-    const iconHtml = `<div class="map-marker" style="transform: rotate(${heading}deg);">
+  function createMarker(loc: LatLngExpression): Marker | null {
+    const iconHtml = `<div class="map-marker" style="transform: rotate(${$deviceOrientation.alpha}}deg);">
 <div class="map-marker"><svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="2rem" height="2rem" viewBox="0 0 256.000000 256.000000"
  preserveAspectRatio="xMidYMid meet">
@@ -320,20 +323,36 @@ fill="#000000" stroke="none">
       html: iconHtml,
       className: 'map-marker',
     });
-    if (map) return L.marker(loc, { icon }).addTo(map);
+    marker = new L.Marker(loc, { icon });
+
+    if (map) {
+      marker.addTo(map);
+      return marker;
+    }
+    return null;
+  }
+  function updateMarkerRotation() {
+    if (marker && marker.getIcon) {
+      const icon = marker.getIcon();
+      icon.options.html = `<div class="map-marker" style="transform: rotate(${$deviceOrientation.alpha}deg);">
+<div class="map-marker"><svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="2rem" height="2rem" viewBox="0 0 256.000000 256.000000"
+ preserveAspectRatio="xMidYMid meet">
+
+<g transform="translate(0.000000,256.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M1245 1839 c-484 -209 -886 -387 -892 -396 -19 -25 -16 -77 5 -97 12
+-10 158 -48 386 -101 202 -47 376 -89 386 -95 10 -5 21 -17 25 -27 3 -10 44
+-182 91 -382 52 -226 90 -371 100 -383 20 -21 72 -24 97 -6 22 17 777 1775
+777 1809 0 34 -29 59 -66 58 -16 -1 -425 -172 -909 -380z"/>
+</g>
+</svg>
+</div>
+    </div>`;
+      marker.setIcon(icon);
+    }
   }
 
-  window.addEventListener('deviceorientation', function (event) {
-    const heading = event.alpha;
-    // 마커의 방향 업데이트
-    if (marker.has('current')) {
-      const existingMarker = marker.get('current');
-      const newIconHtml = `<div class="map-marker" style="transform: rotate(${heading}deg);">
-          <svg ...></svg>
-        </div>`;
-      existingMarker.setIcon(L.divIcon({ html: newIconHtml, className: 'map-marker' }));
-    }
-  });
   function createLines(): Polyline {
     return L.polyline(
       $posList.map((p) => p.latlng),
@@ -379,6 +398,7 @@ fill="#000000" stroke="none">
           gui.remove();
           map = null;
         }
+        clearMotionEventListeners();
       },
     };
   }
@@ -407,6 +427,7 @@ fill="#000000" stroke="none">
     });
     if (!trackingActive) {
       console.log('트래킹 시작');
+      setupStepEventListeners();
 
       if (!startTime) {
         startTime = formatTimeToHMS();
@@ -422,6 +443,7 @@ fill="#000000" stroke="none">
       }, 2000);
     } else {
       console.log('일시정지');
+      stopStepEventListeners();
 
       if (timerIntervalId) {
         console.log('시간 타이머 멈추기 :' + timerIntervalId);
@@ -451,13 +473,13 @@ fill="#000000" stroke="none">
     userStore.initialize(); // 스토어에서 사용자 정보 초기화
     // resetDrawingStore();
     countdown = 3;
-    getMotion();
   });
   onDestroy(() => {
     if (map) {
       map.remove();
       clearInterval(timerIntervalId);
       clearInterval(trackingIntervalId);
+      clearMotionEventListeners();
     }
     disconnectWebSocket();
   });
