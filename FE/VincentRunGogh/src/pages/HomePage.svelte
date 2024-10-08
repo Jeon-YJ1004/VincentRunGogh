@@ -8,6 +8,7 @@
   import { ongoing } from '@/stores/ongoingStore';
   import Swal from 'sweetalert2';
   import RouteDetail from '@/components/modals/RouteDetail.svelte';
+  import { getMyInfo } from '@/api/myhealthApi';
 
   let isLoad: boolean = false;
   let ongoingLength: number = 0;
@@ -25,37 +26,34 @@
     nickname: '',
   };
 
-  // 유형별 정보 더미
-  let dummyGroupInfo: {
-    averageDayRuntime: number;
-    averageDayDistance: number;
-    averageSpeed: number;
-    myDayRuntime: number;
-    myDayDistance: number;
-    mySpeed: number;
-    gender: number;
-    age: number;
+  // 내 운동량
+  let MyInfo: {
+    todayRuntime: number;
+    todayDistance: number;
+    todayAvgPace: number;
+    todayStep: number;
   } = {
-    // 평균 운동량 600초, 400미터, 4km/h
-    // 더미 운동량 1200초, 800미터, 8km/h
-    // 더미 정보 20세 남자
-    averageDayRuntime: 600,
-    averageDayDistance: 400,
-    averageSpeed: 4,
-    myDayRuntime: 1200,
-    myDayDistance: 800,
-    mySpeed: 8,
-    gender: 0,
-    age: 20,
+    todayRuntime: 0,
+    todayDistance: 0,
+    todayAvgPace: 0,
+    todayStep: 0,
   };
 
-  // 홈 문구 대사
-  // 내 그룹 설정
+  // 내 운동량 가져오기
+  async function getToday() {
+    let responseToday = await getMyInfo();
+    MyInfo = responseToday.data;
+    console.log(MyInfo);
+  }
 
+  // 홈 문구 대사
   let welcomeWordList: string[] = [
     '오운완했나요?',
-    `오늘은 ${Math.floor(dummyGroupInfo.myDayRuntime / 60)}분 뛰었군요!`,
-    `오늘은 ${parseFloat((dummyGroupInfo.myDayDistance / 1000).toFixed(2))}km를 뛰었군요!`,
+    '오늘도 드로잉 하셨나요?',
+    `오늘은 ${Math.floor(MyInfo.todayRuntime / 60)}분 뛰었군요!`,
+    `오늘은 ${MyInfo.todayDistance}km를 뛰었군요!`,
+    `오늘은 평균 1km ${MyInfo.todayAvgPace}의 페이스로 뛰었어요!`,
+    `오늘 총 ${MyInfo.todayStep}걸음 걸었어요!`,
   ];
   // 랜덤 문구 출력
   let randomNum: number = Math.floor(Math.random() * welcomeWordList.length);
@@ -315,6 +313,7 @@
 
   onMount(async () => {
     resetDrawingStore();
+    await getToday();
     await getWeekly();
     await getDrawings();
     let UserInfo = localStorage.getItem('user');

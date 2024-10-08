@@ -18,4 +18,14 @@ async function logout(success, fail) {
   await http.post(`/auth/logout/${loginId}`).then(success).catch(fail);
 }
 
-export { getMonthData, getDrawingDetail, updatePw, logout, getDrawingProgress };
+// 내 운동정보 조회
+export function getMyInfo() {
+  return http
+    .get(`/myhealth/group`)
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error;
+    });
+}
+
+export { getMonthData, getDrawingDetail, updatePw, logout };

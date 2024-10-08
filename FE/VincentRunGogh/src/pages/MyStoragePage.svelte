@@ -141,7 +141,7 @@
   // 아직 안올린 게시물
   async function getUnpostArticleInfo() {
     let responseAllArticle = await getDrawingList('community');
-    unpostArticles = responseAllArticle.data.findDrawingList;
+    unpostArticles = responseAllArticle.data.findDrawingList.slice().reverse();
   }
 
   // 게시글 삭제
@@ -202,6 +202,7 @@
     Swal.fire({
       html: '<div id="post-article"></div>',
       showConfirmButton: false,
+      allowOutsideClick: false,
       didOpen: () => {
         // 'route-detail'라는 ID를 가진 div에 Svelte 컴포넌트 렌더링
         new PostArticle({
@@ -209,6 +210,10 @@
           props: {
             article: article,
             onClose: () => {
+              let index = unpostArticles.findIndex(
+                (article) => article.drawingId === article.drawingId
+              );
+              unpostArticles.splice(index, 1);
               Swal.close(); // 모달 닫기
             },
           },

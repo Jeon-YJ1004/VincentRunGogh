@@ -1,9 +1,7 @@
 <script lang="ts">
   import { Button, Input } from 'flowbite-svelte';
-  import { replace } from 'svelte-spa-router';
   import { GradientButton } from 'flowbite-svelte';
   import { ArrowRightOutline, RedoOutline, PenOutline, UploadSolid } from 'flowbite-svelte-icons';
-  import FeedArticle from '../cards/FeedArticle.svelte';
   import { postArticle } from '@/api/communityApi';
   import Swal from 'sweetalert2';
 
