@@ -1,10 +1,10 @@
 import { writable } from 'svelte/store';
 
 // Threshold and timeout settings
-const MIN_STEP_THRESHOLD = 10;
+const MIN_STEP_THRESHOLD = 20;
 const MAX_STEP_THRESHOLD = 40;
-const stepTimeout = 250; // in milliseconds
-const prevPoint = 75;
+const STEP_TIME_DELAY = 500; // in milliseconds
+const PREV_POINTS = 75;
 // State and historic data
 let lastStepTime = 0;
 let historicMotion = { x: [], y: [], z: [] };
@@ -108,11 +108,16 @@ export function clearMotionEventListeners() {
 
 
 function updateStatus() {
-  // 최근 75개의 데이터를 기준으로 전체 움직임을 계산
-  let movement = mostRecentMovementOverall(75);
 
   // 움직임 및 방향 데이터를 기반으로 상태를 설정
-  if (movement > 18) stepCount.update((n) => n + 1);
+  const now = Date.now();
+  if (now - lastStepTime > STEP_TIME_DELAY) {
+    // 최근 75개의 데이터를 기준으로 전체 움직임을 계산
+    let movement = mostRecentMovementOverall(PREV_POINTS);
+    if (movement > MIN_STEP_THRESHOLD) stepCount.update((n) => n + 1);
+    lastStepTime = now;
+
+  }
 }
 
 // 기록된 데이터를 바탕으로 전체 움직임을 계산하는 함수
