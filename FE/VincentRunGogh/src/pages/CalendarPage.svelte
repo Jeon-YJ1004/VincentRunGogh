@@ -139,7 +139,7 @@
 </script>
 
 <div class="flex flex-col items-center bg-bg-main h-screen">
-  <Header title="캘린더" />
+  <Header title="캘린더" to={'/myhealth'} />
   <div id="calendar" class="h-3/5 w-[90vw] bg-white rounded-2xl">
     <FullCalendar {options} />
   </div>

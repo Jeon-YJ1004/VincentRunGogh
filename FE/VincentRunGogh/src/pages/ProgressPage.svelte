@@ -281,7 +281,7 @@
 </script>
 
 <div class="bg-bg-main h-screen">
-  <Header title="통계" />
+  <Header title="통계" to={'/myhealth'} />
   <div class="flex w-full items-center justify-center">
     <h5 class="mb-2 text-3xl font-semibold">{selectedYear}</h5>
 

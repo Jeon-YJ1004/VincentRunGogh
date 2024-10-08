@@ -332,7 +332,7 @@
 
 <div id="homepage-body">
   <div id="homepage-header">
-    <h1 style="font-family: 'BRUSH'; font-size:30px;">Vincent Run Gogh</h1>
+    <h1 class="typing" style="font-family: 'BRUSH'; font-size:30px;">Vincent Run Gogh</h1>
     <p><span class="text-xl font-bold">{user.nickname}</span>님!</p>
     <h3 class="font-bold">{welcomeWordList[randomNum]}</h3>
   </div>
@@ -493,21 +493,52 @@
     position: fixed;
     top: 6%;
     left: 26%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0.8;
     overflow: visible;
     transition: 800ms;
+    animation: sway 5s ease-in-out infinite;
   }
 
   #background2 {
     position: fixed;
     bottom: -9%;
     right: -50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0.8;
     overflow: visible;
     transition: 800ms;
+    animation: sway 5s ease-in-out infinite;
+  }
+
+  @keyframes sway {
+    0% {
+      transform: translate(-100%, -120%); /* 두 변환을 함께 적용 */
+    }
+    50% {
+      transform: translate(20%, 0%); /* 살짝 오른쪽으로 이동 */
+    }
+    100% {
+      transform: translate(-100%, -120%); /* 다시 원래 위치로 */
+    }
+  }
+
+  .typing {
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    animation: typing 4s steps(120) infinite; /* steps로 부드럽게 글자가 하나씩 나타나도록 설정 */
+  }
+
+  @keyframes typing {
+    from {
+      width: 0; /* 처음에는 아무 글자도 보이지 않음 */
+    }
+    to {
+      width: 100%; /* 전체 글자가 다 보이게 됨 */
+    }
   }
 </style>

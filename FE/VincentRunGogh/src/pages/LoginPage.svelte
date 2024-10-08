@@ -135,19 +135,33 @@
     position: fixed;
     top: 6%;
     left: 26%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0.4;
     overflow: visible;
+    animation: sway 5s ease-in-out infinite;
   }
 
   #background2 {
     position: fixed;
     bottom: -9%;
     right: -50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0.4;
     overflow: visible;
+    animation: sway 5s ease-in-out infinite;
+  }
+
+  @keyframes sway {
+    0% {
+      transform: translate(-100%, -120%); /* 두 변환을 함께 적용 */
+    }
+    50% {
+      transform: translate(-10%, 0%); /* 살짝 오른쪽으로 이동 */
+    }
+    100% {
+      transform: translate(-100%, -120%); /* 다시 원래 위치로 */
+    }
   }
 </style>

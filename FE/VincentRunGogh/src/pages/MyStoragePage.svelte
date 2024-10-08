@@ -504,11 +504,12 @@
     position: fixed;
     bottom: 2%;
     left: 25%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0.3;
     overflow: visible;
     transition: 800ms;
+    animation: sway 5s ease-in-out infinite;
   }
 
   #background2 {
@@ -520,5 +521,42 @@
     opacity: 0.3;
     overflow: visible;
     transition: 800ms;
+    animation: sway 5s ease-in-out infinite;
+  }
+
+  @keyframes sway {
+    0% {
+      transform: translate(-100%, -120%);
+    }
+    10% {
+      transform: translate(-80%, -100%);
+    }
+    20% {
+      transform: translate(-60%, -80%);
+    }
+    30% {
+      transform: translate(-40%, -60%);
+    }
+    40% {
+      transform: translate(-20%, -40%);
+    }
+    50% {
+      transform: translate(-40%, -30%);
+    }
+    60% {
+      transform: translate(-50%, -50%);
+    }
+    70% {
+      transform: translate(-60%, -70%);
+    }
+    80% {
+      transform: translate(-70%, -90%);
+    }
+    90% {
+      transform: translate(-90%, -110%);
+    }
+    100% {
+      transform: translate(-100%, -120%);
+    }
   }
 </style>

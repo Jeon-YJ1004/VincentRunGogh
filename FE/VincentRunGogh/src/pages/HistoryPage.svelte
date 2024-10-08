@@ -27,7 +27,7 @@
   });
 </script>
 
-<Header title="히스토리" />
+<Header title="히스토리" to={'/myhealth'} />
 <div id="mystorage-body">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-interactive-supports-focus -->
@@ -185,21 +185,35 @@
     position: fixed;
     bottom: 2%;
     left: 25%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0.3;
     overflow: visible;
     transition: 800ms;
+    animation: sway 5s ease-in-out infinite;
   }
 
   #background2 {
     position: fixed;
     top: 9%;
     right: -50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 1;
     opacity: 0.3;
     overflow: visible;
     transition: 800ms;
+    animation: sway 5s ease-in-out infinite;
+  }
+
+  @keyframes sway {
+    0% {
+      transform: translate(-100%, -120%); /* 두 변환을 함께 적용 */
+    }
+    50% {
+      transform: translate(-10%, 0%); /* 살짝 오른쪽으로 이동 */
+    }
+    100% {
+      transform: translate(-100%, -120%); /* 다시 원래 위치로 */
+    }
   }
 </style>
