@@ -11,7 +11,9 @@
 
 <div class="relative max-w-4xl">
   <div class="absolute top-3 -left-13 z-30">
-    <div class="text-left ms-3 mb-3 text-gray-700 dark:text-gray-400 leading-tight">
+    <div
+      class="text-left ms-3 mb-3 text-gray-700 dark:text-gray-400 leading-tight bg-gray-600 text-white bg-opacity-70 rounded-md p-1"
+    >
       <span>{title}</span>
     </div>
   </div>

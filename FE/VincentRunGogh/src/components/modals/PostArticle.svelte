@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Button, Input } from 'flowbite-svelte';
+  import { Input } from 'flowbite-svelte';
   import { GradientButton } from 'flowbite-svelte';
-  import { ArrowRightOutline, RedoOutline, PenOutline, UploadSolid } from 'flowbite-svelte-icons';
+  import { RedoOutline, PenOutline, UploadSolid } from 'flowbite-svelte-icons';
   import { postArticle } from '@/api/communityApi';
   import Swal from 'sweetalert2';
 
@@ -23,33 +23,51 @@
 
   // 게시글 생성
   async function clickPostArticle() {
-    let postArticleForm = {
-      comment: inputComment,
-      drawingId: article.drawingId,
-    };
-    Swal.fire({
-      title: "<div class='text-lg'>" + '게시글을 올리는 중입니다...' + '</div>',
-      imageUrl: '/saveroute.gif',
-      imageWidth: 300,
-      imageHeight: 200,
-      imageAlt: 'running',
-      showConfirmButton: false,
-      didOpen: () => {
-        postArticle(postArticleForm)
-          .then(() => {
-            Swal.close();
-            goBack(); // 비동기 작업이 끝난 후에 모달 닫기
-          })
-          .catch((error) => {
-            console.error(error);
-            Swal.fire({
-              icon: 'error',
-              title: '오류가 발생했습니다',
-              text: '루트를 저장하는 도중 문제가 발생했습니다.',
+    let errorMessage: string = '';
+
+    if (inputComment.length === 0) {
+      errorMessage = '한 글자 이상 입력해 주세요.';
+      Swal.fire({
+        text: errorMessage,
+        icon: 'error',
+      });
+      return;
+    } else if (inputComment.length > 30) {
+      errorMessage = '최대 30글자까지만 가능합니다.';
+      Swal.fire({
+        text: errorMessage,
+        icon: 'error',
+      });
+      return;
+    } else {
+      let postArticleForm = {
+        comment: inputComment,
+        drawingId: article.drawingId,
+      };
+      Swal.fire({
+        title: "<div class='text-lg'>" + '게시글을 올리는 중입니다...' + '</div>',
+        imageUrl: '/saveroute.gif',
+        imageWidth: 300,
+        imageHeight: 200,
+        imageAlt: 'running',
+        showConfirmButton: false,
+        didOpen: () => {
+          postArticle(postArticleForm)
+            .then(() => {
+              Swal.close();
+              goBack(); // 비동기 작업이 끝난 후에 모달 닫기
+            })
+            .catch((error) => {
+              console.error(error);
+              Swal.fire({
+                icon: 'error',
+                title: '오류가 발생했습니다',
+                text: '루트를 저장하는 도중 문제가 발생했습니다.',
+              });
             });
-          });
-      },
-    });
+        },
+      });
+    }
   }
 </script>
 

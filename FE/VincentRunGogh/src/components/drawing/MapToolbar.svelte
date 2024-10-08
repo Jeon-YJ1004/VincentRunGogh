@@ -11,25 +11,19 @@
 
 <button
   type="button"
-  class="single-click"
+  class={isMakeRoute ? 'single-click mt-[8vh]' : 'single-click'}
   on:click={(e) => {
     e.stopPropagation();
     dispatch('click-reset');
   }}
   title="Reset View"
 >
-  <svg
-    fill="none"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
+  <svg xmlns="http://www.w3.org/2000/svg" width="2.8em" height="2.8em" viewBox="0 0 13 13"
+    ><path
+      fill="currentColor"
+      d="M6 7.75a1.75 1.75 0 1 0 0-3.5a1.75 1.75 0 0 0 0 3.5m.75-5.68a4 4 0 0 1 3.18 3.18h1.32a.75.75 0 0 1 0 1.5H9.93a4 4 0 0 1-3.183 3.18l.003.07v1.25a.75.75 0 0 1-1.5 0V10q0-.035.003-.07A4 4 0 0 1 2.07 6.747L2 6.75H.75a.75.75 0 0 1 0-1.5H2q.035 0 .07.003A4 4 0 0 1 5.25 2.07V.75a.75.75 0 0 1 1.5 0zM8.5 6a2.5 2.5 0 1 0-5 0a2.5 2.5 0 0 0 5 0"
+    /></svg
   >
-    <path
-      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-    />
-  </svg>
 </button>
 
 <style>

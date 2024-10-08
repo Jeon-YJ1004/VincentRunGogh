@@ -163,13 +163,13 @@
             name: '운동 거리',
             color: '#FFB800',
             data: [
-              { x: dateList[0], y: Math.floor(weeklyInfo.distance[0] * 0.25) },
-              { x: dateList[1], y: Math.floor(weeklyInfo.distance[1] * 0.25) },
-              { x: dateList[2], y: Math.floor(weeklyInfo.distance[2] * 0.25) },
-              { x: dateList[3], y: Math.floor(weeklyInfo.distance[3] * 0.25) },
-              { x: dateList[4], y: Math.floor(weeklyInfo.distance[4] * 0.25) },
-              { x: dateList[5], y: Math.floor(weeklyInfo.distance[5] * 0.25) },
-              { x: dateList[6], y: Math.floor(weeklyInfo.distance[6] * 0.25) },
+              { x: dateList[0], y: Math.floor(weeklyInfo.distance[0] * 600) },
+              { x: dateList[1], y: Math.floor(weeklyInfo.distance[1] * 600) },
+              { x: dateList[2], y: Math.floor(weeklyInfo.distance[2] * 600) },
+              { x: dateList[3], y: Math.floor(weeklyInfo.distance[3] * 600) },
+              { x: dateList[4], y: Math.floor(weeklyInfo.distance[4] * 600) },
+              { x: dateList[5], y: Math.floor(weeklyInfo.distance[5] * 600) },
+              { x: dateList[6], y: Math.floor(weeklyInfo.distance[6] * 600) },
             ],
           },
           {
@@ -228,7 +228,7 @@
     chart: {
       type: 'bar',
       width: '100%',
-      height: '120%',
+      height: '100%',
       fontFamily: 'Pretendard-Regular',
       toolbar: {
         show: false,
@@ -251,7 +251,7 @@
       y: {
         formatter: function (val: number, { seriesIndex }) {
           if (seriesIndex === 0) {
-            return Math.floor(val) + 'km'; // '운동 거리'에 km 단위 추가
+            return Math.floor(val / 600) + 'km'; // '운동 거리'에 km 단위 추가
           } else if (seriesIndex === 1) {
             return Math.floor(val / 60) + '분'; // '운동 시간'에 분 단위 추가
           }
@@ -379,7 +379,7 @@
     <Card class="w-80 h-full pb-1 pt-3 bg-opacity-80">
       <p class="font-bold text-black">주간 운동 정보</p>
       {#if isLoad}
-        <div class="flex ms-3 justify-center items-center">
+        <div class="flex ms-3 justify-center items-center grow">
           <Chart {options} />
         </div>
       {/if}

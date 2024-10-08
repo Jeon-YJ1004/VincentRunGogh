@@ -2,10 +2,11 @@
   import { Navbar } from 'flowbite-svelte';
   import BackButton from '@components/buttons/BackButton.svelte';
   export let title: string = '';
+  export let to: string;
 </script>
 
 <div id="header" class="flex justify-center items-center text-center font-bold font-black">
-  <BackButton />
+  <BackButton {to} />
   <h2 class="text-center">
     {title}
   </h2>

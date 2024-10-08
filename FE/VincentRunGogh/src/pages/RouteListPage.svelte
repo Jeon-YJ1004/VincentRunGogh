@@ -175,7 +175,6 @@
     <div id="tab-item">
       <TabItem
         defaultClass="tab-item font-bold text-xs gap-2 bg-white bg-opacity-80 rounded-t-md"
-        divClass="flex flex-col justify-center p-0 w-80"
         on:click={getMyRoute}
         open
       >
@@ -198,7 +197,7 @@
                   >
                     <div class="flex p-1">
                       <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
-                      <div class="ms-3 mt-2">
+                      <div class="flex flex-col justify-around ms-3 mt-2">
                         <p
                           class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                         >
@@ -257,7 +256,7 @@
                   >
                     <div class="flex p-1">
                       <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
-                      <div class="ms-3 mt-2">
+                      <div class="flex flex-col justify-around ms-3 mt-2">
                         <p
                           class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                         >
@@ -316,7 +315,7 @@
                   >
                     <div class="flex p-1">
                       <img src={route.artImage} class="h-[100%] w-[30%]" alt="" />
-                      <div class="ms-3 mt-2">
+                      <div class="flex flex-col justify-around ms-3 mt-2">
                         <p
                           class="mb-1 font-normal text-gray-700 dark:text-gray-400 leading-tight text-sm"
                         >

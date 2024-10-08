@@ -5,7 +5,6 @@
   import Swal from 'sweetalert2';
   import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
   import { Card, Button, Avatar } from 'flowbite-svelte';
-  import BackButton from '@components/buttons/BackButton.svelte';
   import Header from '@/components/common/Header.svelte';
   import { userStore } from '@/stores/userStore';
   import { get } from 'svelte/store';
@@ -160,7 +159,7 @@
 </script>
 
 <div id="community-body">
-  <Header title="커뮤니티" />
+  <Header title="커뮤니티" to={'/'} />
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-interactive-supports-focus -->
   <div

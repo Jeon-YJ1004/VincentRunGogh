@@ -403,7 +403,6 @@
     // 캡쳐하기
     return mapCapture('#map')
       .then(async (finalImage) => {
-        isSubmit = true;
         await submitRoute();
       })
       .catch((error) => {
@@ -433,6 +432,7 @@
       loadingAlert('루트를 저장중입니다...', '/saveroute.gif', () => {
         nameConfirm()
           .then(() => {
+            isSubmit = true;
             Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
           })
           .catch((error) => {
@@ -467,7 +467,7 @@
 </script>
 
 <div id="makeroute-header" class="flex justify-center items-center">
-  <BackButton />
+  <BackButton to={'/'} />
   <h2 class="font-bold">루트 생성</h2>
 </div>
 <div id="make-route">
