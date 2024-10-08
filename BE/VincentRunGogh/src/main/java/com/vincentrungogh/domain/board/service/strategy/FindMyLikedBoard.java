@@ -35,10 +35,7 @@ public class FindMyLikedBoard implements BoardStrategy {
                 .orElseThrow(() -> new CustomException(ErrorCode.MYHEALTH_NOT_FOUND));
 
         double averageSpeed = myHealth.getAverageSpeed();
-
-        if(averageSpeed <= 0){
-            throw new CustomException(ErrorCode.SPEED_DIVIDE_BY_ZERO);
-        }
+        boolean averageSpeedUnderZero = averageSpeed <= 0;
 
         // 우선 사용자가 좋아요한 userLike 목록 조회하기
         List<Board> likedBoardList = userLikeRepository.findAllByUser(user).stream()
@@ -53,9 +50,9 @@ public class FindMyLikedBoard implements BoardStrategy {
         List<FindBoard> findBoardList = likedBoardList.stream()
                 .sorted(Comparator.comparing(Board::getCreated).reversed()) // 쿼리 수정말고, stream 내에서 처리
                 .map(board -> {
-                            boolean isLiked = true;
-                            int predictedTime = (int) ((board.getRoute().getDistance() / 1000.0) / averageSpeed * 3600);
-                            return FindBoard.createFindBoard(board, lat, lng, isLiked, predictedTime);
+                    boolean isLiked = true;
+                    int predictedTime = averageSpeedUnderZero ? 0: (int) ((board.getRoute().getDistance() / 1000.0) / averageSpeed * 3600) ;
+                    return FindBoard.createFindBoard(board, lat, lng, isLiked, predictedTime);
                         })
                 .filter(Objects::nonNull)
                 .toList();

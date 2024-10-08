@@ -33,7 +33,8 @@ public enum ErrorCode {
     USERLIKE_BOARD_NOT_FOUND("유저가 좋아요한 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     BOARD_NOT_FOUND("요청을 처리할 게시글 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     MYHEALTH_NOT_FOUND("마이헬스 정보를 찾는데 실패했습니다.", HttpStatus.NOT_FOUND),
-    ROUTE_IS_NULL("루트가 null입니다. 루트 드로잉을 시작할 수 없습니다", HttpStatus.NOT_FOUND);
+    ROUTE_IS_NULL("루트가 null입니다. 루트 드로잉을 시작할 수 없습니다", HttpStatus.NOT_FOUND),
+    INVALID_COMMENT_LENGTH("게시글 내용은 최대 30자까지 가능합니다.", HttpStatus.BAD_REQUEST)
     ;
 
 

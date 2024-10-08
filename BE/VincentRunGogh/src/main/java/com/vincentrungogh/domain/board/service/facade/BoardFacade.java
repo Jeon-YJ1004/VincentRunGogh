@@ -42,7 +42,6 @@ public class BoardFacade {
     private final DrawingDetailRepository drawingDetailRepository;
     private final PythonApiService pythonApiService;
     private final RouteService routeService;
-    private final AwsService awsService;
     private final BoardService boardService;
     private final DrawingService drawingService;
 
@@ -70,6 +69,11 @@ public class BoardFacade {
     // createBoard
     @Transactional
     public void createBoard(UserPrincipal userPrincipal, SaveBoardRequestDto requestDto) {
+
+        // comment 30자 우선 검증
+        if(requestDto.getComment().length() > 30) {
+            throw new CustomException(ErrorCode.INVALID_COMMENT_LENGTH);
+        }
 
         // 0. 사용자 정보
         User user = userService.getUserById(userPrincipal.getId());
