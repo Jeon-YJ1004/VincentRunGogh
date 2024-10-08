@@ -112,7 +112,7 @@ public class JwtService implements InitializingBean {
             return !claims.getBody().getExpiration().toInstant().isBefore(Instant.now());
         } catch (Exception e) {
             log.info("Invalid JWT token", e);
-            return false;
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
     }
 

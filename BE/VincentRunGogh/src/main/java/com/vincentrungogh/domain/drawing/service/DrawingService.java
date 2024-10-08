@@ -175,17 +175,34 @@ public class DrawingService {
         // 1. 파이썬 호출
         DataSaveDrawingDetailResponse response = processDrawing(userId);
 
+        return saveCommonDrawing(drawingId, response,
+                request.getDrawingImage(), request.getDrawingDetailImage());
+    }
+
+    @Transactional
+    public SaveDrawingResponse saveDrawing(int userId, int drawingId, ReSaveDrawingRequest request) {
+
+        // 1. 파이썬 호출
+        DataSaveDrawingDetailResponse response = processDrawing(userId, request.getPositions());
+
+        return saveCommonDrawing(drawingId, response,
+                request.getDrawingImage(), request.getDrawingDetailImage());
+    }
+
+    private SaveDrawingResponse saveCommonDrawing(int drawingId,
+                                                  DataSaveDrawingDetailResponse response,
+                                                  String drawingImage, String drawingDetailImage) {
         // 2. 드로잉
         Drawing drawing = drawingRepository.findById(drawingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
 
         // 3. 드로잉 업데이트
-        String drawingImageURL = this.getImageUrl(request.getDrawingImage());
+        String drawingImageURL = this.getImageUrl(drawingImage);
         drawing.changeAccumulatedDrawingImage(drawingImageURL);
         drawingRepository.save(drawing);
 
         // 4. 드로잉 디테일 저장
-        String drawingDetailImageURL = this.getImageUrl(request.getDrawingDetailImage());
+        String drawingDetailImageURL = this.getImageUrl(drawingDetailImage);
         DrawingDetail drawingDetail = DrawingDetail
                 .createDrawingDetail(response, drawingDetailImageURL,
                         drawing);
@@ -203,16 +220,33 @@ public class DrawingService {
         // 1. 파이썬 호출
         DataSaveDrawingDetailResponse response = processDrawing(userId);
 
+        return completeCommonDrawing(userId, drawingId, response,
+                request.getTitle(), request.getDrawingImage(), request.getDrawingDetailImage(), request.getStep());
+    }
+
+    @Transactional
+    public SaveDrawingResponse completeDrawing(int userId, int drawingId, ReCompleteDrawingRequest request) {
+
+        // 1. 파이썬 호출
+        DataSaveDrawingDetailResponse response = processDrawing(userId, request.getPositions());
+
+        // 2. 드로잉
+        return completeCommonDrawing(userId, drawingId, response,
+                request.getTitle(), request.getDrawingImage(), request.getDrawingDetailImage(), request.getStep());
+    }
+
+    private SaveDrawingResponse completeCommonDrawing(int userId, int drawingId, DataSaveDrawingDetailResponse response,
+                                                     String title, String drawingImage, String drawingDetailImage, int step){
         // 2. 드로잉
         Drawing drawing = drawingRepository.findById(drawingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
 
         // 3. 드로잉 업데이트
-        String drawingImageURL = this.getImageUrl(request.getDrawingImage());
-        drawing.completeDrawing(request.getTitle(), drawingImageURL);
+        String drawingImageURL = this.getImageUrl(drawingImage);
+        drawing.completeDrawing(title, drawingImageURL);
 
         // 4. 드로잉 디테일 저장
-        String drawingDetailImageURL = this.getImageUrl(request.getDrawingDetailImage());
+        String drawingDetailImageURL = this.getImageUrl(drawingDetailImage);
         DrawingDetail drawingDetail = DrawingDetail
                 .completeDrawingDetail(response, drawingDetailImageURL,
                         drawing);
@@ -224,7 +258,7 @@ public class DrawingService {
 
         List<Drawing> drawings = drawingRepository.findAllByUserId(userId);
         int runningCount = drawingDetailRepository.countAllByDrawings(drawings).intValue();
-        myHealth.updateMyHealth(response, request.getStep(), runningCount);
+        myHealth.updateMyHealth(response, step, runningCount);
         myHealthRepository.save(myHealth);
 
         return SaveDrawingResponse
@@ -239,6 +273,21 @@ public class DrawingService {
         // 2. python 연결
         DataSaveDrawingDetailResponse response = pythonApiService.saveDrawingDetail(
                 DataSaveDrawingDetailRequest.createDataSaveDrawingDetailRequset(redisPositionList)
+        );
+
+        log.info("saveDrawing : " + response);
+
+        // 3. 레디스 삭제
+        redisService.removeRunning(userId);
+
+        return response;
+    }
+
+    private DataSaveDrawingDetailResponse processDrawing(int userId, List<RunningRequest> positions) {
+
+        // 2. python 연결
+        DataSaveDrawingDetailResponse response = pythonApiService.saveDrawingDetail(
+                DataSaveDrawingDetailRequest.createDataSaveDrawingDetailRequset(positions)
         );
 
         log.info("saveDrawing : " + response);
