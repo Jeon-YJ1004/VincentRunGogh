@@ -103,6 +103,7 @@ public class JwtService implements InitializingBean {
 
     // JWT 토큰 유효성 확인
     public boolean validateToken(String token) {
+        log.info("토큰 유효성 "+token);
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey)

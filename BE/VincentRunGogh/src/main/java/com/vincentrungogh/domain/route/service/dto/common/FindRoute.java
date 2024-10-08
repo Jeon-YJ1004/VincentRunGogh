@@ -42,7 +42,7 @@ public class FindRoute {
         return FindRoute.builder()
                 .routeId(route.getId())
                 .title(route.getTitle())
-                .artImage(route.getArtImage())
+                .artImage(route.getArtImage() == null ? route.getAccumulatedDrawingImage() : route.getArtImage())
                 .distance(distance)
                 .predictTime(predictTime)
                 .distanceFromUser(distanceUser)

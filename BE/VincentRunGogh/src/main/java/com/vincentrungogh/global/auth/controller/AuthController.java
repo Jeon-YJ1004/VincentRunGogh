@@ -193,7 +193,7 @@ public class AuthController {
     @CommonSwaggerResponse.CommonResponses
     @PostMapping("/token/reissue")
     public ResponseEntity<?> reissueAccessToken(HttpServletRequest request){
-
+        log.info("리프레시토큰 재발급");
         ReissueTokenResponse response = authService.reissueAccessToken(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
