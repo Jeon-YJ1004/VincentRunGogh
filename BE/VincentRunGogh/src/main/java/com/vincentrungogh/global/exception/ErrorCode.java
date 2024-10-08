@@ -22,7 +22,7 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN("만료된 리프레시 토큰입니다.", HttpStatus.UNAUTHORIZED),
     INVALID_PARAM_TYPE("유효하지 않는 타입입니다.", HttpStatus.BAD_REQUEST),
     SPEED_DIVIDE_BY_ZERO("평균 속력은 0보다 커야 합니다.", HttpStatus.BAD_REQUEST),
-    INVALID_WEIGHT_AND_HEIGHT("몸무게와 키는 0 이상이어야 합니다.", HttpStatus.BAD_REQUEST),
+    INVALID_WEIGHT_AND_HEIGHT("몸무게와 키는 0보다 크고 300보다 작아야 합니다.", HttpStatus.BAD_REQUEST),
     FAILED_UPDATE_PROFILE("프로필 수정에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_PASSWORD_LENGTH("20자 이하의 비밀번호만 가능합니다. ", HttpStatus.BAD_REQUEST),
     ROUTE_NOT_FOUND("존재하지 않은 루트입니다", HttpStatus.NOT_FOUND),

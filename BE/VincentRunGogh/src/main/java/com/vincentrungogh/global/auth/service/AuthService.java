@@ -93,6 +93,11 @@ public class AuthService {
             throw new CustomException(ErrorCode.INVALID_PASSWORD_LENGTH);
         }
 
+        // 3-1. 키 몸무게 0인지 확인
+        if(signupRequest.getHeight() * signupRequest.getWeight() == 0 || signupRequest.getWeight() > 300 || signupRequest.getHeight() > 300){
+            throw new CustomException(ErrorCode.INVALID_WEIGHT_AND_HEIGHT);
+        }
+
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
         // 4. User 엔티티 생성
