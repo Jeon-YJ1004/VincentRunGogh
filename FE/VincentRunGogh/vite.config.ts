@@ -15,8 +15,7 @@ export default defineConfig({
         enabled: false, // 개발 중에는 서비스 워커를 비활성화
       },
       includeAssets: [
-        'favicon.svg',
-        'favicon.ico',
+        'favicon2.ico',
         'android-chrome-192x192.png',
         'android-chrome-512x512.png',
         'apple-touch-icon.png',

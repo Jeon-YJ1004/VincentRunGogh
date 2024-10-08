@@ -275,7 +275,7 @@
             {#each articleList as article}
               <div class="mb-3 relative z-10 text-center">
                 <Card size="sm" class="mb-5 p-1 grow">
-                  <div class="flex ms-1 mt-1 mb-3 items-center">
+                  <div class="flex ms-1 mt-1 mb-3 items-center text-center">
                     <img
                       src={article.profile}
                       alt=""
@@ -337,10 +337,14 @@
           {:else}
             {#each articleList as article}
               {#if article.distanceFromUser <= range}
-                <div class="mb-3 relative z-10">
+                <div class="mb-3 relative z-10 text-center">
                   <Card size="sm" class="mb-5 p-1 grow">
-                    <div class="flex mb-3 items-center justify-between">
-                      <img src={article.profile} alt="" style="width: 50px;  height: 50px;" />
+                    <div class="flex ms-1 mt-1 mb-3 items-center text-center">
+                      <img
+                        src={article.profile}
+                        alt=""
+                        style="width: 50px;  height: 50px; border-radius: 50%;"
+                      />
                       <p class="ml-5">{article.nickname}</p>
                     </div>
                     <FeedArticle
@@ -350,7 +354,7 @@
                       distance={article.distance}
                       time={article.time}
                     />
-                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
+                    <p class="mt-2 mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
                       {article.comment}
                     </p>
                     <div class="me-2 flex justify-end items-center">

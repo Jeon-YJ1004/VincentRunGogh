@@ -67,6 +67,7 @@ export const loadingAlert = (title, imgUrl, didOpen, confirmFuc) => {
     imageHeight: 200,
     imageAlt: 'running',
     showConfirmButton: false,
-    didOpen: didOpen
+    allowOutsideClick: false,
+    didOpen: didOpen,
   }).then(confirmFuc);
-}
+};

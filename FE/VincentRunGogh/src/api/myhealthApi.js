@@ -28,4 +28,4 @@ export function getMyInfo() {
     });
 }
 
-export { getMonthData, getDrawingDetail, updatePw, logout };
+export { getMonthData, getDrawingDetail, updatePw, logout, getDrawingProgress };
