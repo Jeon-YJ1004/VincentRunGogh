@@ -264,7 +264,7 @@
           label: (context) => {
             var label = context.dataset.label;
             var value = context.formattedValue;
-            if (label === '활동 시간') return label + ' : ' + value + ' 초';
+            if (label === '활동 시간') return label + ' : ' + formatSecToH(value);
             else if (label === '이동 거리') return label + ' : ' + value + ' M';
             else return label + ' : ' + value + ' 번';
           },

@@ -1,7 +1,8 @@
 import { writable } from 'svelte/store';
 
 // Threshold and timeout settings
-const stepThreshold = 3;
+const MIN_STEP_THRESHOLD = 18;
+const MAX_STEP_THRESHOLD = 30;
 const stepTimeout = 250; // in milliseconds
 const prevPoint = 150;
 // State and historic data
@@ -33,7 +34,7 @@ function updateMotionData(x, y, z) {
   historicMotion.x.push(x);
   historicMotion.y.push(y);
   historicMotion.z.push(z);
-  trimData(historicMotion);
+  trimData();
   calculateSteps();
 }
 
@@ -44,10 +45,10 @@ function updateOrientationData(alpha, beta, gamma) {
   trimData(historicOrientation);
 }
 
-function trimData(historic) {
-  Object.keys(historic).forEach((key) => {
-    if (historic[key].length > 500) {
-      historic[key].shift();
+function trimData() {
+  Object.keys(historicMotion).forEach((key) => {
+    if (historicMotion[key].length > 500) {
+      historicMotion[key].shift();
     }
   });
 }
@@ -56,7 +57,7 @@ function calculateSteps() {
   const now = Date.now();
   if (now - lastStepTime > stepTimeout) {
     const movement = calculateAverageMovement(historicMotion, prevPoint);
-    if (movement > stepThreshold) {
+    if (movement > MIN_STEP_THRESHOLD && movement < MAX_STEP_THRESHOLD) {
       stepCount.update((n) => n + 1);
       lastStepTime = now;
     }

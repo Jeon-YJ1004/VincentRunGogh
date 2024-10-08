@@ -112,8 +112,8 @@
       <div class=" flex flex-col items-center justify-center">
         <span class="text-sm"> 이동거리 </span>
         <div>
-          <span class="text-lg text-gray-700 text-2xl font-bold"
-            >{Math.round($totalDistance * 10) / 10}
+          <span class="text-lg text-gray-700 text-2xl font-bold">
+            {Math.round($totalDistance * 10) / 10}
           </span> km
         </div>
       </div>

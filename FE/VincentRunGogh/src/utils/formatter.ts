@@ -37,7 +37,7 @@ export function formatSecToMS(seconds: number) {
 export function formatSecToH(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  return `${hours > 0 ? hours + 'h' : ''} ${minutes < 10 ? '0' + minutes : minutes}${minutes > 0 ? 'min' : ''}`;
+  return `${hours > 0 ? hours : '0'} ${minutes > 0 ? '.' + minutes : ''}`;
 }
 
 export function formatDistanceFix2(number: number): string {
