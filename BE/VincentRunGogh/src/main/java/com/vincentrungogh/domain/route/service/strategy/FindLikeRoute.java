@@ -27,6 +27,7 @@ public class FindLikeRoute implements RouteStrategy {
         // 유저가 좋아요한 루트 정보를 모두 가져와 변환
         List<FindRoute> findRouteList = userLikeRepository.findAllByUser(user).stream()
                 .map(UserLike::getBoard)               // UserLike 객체에서 Board 객체로 변환
+                .filter(board -> !board.getIsDelete())
                 .map(Board::getRoute)
                 .filter(route -> route.getTitle() != null)// Board 객체에서 Route 객체로 변환
                 .map(route -> FindRoute.createFindRoute(route, lat, lng, averageSpeed)) // FindRoute 객체 생성
