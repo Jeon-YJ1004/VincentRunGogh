@@ -37,13 +37,14 @@
   });
 </script>
 
-<div class="mb-6">
+<div class="mb-6 w-[80%] z-10">
   <Label for="nickname" class="block mb-2">별명</Label>
   <ButtonGroup class="w-full">
     <Input
       id="nickname"
       type="text"
       placeholder="별명"
+      class="h-full"
       bind:value={$values.nickname}
       on:input={(e) => validateNickname(e.target.value)}
     />
@@ -52,7 +53,7 @@
   <Helper style="color: {$helpers.nickname.color};">{$helpers.nickname.message}</Helper>
 </div>
 
-<div class="mb-6">
+<div class="mb-6 w-[80%] z-10">
   <Label for="height" class="block mb-2">키</Label>
   <Input
     id="height"
@@ -64,7 +65,7 @@
   <Helper style="color: {$helpers.height.color};">{$helpers.height.message}</Helper>
 </div>
 
-<div class="mb-6">
+<div class="mb-6 w-[80%] z-10">
   <Label for="weight" class="block mb-2">몸무게</Label>
   <Input
     id="weight"

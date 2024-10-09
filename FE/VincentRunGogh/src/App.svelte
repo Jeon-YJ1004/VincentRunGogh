@@ -72,6 +72,15 @@
     '/login': LoginPage,
     '*': LoginPage,
   };
+
+  // 새로고침 방지
+  window.addEventListener(
+    'touchmove',
+    (event) => {
+      event.preventDefault();
+    },
+    { passive: false }
+  );
 </script>
 
 <Router {routes} />
