@@ -12,8 +12,8 @@ def calculate_time(before_time, after_time):
 
     if time < 0:
         time+= 60*60*24
-    # 만약 다음 time이 12초 이상인 경우 일시정지로 간주
+    # 만약 다음 time이 4초 이상인 경우 일시정지로 간주
     # print("time: ",time)
-    if time >= 12:
+    if time >= 4:
         return 0
     return time

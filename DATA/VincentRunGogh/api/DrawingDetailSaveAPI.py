@@ -1,11 +1,10 @@
 from fastapi import APIRouter
 from pyspark.sql import SparkSession
+from starlette.responses import JSONResponse
 
 api_router = APIRouter()
 
 from db import mongodb
-from bson import ObjectId
-
 from core.CalculateTime import calculate_time
 
 from models import DrawingDetail
@@ -18,6 +17,8 @@ from pySpark.RouteTotalDistance import haversine, calculate_total_distance
 async def save_drawing_detail(request: DataSaveDrawingDetailRequestDto):
 
     spark = SparkSession.builder.appName("saveDrawingPyspark").getOrCreate()
+
+    spark.sparkContext.setLogLevel("WARN")
 
     # 1. 시간 계산 : 처음과 끝만 계산하기(5초마다 보내기 때문)
     # 중간 일시정지가 된다면 데이터가 들어오지 않음. 그러면 결론.
@@ -35,12 +36,18 @@ async def save_drawing_detail(request: DataSaveDrawingDetailRequestDto):
         drawing_detail_coords.append((draws[i].lat, draws[i].lng)) # 일단 다 받고, spark로 싹 다 계산하고, 나중에 일시정지만 빼기
         if each_time == 0: # 일시 정지일 때 뺄 값 따로 계산하기
             temp_stop_distance += haversine(draws[i-1].lat,draws[i-1].lng,draws[i].lat,draws[i].lng)
-            # print("12초 이상인 경우 ", i)
+            # print("4초 이상인 경우 ", i)
         total_time += each_time
 
+    # total_time 0으로 계산될 경우 400 return
+    if total_time == 0:
+        spark.stop()
+        return JSONResponse(status_code=400, content= {
+            "status": 400,
+            "message": "통신 과정에서 드로잉 저장에 실패했습니다.",
+            "data": {}
+        })
     # 전체 pyspark 계산한 값에서 일시정지 distance값 빼기
-
-    # print("일시정지 거리 계산 합" ,temp_stop_distance)
     # m
     total_distance = calculate_total_distance(drawing_detail_coords) - temp_stop_distance
 
