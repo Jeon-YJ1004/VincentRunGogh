@@ -262,6 +262,8 @@
 
   async function mapCapture(isTypeColorLine: boolean) {
     map.invalidateSize();
+    let guide = document.querySelector('#capture-guide');
+    guide.style.display = 'none';
     const svg = document.querySelector('svg');
     const svgString = new XMLSerializer().serializeToString(svg);
     const svgCanvas = document.createElement('canvas');
@@ -335,11 +337,30 @@
   {/if}
 </div>
 <div
-  class="make-route flex items-center justify-center
+  class="relative make-route flex items-center justify-center
 "
 >
   {#if !isLocked}
     <div bind:this={mapRef} id="map"></div>
+    <svg
+      id="capture-guide"
+      width="350"
+      height="350"
+      class="z-[1050]"
+      viewBox="0 0 350 350"
+      style={`position: absolute; top: ${(window.outerHeight - 350) / 2}; left: ${(window.outerWidth - 350) / 2}; pointer-events: none;`}
+    >
+      <!-- 가이드라인 외곽선 -->
+      <rect
+        x="0"
+        y="0"
+        width="350"
+        height="350"
+        fill="none"
+        stroke="rgba(255, 0, 0, 0.5)"
+        stroke-width="4"
+      />
+    </svg>
     <div id="makeroute-footer" class="flex flex-col items-center justify-end">
       <div
         class="fixed left-1/2 transform -translate-x-1/2 text-red-350 font-bold px-2 py-1 top-[12vh] overflow-hidden text-ellipsis whitespace-nowrap bg-[#FFFFFF67]"

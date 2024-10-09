@@ -145,9 +145,11 @@
             /></svg
           >드로잉 시작하기</GradientButton
         >
-        <p class="absolute -top-10 left-3 w-80" style="color:red;">
-          진행중인 드로잉이 3개 이상입니다.
-        </p>
+        {#if ongoingLength >= 3}
+          <p class="absolute -top-10 -left-2 w-80" style="color:red;">
+            진행중인 드로잉이 3개 이상입니다.
+          </p>
+        {/if}
       </div>
     {/if}
   </div>

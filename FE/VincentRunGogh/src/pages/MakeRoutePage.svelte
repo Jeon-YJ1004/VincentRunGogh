@@ -316,6 +316,10 @@
     isConfirm = true;
     let footer = document.querySelector('#makeroute-footer');
     footer.style.height = '30vh';
+    let guide = document.querySelector('#capture-guide');
+    guide.style.display = '';
+    guide.style.left = (window.outerWidth - 350) / 2;
+    guide.style.top = (window.outerHeight - 350) / 2 - 100;
   }
 
   //캡쳐 함수
@@ -325,6 +329,8 @@
 
   function mapCapture(target: string) {
     map.invalidateSize();
+    let guide = document.querySelector('#capture-guide');
+    guide.style.display = 'none';
 
     return new Promise(async (resolve, reject) => {
       try {
@@ -473,6 +479,25 @@
 <div id="make-route">
   {#if !isSubmit}
     <div id="map"></div>
+    <svg
+      id="capture-guide"
+      width="350"
+      height="350"
+      class="z-10"
+      viewBox="0 0 350 350"
+      style="position: absolute; top: 50px; left: 50px; pointer-events: none; display:none;"
+    >
+      <!-- 가이드라인 외곽선 -->
+      <rect
+        x="0"
+        y="0"
+        width="350"
+        height="350"
+        fill="none"
+        stroke="rgba(255, 0, 0, 0.5)"
+        stroke-width="4"
+      />
+    </svg>
   {:else if routeInfo}
     <SaveRouteDrawing
       title={inputName}
