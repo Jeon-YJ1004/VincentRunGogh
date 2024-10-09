@@ -172,7 +172,7 @@ public class AuthService {
     //전송 실패시 3번 재시도
     public void sendCode(String email){
         // 1. 인증 코드 생성
-        int code = makeRandomCode();
+        String code = makeRandomCode();
 
         // 2. 이메일 전송
         String expirationTime = emailService.sendCodeEmail(email, code);
@@ -243,14 +243,14 @@ public class AuthService {
 
 
     // 랜덤 인증번호 생성
-    private int makeRandomCode(){
+    private String makeRandomCode(){
         Random random = new Random();
         String randomNumber = "";
 
         for (int i = 0; i < 6; i++) {
             randomNumber += random.nextInt(10);
         }
-        return Integer.parseInt(randomNumber);
+        return randomNumber;
     }
 
     private boolean checkDuplicateEmail(String email){

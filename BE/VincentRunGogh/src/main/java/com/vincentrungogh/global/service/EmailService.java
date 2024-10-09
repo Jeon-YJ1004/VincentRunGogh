@@ -26,7 +26,7 @@ public class EmailService {
     private String serviceName;
 
     // 인증 코드 이메일 전송
-    public String sendCodeEmail(String to, int code) {
+    public String sendCodeEmail(String to, String code) {
         LocalDateTime expirationTime;
         try {
             expirationTime = LocalDateTime.now().plusMinutes(3);
