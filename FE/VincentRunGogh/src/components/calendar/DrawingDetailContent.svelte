@@ -54,10 +54,13 @@
 </script>
 
 <div class="p-4 bg-white shadow-lg rounded-lg overflow-hidden">
-  <div class="flex flex-row justify-between items-center">
-    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-      {date} &nbsp; {#if drawingDetail}{drawingDetail.title}{/if}
-    </h5>
+  <div class="flex flex-row justify-between items-start">
+    <h6 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+      {#if drawingDetail}{drawingDetail.title}{/if}
+    </h6>
+    <span class="mb-2 text-sm font-bold tracking-tight text-gray-900 dark:text-white">
+      {date}
+    </span>
     {#if drawingDetail && drawingDetail.routeImage}
       <button
         class="flex items-center justify-center p-2 rounded bg-gray-200 hover:bg-gray-300"

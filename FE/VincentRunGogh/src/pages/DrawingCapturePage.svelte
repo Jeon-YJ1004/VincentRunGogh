@@ -88,6 +88,7 @@
 
   function drawPrevLines(map: L.Map) {
     const prevData = get(drawingStore).drawingPositionList;
+    if (prevData.length === 0 || prevData === null || prevData === undefined) return;
     const prevLatlngs: L.LatLng[] = prevData?.map((item) => item.latlng);
     prevPolyline = L.polyline(prevLatlngs, {
       color: '#5e8358',
@@ -148,6 +149,7 @@
         weight: 5,
       }).addTo(map);
     });
+
     drawPrevLines(map);
   }
 
@@ -169,9 +171,11 @@
         drawingInfo.drawingId,
         data,
         (response) => {
-          isLocked = true;
-          isLoading = false;
-          Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+          if (response.data.status === 200) {
+            isLocked = true;
+            isLoading = false;
+            Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+          }
         },
         (error) => {
           isLoading = false;
@@ -181,9 +185,11 @@
               drawingInfo.drawingId,
               data,
               (res) => {
-                isLocked = true;
-                isLoading = false;
-                Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+                if (response.data.status === 200) {
+                  isLocked = true;
+                  isLoading = false;
+                  Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+                }
               },
               (err) => {
                 isLoading = false;
@@ -200,9 +206,11 @@
         drawingInfo.drawingId,
         data,
         (response) => {
-          isLoading = false;
-          isLocked = true;
-          Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+          if (response.data.status === 200) {
+            isLoading = false;
+            isLocked = true;
+            Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+          }
         },
         (error) => {
           isLoading = false;
@@ -212,9 +220,11 @@
               drawingInfo.drawingId,
               data,
               (res) => {
-                isLocked = true;
-                isLoading = false;
-                Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+                if (res.data.status === 200) {
+                  isLocked = true;
+                  isLoading = false;
+                  Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+                }
               },
               (err) => {
                 isLoading = false;
