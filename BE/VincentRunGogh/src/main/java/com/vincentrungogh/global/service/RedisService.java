@@ -3,11 +3,17 @@ package com.vincentrungogh.global.service;
 import com.vincentrungogh.domain.route.service.dto.common.Position;
 import com.vincentrungogh.domain.running.service.dto.request.RunningRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisService {
@@ -33,6 +39,10 @@ public class RedisService {
         redisTemplate.opsForValue().set(email, code);
 
         redisTemplate.opsForValue().set(email+ "-expirationTime", expirationTime);
+
+        redisTemplate.expire(email+ "-expirationTime", 180, TimeUnit.SECONDS);
+        redisTemplate.expire(email, 180, TimeUnit.SECONDS);
+
     }
 
     public String getEmailCode(String email){

@@ -1,6 +1,7 @@
 package com.vincentrungogh.global.service;
 
 import com.vincentrungogh.global.exception.CustomException;
+import com.vincentrungogh.global.exception.EmailServerException;
 import com.vincentrungogh.global.exception.ErrorCode;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -25,20 +26,25 @@ public class EmailService {
     private String serviceName;
 
     // 인증 코드 이메일 전송
-    public String sendCodeEmail(String to, int code){
-        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm");
-        String formattedExpirationTime = expirationTime.format(formatter);
+    public String sendCodeEmail(String to, int code) {
+        LocalDateTime expirationTime;
+        try {
+            expirationTime = LocalDateTime.now().plusMinutes(3);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm");
+            String formattedExpirationTime = expirationTime.format(formatter);
 
-        String title = "회원 가입을 위한 이메일입니다!";
-        String content =
-                "이메일을 인증하기 위한 절차입니다." +
-                        "<br><br>" +
-                        "인증 번호는 " + code + "입니다." +
-                        "<br>" +
-                        "인증 번호는 " + formattedExpirationTime + "까지 유효합니다.";
+            String title = "회원 가입을 위한 이메일입니다!";
+            String content =
+                    "이메일을 인증하기 위한 절차입니다." +
+                            "<br><br>" +
+                            "인증 번호는 " + code + "입니다." +
+                            "<br>" +
+                            "인증 번호는 " + formattedExpirationTime + "까지 유효합니다.";
 
-        sendEmail(to, title, content);
+            sendEmail(to, title, content);
+        } catch (Exception e) {
+            throw new EmailServerException();
+        }
 
         return expirationTime.toString();
     }

@@ -10,6 +10,7 @@ import com.vincentrungogh.global.auth.service.dto.request.ResetPasswordRequest;
 import com.vincentrungogh.global.auth.service.dto.request.SignupRequest;
 import com.vincentrungogh.global.auth.service.dto.response.*;
 import com.vincentrungogh.global.exception.CustomException;
+import com.vincentrungogh.global.exception.EmailServerException;
 import com.vincentrungogh.global.exception.ErrorCode;
 import com.vincentrungogh.global.service.EmailService;
 import com.vincentrungogh.global.service.RedisService;
@@ -19,6 +20,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -160,6 +166,10 @@ public class AuthService {
         return response;
     }
 
+    @Async
+    @Retryable(value = { EmailServerException.class, RedisConnectionFailureException.class },
+            backoff = @Backoff(delay = 2000))
+    //전송 실패시 3번 재시도
     public void sendCode(String email){
         // 1. 인증 코드 생성
         int code = makeRandomCode();
@@ -169,6 +179,14 @@ public class AuthService {
 
         // 3. 레디스 저장
         redisService.saveEmailCode(email, String.valueOf(code), expirationTime);
+    }
+
+    // 재시도 실패 시 복구 로직
+    @Recover
+    public void recoverFromFailure(Exception e, String email) {
+        // 재시도 실패 시 처리할 로직
+        log.warn("이메일 전송 실패");
+        throw new CustomException(ErrorCode.FAILED_SEND_EMAIL);
     }
 
     public void resetPassword(ResetPasswordRequest request){

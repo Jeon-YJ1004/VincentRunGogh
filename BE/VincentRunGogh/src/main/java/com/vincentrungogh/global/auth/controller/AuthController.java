@@ -116,6 +116,8 @@ public class AuthController {
     @PostMapping("/code/send")
     public ResponseEntity<?> sendCode(@RequestBody @Valid SendCodeRequest sendCodeRequest){
 
+        log.info("코드 전송");
+
         authService.sendCode(sendCodeRequest.getEmail());
 
         return ResponseEntity
