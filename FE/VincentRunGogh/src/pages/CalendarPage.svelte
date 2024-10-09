@@ -151,7 +151,7 @@
           {$selectedMonth}월 {$selectedDate?.split('-')[2]}일 운동
         </h2>
         <DrawingSummaryInfo
-          time={formatSecToH($selectedDayInfo.dayTotalTime)}
+          time={`${formatSecToH($selectedDayInfo.dayTotalTime)} hrs`}
           averagePace={getPace($selectedDayInfo.dayTotalDistance, $selectedDayInfo.dayTotalTime)}
           distance={formatDistanceFix2($selectedDayInfo.dayTotalDistance)}
           km

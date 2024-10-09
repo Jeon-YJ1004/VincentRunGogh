@@ -48,15 +48,15 @@
 
   // 속도에 따른 색상을 반환하는 함수
   function getSpeedColor(speed: number): string {
-    return speed < 4
+    return speed < 6
       ? '#3FAE48'
-      : speed < 8
+      : speed < 12
         ? '#ffffb2'
-        : speed < 13
+        : speed < 18
           ? '#fecc5c'
-          : speed < 20
+          : speed < 25
             ? '#fd8d3c'
-            : speed < 26
+            : speed < 32
               ? '#f03b20'
               : '#bd0026';
   }

@@ -2,7 +2,6 @@ import DrawingPage from './DrawingPage.svelte';
 import MakeRoutePage from './MakeRoutePage.svelte';
 import DrawingCapturePage from './DrawingCapturePage.svelte';
 import CalendarPage from './CalendarPage.svelte';
-import DrawingDetailPage from './DrawingDetailPage.svelte';
 import HomePage from './HomePage.svelte';
 import RouteListPage from './RouteListPage.svelte';
 import CommunityPage from './CommunityPage.svelte';
@@ -14,7 +13,6 @@ import ProgressPage from './ProgressPage.svelte';
 import SignUpProfilePage from './SignUpProfilePage.svelte';
 import HistoryPage from './HistoryPage.svelte';
 export {
-  DrawingDetailPage,
   DrawingPage,
   MakeRoutePage,
   DrawingCapturePage,
@@ -28,5 +26,5 @@ export {
   MyHealthPage,
   ProgressPage,
   SignUpProfilePage,
-  HistoryPage
+  HistoryPage,
 };

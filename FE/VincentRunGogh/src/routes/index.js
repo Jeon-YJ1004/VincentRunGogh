@@ -1,7 +1,6 @@
 // import 컴포넌트
 // @ts-ignore
 import {
-  DrawingDetailPage,
   DrawingPage,
   MakeRoutePage,
   DrawingCapturePage,
@@ -22,7 +21,6 @@ export default {
   '/drawingmap': DrawingPage,
   '/drawingcapture': DrawingCapturePage,
   '/calendar': CalendarPage,
-  '/drawingdetail': DrawingDetailPage,
   '/': HomePage,
   '/routelist': RouteListPage,
   '/community': CommunityPage,

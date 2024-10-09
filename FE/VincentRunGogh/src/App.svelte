@@ -5,7 +5,6 @@
   import Router, { replace } from 'svelte-spa-router';
   import { userStore } from '@/stores/userStore';
   import {
-    DrawingDetailPage,
     DrawingPage,
     MakeRoutePage,
     DrawingCapturePage,
@@ -58,7 +57,6 @@
     '/drawingmap': DrawingPage,
     '/drawingcapture': DrawingCapturePage,
     '/calendar': CalendarPage,
-    '/drawingdetail': DrawingDetailPage,
     '/': HomePage,
     '/routelist': RouteListPage,
     '/community': CommunityPage,
