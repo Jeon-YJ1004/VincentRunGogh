@@ -41,7 +41,6 @@
   let latLngMessageList: string[] = ['지도를 움직여 표지를 지정해주세요', '드로잉을 저장했습니다!'];
   let latLngMessage: string = latLngMessageList[0];
 
-  let inputElement: HTMLElement;
   let inputName: string = '';
 
   let drawingDetailImage = writable('');
@@ -262,8 +261,7 @@
   }
 
   async function mapCapture(isTypeColorLine: boolean) {
-    console.log(inputElement);
-    inputElement.blur();
+    document.getElementById('route-name')?.blur();
 
     map.invalidateSize();
     let guide = document.querySelector('#capture-guide');
@@ -377,7 +375,6 @@
           <Label for="input-group-1" class="block mb-2">드로잉 이름</Label>
           <Input
             bind:value={inputName}
-            bind:this={inputElement}
             id="route-name"
             type="text"
             color="base"

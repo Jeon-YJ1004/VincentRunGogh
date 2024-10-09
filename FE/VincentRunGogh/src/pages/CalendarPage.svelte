@@ -183,7 +183,7 @@
       <div class="text-sm">
         <h2 class="text-gray-500 mb-1 font-bold">{$selectedYear}년 {$selectedMonth}월 통계</h2>
         <DrawingSummaryInfo
-          time={`${formatSecToH($monthInfo.monthTotalTime)} hrs`}
+          time={`${formatSecToH($monthInfo.monthTotalTime)} h`}
           averagePace={getPace($monthInfo.monthTotalDistance, $monthInfo.monthTotalTime)}
           distance={formatDistanceFix2($monthInfo.monthTotalDistance)}
         />
