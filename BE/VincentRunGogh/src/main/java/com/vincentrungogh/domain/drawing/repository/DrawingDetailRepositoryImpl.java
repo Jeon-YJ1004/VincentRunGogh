@@ -182,4 +182,20 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                         .and(drawing.title.isNotNull()))
                 .fetchOne();
     }
+
+    @Override
+    public DrawingDetailsSummary findDrawingDetailsSummary(Drawing drawing) {
+        return queryFactory
+                .select(
+                        Projections.constructor(DrawingDetailsSummary.class,
+                                drawingDetail.time.sum().as("totalTime"),
+                                drawingDetail.distance.sum().as("totalDistance"),
+                                drawingDetail.speed.avg().as("avgSpeed"),
+                                drawingDetail.step.sum().as("totalStep")
+                        ))
+                .from(drawingDetail)
+                .where(drawingDetail.drawing.eq(drawing))
+                .groupBy(drawingDetail.drawing)
+                .fetchOne();
+    }
 }

@@ -1,6 +1,7 @@
 package com.vincentrungogh.domain.drawing.service;
 
 import com.vincentrungogh.domain.drawing.entity.DrawingDetail;
+import com.vincentrungogh.domain.drawing.entity.DrawingDetailsSummary;
 import com.vincentrungogh.domain.drawing.entity.MongoDrawingDetail;
 import com.vincentrungogh.domain.drawing.repository.MongoDrawingRepository;
 import com.vincentrungogh.domain.drawing.service.dto.request.*;
@@ -244,8 +245,16 @@ public class DrawingService {
         List<DrawingDetail> drawingDetails = drawingDetailRepository.findAllByDrawingOrderByCreated(drawing);
 
         // 2.
-        return DrawingDetailsResponse.createDrawingDetailsResponse(drawingDetails);
+        DrawingDetailsSummary summary = drawingDetailRepository.findDrawingDetailsSummary(drawing);
 
+        DrawingDetailsResponse response =  DrawingDetailsResponse.createDrawingDetailsResponse(drawingDetails, summary);
+
+        // 3. 루트 이미지
+        if(drawing.getRoute() != null){
+            response.setRouteImage(drawing.getRoute().getArtImage());
+        }
+
+        return response;
     }
 
     private SaveDrawingResponse completeCommonDrawing(int userId, int drawingId, DataSaveDrawingDetailResponse response,

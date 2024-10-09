@@ -25,4 +25,6 @@ public interface DrawingDetailRepositoryCustom {
     List<EachMonthWalkDistanceTime> findWalkDistanceTimeByYearEachMonth(User user, int year);
 
     DrawingDetailToday findTodayByUser(User user);
+
+    DrawingDetailsSummary findDrawingDetailsSummary(Drawing drawing);
 }

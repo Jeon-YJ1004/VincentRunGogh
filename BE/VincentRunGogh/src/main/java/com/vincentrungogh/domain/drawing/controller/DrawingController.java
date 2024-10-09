@@ -218,7 +218,7 @@ public class DrawingController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResultDto.res(HttpStatus.OK.value(), "드로잉이 완료되었습니다.", response));
+                .body(ResultDto.res(HttpStatus.OK.value(), "특정 드로잉에 대한 드로잉 디테일들 조회에 성공하였습니다.", response));
 
     }
 
