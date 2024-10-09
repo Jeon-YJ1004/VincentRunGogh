@@ -52,7 +52,7 @@
     '오늘도 드로잉 하셨나요?',
     `오늘은 ${Math.floor(MyInfo.todayRuntime / 60)}분 뛰었군요!`,
     `오늘은 ${MyInfo.todayDistance}km를 뛰었군요!`,
-    `오늘은 평균 1km ${MyInfo.todayAvgPace}의 페이스로 뛰었어요!`,
+    `오늘은 ${MyInfo.todayAvgPace}의 페이스로 뛰었어요!`,
     `오늘 총 ${MyInfo.todayStep}걸음 걸었어요!`,
   ];
   // 랜덤 문구 출력

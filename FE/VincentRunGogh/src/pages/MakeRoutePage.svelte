@@ -483,7 +483,7 @@
       id="capture-guide"
       width="350"
       height="350"
-      class="z-10"
+      class="z-[1000]"
       viewBox="0 0 350 350"
       style="position: absolute; top: 50px; left: 50px; pointer-events: none; display:none;"
     >
