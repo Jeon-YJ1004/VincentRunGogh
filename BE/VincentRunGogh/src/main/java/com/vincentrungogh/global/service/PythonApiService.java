@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -51,7 +52,9 @@ public class PythonApiService {
                     new ParameterizedTypeReference<ResultDto<DataArtRouteResponseDto>>() {
                     }
             );
-        } catch (Exception e) {
+        } catch(ResourceAccessException e){
+            throw new CustomException(ErrorCode.PYTHON_API_TIMEOUT_ERROR);
+        } catch(Exception e) {
             throw new CustomException(ErrorCode.FAILED_CHANGE_ROOTING);
         }
 
@@ -83,10 +86,13 @@ public class PythonApiService {
                 new HttpEntity<>(requestDto),
                 new ParameterizedTypeReference<ResultDto<DataSaveRouteResponseDto>>() {}
         );
+        } catch(ResourceAccessException e){
+            throw new CustomException(ErrorCode.PYTHON_API_TIMEOUT_ERROR);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.FAILED_CHANGE_ROOTING);
         }
 
+        log.info("파이썬 code" + response.getStatusCode());
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new CustomException(ErrorCode.FAILED_SAVE_ROOTING);
         }
@@ -111,11 +117,14 @@ public class PythonApiService {
                     new HttpEntity<>(request),
                     new ParameterizedTypeReference<ResultDto<DataSaveDrawingDetailResponse>>() {}
             );
-        } catch (Exception e) {
+        } catch(ResourceAccessException e){
+            throw new CustomException(ErrorCode.PYTHON_API_TIMEOUT_ERROR);
+        }catch (Exception e) {
             log.info(e.getMessage());
             throw new CustomException(ErrorCode.FAILED_SAVE_DRAWINGDETAIL);
         }
 
+        log.info("파이썬 code" + response.getStatusCode());
         if(response.getStatusCode() != HttpStatus.OK){
             throw new CustomException(ErrorCode.FAILED_SAVE_DRAWINGDETAIL);
         }

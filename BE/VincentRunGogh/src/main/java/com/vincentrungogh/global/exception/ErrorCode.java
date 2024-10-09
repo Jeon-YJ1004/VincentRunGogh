@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 //사용법 에러명("message", 실제 에러상태)
 public enum ErrorCode {
     UNAUTHORIZED("유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED),
-    FAILED_CHANGE_ROOTING("루트화 하는데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    FAILED_SAVE_ROOTING("루트르 저장하는데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    FAILED_CHANGE_ROOTING("루트화 하는데 실패했습니다.", HttpStatus.NOT_IMPLEMENTED),
+    FAILED_SAVE_ROOTING("루트를 저장하는데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_NOT_FOUND("존재하지 않은 유저입니다.", HttpStatus.NOT_FOUND),
     JSON_PROCESSING_ERROR("JSON을 처리하는 도중 오류가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     DUPLICATED_EMAIL("존재하는 이메일입니다.", HttpStatus.BAD_REQUEST),
@@ -28,13 +28,14 @@ public enum ErrorCode {
     ROUTE_NOT_FOUND("존재하지 않은 루트입니다", HttpStatus.NOT_FOUND),
     DRAWING_NOT_FOUND("드로잉 정보가 없습니다. ", HttpStatus.NOT_FOUND),
     DRAWINGDETAUL_NOT_FOUND("드로잉 디테일 정보가 없습니다.", HttpStatus.NOT_FOUND),
-    FAILED_SAVE_DRAWINGDETAIL("드로잉 디테일을 저장하는데 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    FAILED_SAVE_DRAWINGDETAIL("드로잉 디테일을 저장하는데 실패하였습니다.", HttpStatus.NOT_IMPLEMENTED),
     MORE_THAN_THREE_DRAWINGS("3개의 드로잉이 진행 중입니다. 진행 중인 드로잉을 완료해주세요.", HttpStatus.BAD_REQUEST),
     USERLIKE_BOARD_NOT_FOUND("유저가 좋아요한 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     BOARD_NOT_FOUND("요청을 처리할 게시글 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     MYHEALTH_NOT_FOUND("마이헬스 정보를 찾는데 실패했습니다.", HttpStatus.NOT_FOUND),
     ROUTE_IS_NULL("루트가 null입니다. 루트 드로잉을 시작할 수 없습니다", HttpStatus.NOT_FOUND),
-    INVALID_COMMENT_LENGTH("게시글 내용은 최대 30자까지 가능합니다.", HttpStatus.BAD_REQUEST)
+    INVALID_COMMENT_LENGTH("게시글 내용은 최대 30자까지 가능합니다.", HttpStatus.BAD_REQUEST),
+    PYTHON_API_TIMEOUT_ERROR("파이썬 서버에서 응답 시간이 초과되었습니다.", HttpStatus.NOT_IMPLEMENTED),
     ;
 
 
