@@ -19,7 +19,6 @@
   import {
     elapsedTime,
     posList,
-    route,
     totalDistance,
     drawingStore,
     realTimePositions,
@@ -36,11 +35,14 @@
   let map: LeafletMap;
   let mapRef: HTMLElement;
   let posPolyline: Polyline | null = null;
-  let routePolyline: Polyline | null = null;
+  let prevPolyline: Polyline | null = null;
 
   let isLocked: boolean = false;
   let latLngMessageList: string[] = ['지도를 움직여 표지를 지정해주세요', '드로잉을 저장했습니다!'];
   let latLngMessage: string = latLngMessageList[0];
+
+  let inputElement: HTMLElement;
+  let inputName: string = '';
 
   let drawingDetailImage = writable('');
   let drawingImage = writable('');
@@ -84,23 +86,20 @@
       // map.fitBounds(polyline.getBounds());
     });
   }
-  // route 배열에 있는 좌표를 기준으로 점선 스타일로 선을 그리기
-  function drawRouteLines(map: L.Map) {
-    const routeData = get(route);
-    const routeLatlngs: L.LatLng[] = routeData.map((item) => item.latlng);
-    routePolyline = L.polyline(routeLatlngs, {
-      color: '#000',
-      weight: 3,
-      dashArray: '5, 10',
-      opacity: 0.5,
+
+  function drawPrevLines(map: L.Map) {
+    const prevData = get(drawingStore).drawingPositionList;
+    const prevLatlngs: L.LatLng[] = prevData?.map((item) => item.latlng);
+    prevPolyline = L.polyline(prevLatlngs, {
+      color: '#5e8358',
+      weight: 5,
     }).addTo(map);
-    routePolyline.setStyle({ zIndex: -1 });
+    prevPolyline.setStyle({ zIndex: -1 });
   }
 
   // 전체 맵에 선을 그리는 함수
   function drawLinesOnMap(map: L.Map) {
     drawPosListLines(map);
-    $route && drawRouteLines(map);
   }
 
   // 지도 초기화 및 선 그리기
@@ -146,11 +145,11 @@
 
     segments.forEach((segment) => {
       L.polyline(segment, {
-        color: '#000', // 단일 색상 적용
+        color: '#5e8358', // 단일 색상 적용
         weight: 5,
-        opacity: 0.8,
       }).addTo(map);
     });
+    drawPrevLines(map);
   }
 
   async function submitDrawing() {
@@ -189,6 +188,8 @@
               },
               (err) => {
                 isLoading = false;
+                Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+
                 replace('/');
               }
             );
@@ -218,6 +219,8 @@
               },
               (err) => {
                 isLoading = false;
+                Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+
                 replace('/');
               }
             );
@@ -258,9 +261,10 @@
     });
   }
 
-  let inputName: string = '';
-
   async function mapCapture(isTypeColorLine: boolean) {
+    console.log(inputElement);
+    inputElement.blur();
+
     map.invalidateSize();
     let guide = document.querySelector('#capture-guide');
     guide.style.display = 'none';
@@ -373,6 +377,7 @@
           <Label for="input-group-1" class="block mb-2">드로잉 이름</Label>
           <Input
             bind:value={inputName}
+            bind:this={inputElement}
             id="route-name"
             type="text"
             color="base"
@@ -412,10 +417,6 @@
     />
   {/if}
 </div>
-
-<!-- {#if isLoading}
-  <Spinner />
-{/if} -->
 
 <style>
   #makeroute-header {

@@ -49,7 +49,7 @@
   let startTime: string | null = null;
   let firstLocationFound = writable(false); // 최초 위치 찾기 상태
   let isFocusMarker: boolean = true;
-  let zoomLevel: number = 16;
+  let zoomLevel: number = 20;
   let routeId = writable(null);
   let drawingId = writable(null);
   let options = writable({});
@@ -77,7 +77,7 @@
 
   function createMap(): LeafletMap {
     const m = L.map('map', { preferCanvas: true });
-    m.locate({ setView: true, maxZoom: zoomLevel });
+    m.locate({ setView: true, maxZoom: 20 });
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       // attribution: `&copy;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>,
@@ -365,7 +365,7 @@ fill="#000000" stroke="none">
   function createLines(): Polyline {
     return L.polyline(
       $posList.map((p) => p.latlng),
-      { color: '#3FAE48', opacity: 0.5, smoothFactor: 1 }
+      { color: '#3FAE48', opacity: 0.5, smoothFactor: 1, weight: 5 }
     );
   }
 
