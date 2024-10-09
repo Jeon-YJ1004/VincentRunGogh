@@ -66,14 +66,14 @@ public class DrawingDetail {
     }
 
     public static DrawingDetail createDrawingDetail(DataSaveDrawingDetailResponse data,
-                                                    String image, Drawing drawing){
+                                                    String image, Drawing drawing, int step){
         return DrawingDetail.builder()
                 .id(data.getDrawingDetailId())
                 .isCompleted(false)
                 .time(data.getTime())
                 .distance(data.getDistance())
                 .speed(data.getSpeed())
-                .step(data.getDistance())
+                .step(step)
                 .currentDrawingImage(image)
                 .created(LocalDateTime.now())
                 .drawing(drawing)
@@ -82,14 +82,14 @@ public class DrawingDetail {
     }
 
     public static DrawingDetail completeDrawingDetail(DataSaveDrawingDetailResponse data,
-                                                    String image, Drawing drawing){
+                                                    String image, Drawing drawing, int step){
         return DrawingDetail.builder()
                 .id(data.getDrawingDetailId())
                 .isCompleted(true)
                 .time(data.getTime())
                 .distance(data.getDistance())
                 .speed(data.getSpeed())
-                .step(data.getDistance())
+                .step(step)
                 .currentDrawingImage(image)
                 .created(LocalDateTime.now())
                 .drawing(drawing)

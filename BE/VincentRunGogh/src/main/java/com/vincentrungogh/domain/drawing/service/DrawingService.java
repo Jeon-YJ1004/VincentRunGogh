@@ -177,7 +177,7 @@ public class DrawingService {
         DataSaveDrawingDetailResponse response = processDrawing(userId);
 
         return saveCommonDrawing(drawingId, response,
-                request.getDrawingImage(), request.getDrawingDetailImage());
+                request.getDrawingImage(), request.getDrawingDetailImage(), request.getStep());
     }
 
     @Transactional
@@ -187,12 +187,13 @@ public class DrawingService {
         DataSaveDrawingDetailResponse response = processDrawing(userId, request.getPositions());
 
         return saveCommonDrawing(drawingId, response,
-                request.getDrawingImage(), request.getDrawingDetailImage());
+                request.getDrawingImage(), request.getDrawingDetailImage(), request.getStep());
     }
 
     private SaveDrawingResponse saveCommonDrawing(int drawingId,
                                                   DataSaveDrawingDetailResponse response,
-                                                  String drawingImage, String drawingDetailImage) {
+                                                  String drawingImage, String drawingDetailImage,
+                                                  int step) {
         // 2. 드로잉
         Drawing drawing = drawingRepository.findById(drawingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
@@ -206,7 +207,7 @@ public class DrawingService {
         String drawingDetailImageURL = this.getImageUrl(drawingDetailImage);
         DrawingDetail drawingDetail = DrawingDetail
                 .createDrawingDetail(response, drawingDetailImageURL,
-                        drawing);
+                        drawing, step);
         drawingDetailRepository.save(drawingDetail);
 
         return SaveDrawingResponse
@@ -271,7 +272,7 @@ public class DrawingService {
         String drawingDetailImageURL = this.getImageUrl(drawingDetailImage);
         DrawingDetail drawingDetail = DrawingDetail
                 .completeDrawingDetail(response, drawingDetailImageURL,
-                        drawing);
+                        drawing, step);
         drawingDetailRepository.save(drawingDetail);
 
         // 5. 마이헬스 저장
