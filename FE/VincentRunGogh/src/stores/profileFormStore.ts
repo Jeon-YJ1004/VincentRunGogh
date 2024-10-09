@@ -86,24 +86,44 @@ function createFormStore() {
   }
   function validateHeight(value: string) {
     const regex = /^\d+$/;
-    helpers.update((h) => ({
-      ...h,
-      height: {
-        message: regex.test(value) ? '' : '키는 숫자만 입력 가능합니다.',
-        color: regex.test(value) ? 'green' : 'red',
-      },
-    }));
+    if (value === '0' || parseInt(value, 10) > 300) {
+      helpers.update((h) => ({
+        ...h,
+        height: {
+          message: '키는 0 초과 300 이하로 입력하세요.',
+          color: 'red',
+        },
+      }));
+    } else {
+      helpers.update((h) => ({
+        ...h,
+        height: {
+          message: regex.test(value) ? '' : '키는 숫자만 입력 가능합니다.',
+          color: regex.test(value) ? 'green' : 'red',
+        },
+      }));
+    }
   }
 
   function validateWeight(value: string) {
     const regex = /^\d+$/;
-    helpers.update((h) => ({
-      ...h,
-      weight: {
-        message: regex.test(value) ? '' : '몸무게는 숫자만 입력 가능합니다.',
-        color: regex.test(value) ? 'green' : 'red',
-      },
-    }));
+    if (value === '0' || parseInt(value, 10) > 300) {
+      helpers.update((h) => ({
+        ...h,
+        weight: {
+          message: '몸무게는 0 초과 300 이하로 입력하세요.',
+          color: 'red',
+        },
+      }));
+    } else {
+      helpers.update((h) => ({
+        ...h,
+        weight: {
+          message: regex.test(value) ? '' : '몸무게는 숫자만 입력 가능합니다.',
+          color: regex.test(value) ? 'green' : 'red',
+        },
+      }));
+    }
   }
 
   function validateProfileImage(file: File) {

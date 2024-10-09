@@ -239,13 +239,32 @@
   });
 
   let options = {
-    responsive: true,
+    layout: {
+      responsive: true,
+    },
 
     scales: {
       y: {
-        beginAtZero: true,
-        // display: false,
         stacked: true,
+        beginAtZero: true,
+        type: 'linear' as const,
+        display: true,
+        position: 'left' as const,
+        title: {
+          display: true,
+          text: $activeCategory,
+          font: {
+            size: 15,
+          },
+        },
+        grid: {
+          drawOnChartArea: false,
+        },
+        ticks: {
+          font: {
+            size: 14,
+          },
+        },
       },
       x: {
         // display: false,
@@ -293,13 +312,15 @@
       class="w-28 absolute right-2"
     />
   </div>
-  {#if $activeCategory === 'completed'}
-    <Chart type="bar" {options} data={$chartData} class="m-4 flex justify-center" />
-  {:else}
-    <Chart type="line" {options} data={$chartData} class="m-4 flex justify-center" />
-  {/if}
+  <div class="relative w-screen">
+    {#if $activeCategory === 'completed'}
+      <Chart type="bar" {options} data={$chartData} class="" />
+    {:else}
+      <Chart type="line" {options} data={$chartData} class="" />
+    {/if}
+  </div>
   <div
-    class="grid grid-flow-row-dense grid-cols-3 grid-rows-3 items-center justify-center justify-items-center gap-[1rem] mr-[10%]"
+    class="grid grid-flow-row-dense grid-cols-3 grid-rows-3 items-center justify-center justify-items-center gap-[1rem] mr-[10%] mt-[10%]"
   >
     <button class="categoryBtn col-span-2" on:click={() => activeCategory.set('walk')}>
       <div class="categoryTitle">
@@ -331,15 +352,17 @@
 <style>
   .categoryBtn {
     width: 40vw;
-    height: 20vh;
+    height: 18vh;
     border-radius: 20px;
     background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .categoryTitle {
     width: 100%;
-    height: 11.184px;
-    flex-shrink: 0;
+    display: flex;
   }
   .categoryTitle span {
     color: var(--gray-color-200, #bebaba);
@@ -347,13 +370,17 @@
     font-style: normal;
     font-weight: 300;
     line-height: normal;
+    margin-left: 1rem;
+    margin-top: 1rem;
+    position: relative;
   }
   .chartSum {
     color: var(--gray-label-color, #868282);
-    font-family: Roboto;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    top: 20%;
+    position: relative;
   }
 </style>

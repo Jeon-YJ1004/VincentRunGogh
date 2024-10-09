@@ -37,7 +37,6 @@ export const currentPace = writable('00:00');
 export const route = writable([]);
 export const posList = writable([]);
 export const isRouteDrawing = writable<boolean>(false);
-
 // 로컬 스토리지에서 데이터 가져오기
 function loadFromLocalStorage(key, defaultValue) {
   const storedData = localStorage.getItem('drawingStore');
@@ -54,6 +53,7 @@ export const drawingStore: Writable<DrawingInfo> = writable(
 );
 export const totalDistance = writable(loadFromLocalStorage('totalDistance', 0));
 export const elapsedTime = writable(loadFromLocalStorage('elapsedTime', 0));
+export const realTimePositions = writable(loadFromLocalStorage('realTimePositions', []));
 
 // 스토어 구독하여 변경 시 로컬 스토리지에 저장
 drawingStore.subscribe((value) => {
@@ -66,6 +66,9 @@ totalDistance.subscribe((value) => {
 
 elapsedTime.subscribe((value) => {
   localStorage.setItem('elapsedTime', JSON.stringify(value));
+});
+realTimePositions.subscribe((value) => {
+  localStorage.setItem('realTimePositions', JSON.stringify(value));
 });
 
 // drawingStore 업데이트 함수
@@ -80,13 +83,25 @@ export function updateDrawingInfo(data: Partial<DrawingInfo>): void {
     routeId: data.routeId || undefined,
   });
 }
-
+export function updateLastPosSpeed(speed: number) {
+  posList.update((list) => {
+    if (list.length > 0) {
+      // 마지막 요소의 참조를 가져와서 speed를 수정합니다.
+      const lastIndex = list.length - 1;
+      const lastPos = { ...list[lastIndex], speed: speed };
+      // 기존의 list를 복사하고 마지막 요소만 업데이트된 새로운 객체로 교체합니다.
+      return [...list.slice(0, lastIndex), lastPos];
+    }
+    return list;
+  });
+}
 // 경과 시간 및 좌표 목록 업데이트 함수
-export function updateDistanceAndSpeed(posList: PositionData[]) {
+export function updateDistanceAndSpeed() {
   totalDistance.update((currentDistance) => {
-    if (posList.length > 1) {
-      const lastPosData = posList[posList.length - 2];
-      const newPosData = posList[posList.length - 1];
+    const positions = get(posList); // 스토어에서 현재 위치 목록을 가져옵니다.
+    if (positions.length > 1) {
+      const lastPosData = positions[positions.length - 2];
+      const newPosData = positions[positions.length - 1];
       const lastPos = lastPosData.latlng;
       const newPos = newPosData.latlng;
 
@@ -95,13 +110,17 @@ export function updateDistanceAndSpeed(posList: PositionData[]) {
 
       if (timeDiff > 0 && distance > 0) {
         const speed = distance / (timeDiff / 3600);
+        updateLastPosSpeed(speed); // 여기에서 속도 업데이트 함수 호출
+
         const paceSeconds = 3600 / speed;
         const paceMinutes = Math.floor(paceSeconds / 60);
         const remainingSeconds = Math.round(paceSeconds % 60);
         const minutesString = paceMinutes.toString().padStart(2, '0');
         const secondsString = remainingSeconds.toString().padStart(2, '0');
         currentPace.set(`${minutesString}:${secondsString}`);
-      } else currentPace.set('-');
+      } else {
+        currentPace.set('-');
+      }
       return currentDistance + distance;
     }
     return currentDistance;
@@ -126,8 +145,10 @@ export function resetDrawingStore(): void {
   elapsedTime.set(0);
   posList.set([]);
   route.set([]);
-
+  realTimePositions.set([]);
   isRouteDrawing.set(false);
+
+  localStorage.removeItem('realTimePositions');
   localStorage.removeItem('drawingStore');
   localStorage.removeItem('totalDistance');
   localStorage.removeItem('elapsedTime');

@@ -16,9 +16,16 @@
   import { Input, GradientButton, Label, Card } from 'flowbite-svelte';
   import { LockSolid } from 'flowbite-svelte-icons';
 
-  import { elapsedTime, posList, route, totalDistance, drawingStore } from '@/stores/drawingStore';
+  import {
+    elapsedTime,
+    posList,
+    route,
+    totalDistance,
+    drawingStore,
+    realTimePositions,
+  } from '@/stores/drawingStore';
   import { stepCount } from '@/stores/deviceMotionStore';
-  import { completeDrawing, saveDrawing } from '@/api/drawingApi';
+  import { completeDrawing, saveDrawing, reCompleteDrawing, reSaveDrawing } from '@/api/drawingApi';
   import SaveRouteDrawing from '@components/cards/SaveRouteDrawing.svelte';
   import { formatDistanceFix2 } from '@/utils/formatter';
   import { loadingAlert } from '@/utils/notificationAlert';
@@ -41,15 +48,17 @@
 
   // 속도에 따른 색상을 반환하는 함수
   function getSpeedColor(speed: number): string {
-    return speed < 30
-      ? '#bd0026'
-      : speed < 15
-        ? '#f03b20'
-        : speed < 10
-          ? '#fd8d3c'
-          : speed < 5
-            ? '#fecc5c'
-            : '#ffffb2';
+    return speed < 4
+      ? '#3FAE48'
+      : speed < 8
+        ? '#ffffb2'
+        : speed < 13
+          ? '#fecc5c'
+          : speed < 20
+            ? '#fd8d3c'
+            : speed < 26
+              ? '#f03b20'
+              : '#bd0026';
   }
 
   // posList에 담긴 좌표를 기준으로 선을 그리고 속도에 따라 그라데이션 처리
@@ -66,6 +75,7 @@
     // 각 구간별로 선을 그리며, 속도에 따라 색상 적용
     segments.forEach((segment, index) => {
       const speed = posListData[index + 1].speed || 0;
+      console.log(speed);
       const polyline = L.polyline(segment, {
         color: getSpeedColor(speed),
         weight: 5,
@@ -156,35 +166,65 @@
       data.title = inputName;
     }
     console.log(drawingInfo);
-    loadingAlert('드로잉을 저장중입니다...', '/saveroute.gif', () => {
-      if (isComplete) {
-        completeDrawing(
-          drawingInfo.drawingId,
-          data,
-          (response) => {
-            isLocked = true;
-            isLoading = false;
-            Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
-          },
-          (error) => {
-            isLoading = false;
+    if (isComplete) {
+      completeDrawing(
+        drawingInfo.drawingId,
+        data,
+        (response) => {
+          isLocked = true;
+          isLoading = false;
+          Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+        },
+        (error) => {
+          isLoading = false;
+          if (error.response.status === 501) {
+            data.positions = get(realTimePositions);
+            reCompleteDrawing(
+              drawingInfo.drawingId,
+              data,
+              (res) => {
+                isLocked = true;
+                isLoading = false;
+                Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+              },
+              (err) => {
+                isLoading = false;
+                replace('/');
+              }
+            );
           }
-        );
-      } else {
-        saveDrawing(
-          drawingInfo.drawingId,
-          data,
-          (response) => {
-            isLoading = false;
-            isLocked = true;
-            Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
-          },
-          (error) => {
-            isLoading = false;
+        }
+      );
+    } else {
+      saveDrawing(
+        drawingInfo.drawingId,
+        data,
+        (response) => {
+          isLoading = false;
+          isLocked = true;
+          Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+        },
+        (error) => {
+          isLoading = false;
+          if (error.response.status === 501) {
+            data.positions = get(realTimePositions);
+            reSaveDrawing(
+              drawingInfo.drawingId,
+              data,
+              (res) => {
+                isLocked = true;
+                isLoading = false;
+                Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
+              },
+              (err) => {
+                isLoading = false;
+                replace('/');
+              }
+            );
           }
-        );
-      }
-    });
+        }
+      );
+    }
   }
   //지도 잠그기
   let errorMessage: string = '';
@@ -207,13 +247,15 @@
         return;
       } else errorMessage = '';
     }
-    await mapCapture(true);
-    await changeMapWithSingleColor();
+    loadingAlert('드로잉을 저장중입니다...', '/saveroute.gif', async () => {
+      await mapCapture(true);
+      await changeMapWithSingleColor();
 
-    await mapCapture(false);
-    if (!isLoading) {
-      await submitDrawing();
-    }
+      await mapCapture(false);
+      if (!isLoading) {
+        await submitDrawing();
+      }
+    });
   }
 
   let inputName: string = '';

@@ -16,7 +16,6 @@
     updateDrawingInfo,
     setDrawingPos,
     updateDistanceAndSpeed,
-    drawingStore,
     isRouteDrawing,
   } from '@/stores/drawingStore';
   import {
@@ -33,7 +32,7 @@
   import { startDrawing } from '@/api/drawingApi';
   import { connectWebSocket, disconnectWebSocket, sendRealTimePosition } from '@/api/websocket';
   import { formatTimeToHMS } from '@/utils/formatter';
-  import { set } from 'date-fns';
+
   $: $isLockScreen = $isLockScreen;
   $: $isPause = $isPause;
   $: $elapsedTime = $elapsedTime;
@@ -148,7 +147,7 @@
           const currentUser = get(userStore);
           const nickname = currentUser ? currentUser.nickname : '';
           sendRealTimePosition({ lat, lng }, nickname);
-          updateDistanceAndSpeed($posList);
+          updateDistanceAndSpeed();
         }
         setDrawingPos({ lat, lng, time: formatTimeToHMS() });
         if (map !== null) {

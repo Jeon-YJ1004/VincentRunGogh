@@ -21,7 +21,14 @@ async function saveDrawing(drawingId, data, success, fail) {
 async function completeDrawing(drawingId, data, success, fail) {
   await http.post(`/drawings/end/${drawingId}`, data).then(success).catch(fail);
 }
-export function getDrawingList(type) {
+
+async function reSaveDrawing(drawingId, data, success, fail) {
+  await http.post(`/drawings/re/${drawingId}`, data).then(success).catch(fail);
+}
+async function reCompleteDrawing(drawingId, data, success, fail) {
+  await http.post(`/drawings/re/end/${drawingId}`, data).then(success).catch(fail);
+}
+async function getDrawingList(type) {
   return http
     .get(`/drawings?type=${type}`)
     .then((response) => response.data)
@@ -31,7 +38,7 @@ export function getDrawingList(type) {
 }
 
 // 특정 드로잉 조회 (홈)
-export function getDrawingInfo(drawingId) {
+async function getDrawingInfo(drawingId) {
   return http
     .get(`/drawings/${drawingId}`)
     .then((response) => response.data)
@@ -40,4 +47,12 @@ export function getDrawingInfo(drawingId) {
     });
 }
 
-export { startDrawing, saveDrawing, completeDrawing };
+export {
+  startDrawing,
+  saveDrawing,
+  completeDrawing,
+  reCompleteDrawing,
+  reSaveDrawing,
+  getDrawingInfo,
+  getDrawingList,
+};

@@ -4,6 +4,7 @@ import { Client } from '@stomp/stompjs';
 import type { IFrame } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { formatTimeToHMS } from '@/utils/formatter';
+import { realTimePositions } from '@/stores/drawingStore';
 
 let stompClient: Client | null = null;
 
@@ -51,6 +52,9 @@ export function sendRealTimePosition(location: Object, nickname: string) {
     const headers = { Authorization: `Bearer ${accessToken}` };
     const data = { ...location, time: formatTimeToHMS() };
     // console.log('Sending data:', data);
+    realTimePositions.update((prev) => {
+      return [...prev, data];
+    });
     stompClient.publish({
       destination: `/pub/running/${nickname}`,
       headers: headers,
