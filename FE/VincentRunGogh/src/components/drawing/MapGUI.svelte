@@ -20,7 +20,7 @@
   $: $isLockScreen = $isLockScreen;
   $: $isPause = $isPause;
   $: $stepCount = $stepCount;
-
+  $: $currentPace = $currentPace;
   let isMute = false;
   let hasRoute = false;
 
