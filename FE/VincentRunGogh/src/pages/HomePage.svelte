@@ -43,20 +43,20 @@
   async function getToday() {
     let responseToday = await getMyInfo();
     MyInfo = responseToday.data;
-    console.log(MyInfo);
+    welcomeWordList = [
+      '오운완했나요?',
+      '오늘도 드로잉 하셨나요?',
+      `오늘은 ${Math.floor(MyInfo.todayRuntime / 60)}분 뛰었군요!`,
+      `오늘은 ${MyInfo.todayDistance}km를 뛰었군요!`,
+      `오늘은 ${MyInfo.todayAvgPace}의 페이스로 뛰었어요!`,
+      `오늘 총 ${MyInfo.todayStep}걸음 걸었어요!`,
+    ];
   }
 
   // 홈 문구 대사
-  let welcomeWordList: string[] = [
-    '오운완했나요?',
-    '오늘도 드로잉 하셨나요?',
-    `오늘은 ${Math.floor(MyInfo.todayRuntime / 60)}분 뛰었군요!`,
-    `오늘은 ${MyInfo.todayDistance}km를 뛰었군요!`,
-    `오늘은 ${MyInfo.todayAvgPace}의 페이스로 뛰었어요!`,
-    `오늘 총 ${MyInfo.todayStep}걸음 걸었어요!`,
-  ];
+  let welcomeWordList: string[] = [];
   // 랜덤 문구 출력
-  let randomNum: number = Math.floor(Math.random() * welcomeWordList.length);
+  let randomNum: number = Math.floor(Math.random() * 6);
 
   // 진행중 드로잉 더미
 
@@ -316,6 +316,8 @@
     await getToday();
     await getWeekly();
     await getDrawings();
+    console.log('mount', MyInfo);
+    console.log(welcomeWordList);
     let UserInfo = localStorage.getItem('user');
     console.log(UserInfo);
     if (UserInfo) {
@@ -334,7 +336,9 @@
   <div id="homepage-header">
     <h1 class="typing" style="font-family: 'BRUSH'; font-size:30px;">Vincent Run Gogh</h1>
     <p><span class="text-xl font-bold">{user.nickname}</span>님!</p>
-    <h3 class="font-bold">{welcomeWordList[randomNum]}</h3>
+    {#if welcomeWordList.length > 1}
+      <h3 class="font-bold">{welcomeWordList[randomNum]}</h3>
+    {/if}
   </div>
   <div id="homepage-drawing">
     <p class="mt-2 font-bold">진행 중인 드로잉</p>
