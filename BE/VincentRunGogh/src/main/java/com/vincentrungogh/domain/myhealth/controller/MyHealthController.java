@@ -59,6 +59,7 @@ public class MyHealthController {
     @GetMapping("/group")
     public ResponseEntity<?> getToday(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         TodayMyhealthResponse response = myHealthService.getToday(userPrincipal.getId());
+        log.info("TodayMyhealthResponse" + response);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResultDto.res(HttpStatus.OK.value(),

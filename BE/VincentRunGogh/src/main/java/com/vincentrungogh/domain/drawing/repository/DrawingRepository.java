@@ -27,4 +27,6 @@ public interface DrawingRepository extends JpaRepository<Drawing, Integer>, Draw
     List<EachMonthRouteFreeCount> findRouteFreeCountByYearEachMonth(User user, int year);
 
     Optional<Drawing> findById(int drawingId);
+
+    Optional<Drawing> findByIdAndUserId(int drawingId, int userId);
 }

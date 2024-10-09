@@ -202,5 +202,25 @@ public class DrawingController {
 
     }
 
+    @Operation(summary = "드로잉 디테일들 가져오기", description = "특정 드로잉에 대한 모든 드로잉 디테일 정보 가져오기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "특정 드로잉에 대한 드로잉 디테일들 조회에 성공하였습니다.",
+                    content = @Content(schema = @Schema(implementation = DrawingDetailsResponse.class))),
+            @ApiResponse(responseCode = "500", description = "특정 드로잉에 대한 드로잉 디테일들 조회에 실패하였습니다.",
+                    content = @Content(schema = @Schema(implementation = ResultDto.class)))
+    })
+    @CommonSwaggerResponse.CommonResponses
+    @GetMapping("/{drawingId}/details")
+    public ResponseEntity<?> getDrawingDetails(@PathVariable int drawingId,
+                                               @AuthenticationPrincipal UserPrincipal userPrincipal){
+
+        DrawingDetailsResponse response =  drawingService.getDrawingDetails(drawingId, userPrincipal.getId());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResultDto.res(HttpStatus.OK.value(), "드로잉이 완료되었습니다.", response));
+
+    }
+
 
 }

@@ -235,6 +235,19 @@ public class DrawingService {
                 request.getTitle(), request.getDrawingImage(), request.getDrawingDetailImage(), request.getStep());
     }
 
+    public DrawingDetailsResponse getDrawingDetails(int drawingId, int userId){
+        // 0.
+        Drawing drawing = drawingRepository.findByIdAndUserId(drawingId, userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
+
+        // 1. DB 조회
+        List<DrawingDetail> drawingDetails = drawingDetailRepository.findAllByDrawingOrderByCreated(drawing);
+
+        // 2.
+        return DrawingDetailsResponse.createDrawingDetailsResponse(drawingDetails);
+
+    }
+
     private SaveDrawingResponse completeCommonDrawing(int userId, int drawingId, DataSaveDrawingDetailResponse response,
                                                      String title, String drawingImage, String drawingDetailImage, int step){
         // 2. 드로잉

@@ -11,6 +11,7 @@ import java.util.List;
 public interface DrawingDetailRepository extends JpaRepository<DrawingDetail, Integer>, DrawingDetailRepositoryCustom {
     List<DrawingDetail> findAllByDrawingAndCreatedBetween(Drawing drawing, LocalDateTime start, LocalDateTime end);
     List<DrawingDetail> findAllByDrawing(Drawing drawing);
+    List<DrawingDetail> findAllByDrawingOrderByCreated(Drawing drawing);
 
     @Override
     Long countAllByDrawings(List<Drawing> drawings);
