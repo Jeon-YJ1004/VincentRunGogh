@@ -12,9 +12,9 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResetPasswordRequest {
-    @NotBlank
+    @NotBlank(message = "모든 항목을 입력해주세요.")
     private String email;
-    @NotNull
+    @NotNull(message = "모든 항목을 입력해주세요.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birth;
 }

@@ -8,8 +8,8 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBl
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CodeCheckRequest {
-    @NotBlank
+    @NotBlank(message = "모든 항목을 입력해주세요.")
     private String code;
-    @NotBlank
+    @NotBlank(message = "모든 항목을 입력해주세요.")
     private String email;
 }

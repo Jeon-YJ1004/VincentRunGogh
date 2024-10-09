@@ -10,8 +10,8 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBl
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "모든 항목을 입력해주세요.")
     private String email;
-    @NotBlank
+    @NotBlank(message = "모든 항목을 입력해주세요.")
     private String password;
 }

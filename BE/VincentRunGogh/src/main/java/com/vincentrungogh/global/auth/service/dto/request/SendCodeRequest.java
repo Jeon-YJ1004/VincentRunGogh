@@ -11,6 +11,6 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBl
 @AllArgsConstructor
 public class SendCodeRequest {
 
-    @NotBlank
+    @NotBlank(message = "모든 항목을 입력해주세요.")
     private String email;
 }
