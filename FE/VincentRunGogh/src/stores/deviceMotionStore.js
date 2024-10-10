@@ -11,95 +11,74 @@ let historicMotion = { x: [], y: [], z: [] };
 let historicOrientation = { x: [], y: [], z: [] };
 export const stepCount = writable(0);
 export const deviceOrientation = writable({ alpha: 0, beta: 0, gamma: 0 });
+async function requestOrientaionPermission() {
+  if (
+    typeof DeviceOrientationEvent !== 'undefined' &&
+    typeof DeviceOrientationEvent.requestPermission === 'function'
+  ) {
+    const orientationPermission = await DeviceOrientationEvent.requestPermission();
+    console.log('Orientation permission:', orientationPermission);
+    return orientationPermission === 'granted';
+  }
+  return true; // 안드로이드 또는 권한 요청이 필요없는 브라우저에서는 항상 true를 반환
+}
 
-// // Functions to handle motion and orientation
-// function motion(event) {
-//   const { accelerationIncludingGravity } = event;
-//   if (accelerationIncludingGravity) {
-//     updateMotionData(
-//       accelerationIncludingGravity.x,
-//       accelerationIncludingGravity.y,
-//       accelerationIncludingGravity.z
-//     );
-//   }
-// }
-
-// function orientation(event) {
-//   const { alpha, beta, gamma } = event;
-//   deviceOrientation.set({ alpha, beta, gamma });
-//   updateOrientationData(alpha, beta, gamma);
-// }
-
-// function updateMotionData(x, y, z) {
-//   historicMotion.x.push(x);
-//   historicMotion.y.push(y);
-//   historicMotion.z.push(z);
-//   trimData();
-//   calculateSteps();
-// }
-
-// function updateOrientationData(alpha, beta, gamma) {
-//   historicOrientation.x.push(alpha);
-//   historicOrientation.y.push(beta);
-//   historicOrientation.z.push(gamma);
-//   trimData(historicOrientation);
-// }
-
-// function trimData() {
-//   Object.keys(historicMotion).forEach((key) => {
-//     if (historicMotion[key].length > 500) {
-//       historicMotion[key].shift();
-//     }
-//   });
-// }
-
-// function calculateSteps() {
-//   const now = Date.now();
-//   if (now - lastStepTime > stepTimeout) {
-//     const movement = calculateAverageMovement(historicMotion, prevPoint);
-//     if (movement > 10) {
-//       alert(movement);
-//     }
-//     if (movement > MIN_STEP_THRESHOLD && movement < MAX_STEP_THRESHOLD) {
-//       stepCount.update((n) => n + 1);
-//       lastStepTime = now;
-//     }
-//   }
-// }
-
-// function calculateAverageMovement(historic, points) {
-//   return (
-//     Object.keys(historic).reduce((acc, key) => {
-//       let data = historic[key].slice(-points);
-//       let sum = data.reduce((sum, val) => sum + Math.abs(val), 0);
-//       return acc + sum / data.length;
-//     }, 0) / 3
-//   );
-// }
+async function requestMotionPermission() {
+  if (
+    typeof DeviceMotionEvent !== 'undefined' &&
+    typeof DeviceMotionEvent.requestPermission === 'function'
+  ) {
+    const motionPermission = await DeviceMotionEvent.requestPermission();
+    console.log('Motion permission:', motionPermission);
+    return motionPermission === 'granted';
+  }
+  return true; // 안드로이드 또는 권한 요청이 필요없는 브라우저에서는 항상 true를 반환
+}
 
 // Setup and clear event listeners
 export function setupMotionEventListeners() {
-  window.addEventListener('deviceorientation', orientation);
+  requestOrientaionPermission()
+    .then((granted) => {
+      if (granted) {
+        window.addEventListener('deviceorientation', orientation);
+      } else {
+        console.error('Orientation permission not granted');
+      }
+    })
+    .catch((error) => {
+      console.error('Permission request error:', error);
+    });
 }
-let setpIntervalId; // 여기에서 intervalId를 선언
+
+let stepIntervalId; // 여기에서 intervalId를 선언
 
 export function setupStepEventListeners() {
-  window.addEventListener('devicemotion', motion);
-  setpIntervalId = window.setInterval(updateStatus, 100);
+  requestMotionPermission()
+    .then((granted) => {
+      if (granted) {
+        window.addEventListener('devicemotion', motion);
+        stepIntervalId = window.setInterval(updateStatus, 100);
+      } else {
+        console.error('Motion permission not granted');
+      }
+    })
+    .catch((error) => {
+      console.error('Permission request error:', error);
+    });
 }
 export function stopStepEventListeners() {
   window.removeEventListener('devicemotion', motion);
-  if (setpIntervalId) {
-    clearInterval(setpIntervalId); // intervalId를 사용하여 인터벌 중지
-    setpIntervalId = null; // intervalId를 재설정
+  if (stepIntervalId) {
+    clearInterval(stepIntervalId); // intervalId를 사용하여 인터벌 중지
+    stepIntervalId = null; // intervalId를 재설정
   }
 }
 export function clearMotionEventListeners() {
   window.removeEventListener('devicemotion', motion);
   window.removeEventListener('deviceorientation', orientation);
-  if (setpIntervalId) {
-    clearInterval(setpIntervalId); // intervalId를 사용하여 인터벌 중지
-    setpIntervalId = null; // intervalId를 재설정
+  if (stepIntervalId) {
+    clearInterval(stepIntervalId); // intervalId를 사용하여 인터벌 중지
+    stepIntervalId = null; // intervalId를 재설정
   }
   deviceOrientation.set({ alpha: 0, beta: 0, gamma: 0 });
 }
