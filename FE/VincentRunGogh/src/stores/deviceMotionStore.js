@@ -86,7 +86,6 @@ let setpIntervalId; // 여기에서 intervalId를 선언
 export function setupStepEventListeners() {
   window.addEventListener('devicemotion', motion);
   setpIntervalId = window.setInterval(updateStatus, 100);
-
 }
 export function stopStepEventListeners() {
   window.removeEventListener('devicemotion', motion);
@@ -102,13 +101,10 @@ export function clearMotionEventListeners() {
     clearInterval(setpIntervalId); // intervalId를 사용하여 인터벌 중지
     setpIntervalId = null; // intervalId를 재설정
   }
-  stepCount.set(0);
   deviceOrientation.set({ alpha: 0, beta: 0, gamma: 0 });
 }
 
-
 function updateStatus() {
-
   // 움직임 및 방향 데이터를 기반으로 상태를 설정
   const now = Date.now();
   if (now - lastStepTime > STEP_TIME_DELAY) {
@@ -116,16 +112,18 @@ function updateStatus() {
     let movement = mostRecentMovementOverall(PREV_POINTS);
     if (movement > MIN_STEP_THRESHOLD) stepCount.update((n) => n + 1);
     lastStepTime = now;
-
   }
 }
 
 // 기록된 데이터를 바탕으로 전체 움직임을 계산하는 함수
 function mostRecentMovementOverall(numberOfHistoricPoints) {
   // x, y, z축의 움직임 평균을 계산하여 반환
-  return (mostRecentMovement(historicMotion["x"], numberOfHistoricPoints, true) +
-    mostRecentMovement(historicMotion["y"], numberOfHistoricPoints, true) +
-    mostRecentMovement(historicMotion["z"], numberOfHistoricPoints, true)) / 3.0;
+  return (
+    (mostRecentMovement(historicMotion['x'], numberOfHistoricPoints, true) +
+      mostRecentMovement(historicMotion['y'], numberOfHistoricPoints, true) +
+      mostRecentMovement(historicMotion['z'], numberOfHistoricPoints, true)) /
+    3.0
+  );
 }
 
 // 특정 축의 움직임을 계산하는 함수
@@ -136,7 +134,7 @@ function mostRecentMovement(array, numberOfHistoricPoints, removeNegatives) {
       let currentElement = array[array.length - toCount - 1];
 
       // 최신 데이터를 더 큰 비중으로 계산
-      currentElement *= (1 - toCount / numberOfHistoricPoints);
+      currentElement *= 1 - toCount / numberOfHistoricPoints;
 
       // 음수 값을 제거해야 하는 경우, 음수를 양수로 변환
       if (currentElement < 0 && removeNegatives) currentElement = currentElement * -1;
@@ -144,25 +142,22 @@ function mostRecentMovement(array, numberOfHistoricPoints, removeNegatives) {
       // 너무 작은 값은 무시
       if (currentElement > 0.1 || currentElement < -0.1) totalSum += currentElement;
     }
-    return totalSum * 100 / numberOfHistoricPoints; // 평균을 반환
+    return (totalSum * 100) / numberOfHistoricPoints; // 평균을 반환
   }
   return 0;
 }
-
 
 // 기기 움직임 이벤트를 처리하는 함수
 function motion(event) {
   // 각 축의 움직임 값을 업데이트
 
-  historicMotion["x"].push(event.acceleration.x);
-  historicMotion["y"].push(event.acceleration.y);
-  historicMotion["z"].push(event.acceleration.z);
+  historicMotion['x'].push(event.acceleration.x);
+  historicMotion['y'].push(event.acceleration.y);
+  historicMotion['z'].push(event.acceleration.z);
 }
-
 
 // 기기 방향 이벤트를 처리하는 함수
 function orientation(event) {
   const { alpha, beta, gamma } = event;
   deviceOrientation.set({ alpha, beta, gamma });
-
 }

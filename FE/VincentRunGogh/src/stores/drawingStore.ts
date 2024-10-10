@@ -2,6 +2,7 @@ import { writable, get, derived } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { LatLng } from 'leaflet';
 import L from 'leaflet';
+import { stepCount } from '@/stores/deviceMotionStore';
 
 // 데이터 타입 정의
 interface Position {
@@ -148,6 +149,7 @@ export function resetDrawingStore(): void {
   route.set([]);
   realTimePositions.set([]);
   isRouteDrawing.set(false);
+  stepCount.set(0);
 
   localStorage.removeItem('realTimePositions');
   localStorage.removeItem('drawingStore');
