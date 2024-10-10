@@ -12,22 +12,23 @@
     authFormStore;
 
   let loading: boolean = false;
+  let isValuableEmail: boolean = false;
   let isVerifyEmail: boolean = false;
   let sendEmailCode: boolean = false;
   let emailCode: string = '';
   const onchangeEmail = (e) => {
     isVerifyEmail = false;
+    isValuableEmail = validateEmail(e.target.value);
     sendEmailCode = false;
-    validateEmail(e.target.value);
   };
   const handleCheckEmail = () => {
-    if (!$values.email) {
+    if (!$values.email || !isValuableEmail) {
       $helpers.email.color = 'red';
-      $helpers.email.message = '이메일일을 입력해주세요.';
+      $helpers.email.message = '올바른 이메일을 입력해주세요.';
       return;
     }
-    $helpers.email.color = '';
-    $helpers.email.message = '';
+    $helpers.email.color = 'black';
+    $helpers.email.message = '잠시 기다려주세요';
     if (loading) return;
     loading = true;
     checkEmailDuplication(
@@ -80,12 +81,12 @@
   <div id="signup-form">
     <div class="mb-6 w-[80%] z-10">
       <Label for="nickname" class="block mb-2">이메일</Label>
-      <ButtonGroup class="w-full">
+      <ButtonGroup class="w-full h-[50%] ">
         <Input
           id="email"
           type="email"
           placeholder="name@site.com"
-          class="h-full"
+          class="h-[100%]"
           bind:value={$values.email}
           on:input={onchangeEmail}
         />

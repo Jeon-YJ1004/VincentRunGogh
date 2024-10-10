@@ -39,7 +39,7 @@
 
 <div class="mb-6 w-[80%] z-10">
   <Label for="nickname" class="block mb-2">별명</Label>
-  <ButtonGroup class="w-full">
+  <ButtonGroup class="w-full  h-[50%] ">
     <Input
       id="nickname"
       type="text"

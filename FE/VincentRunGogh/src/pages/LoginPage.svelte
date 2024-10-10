@@ -67,15 +67,8 @@
         <Input type="password" name="password" required bind:value={password} />
       </Label>
       <div class="flex flex-col justify-center items-center">
-        <a use:link href="/" class="text-sm text-primary-700 hover:underline dark:text-primary-500">
-          비밀번호 찾기
-        </a><br />
         <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-          계정이 없으신가요? <a
-            use:link
-            href="/signup"
-            class="text-primary-700 hover:underline dark:text-primary-500"
-          >
+          <a use:link href="/signup" class="text-primary-700 hover:underline dark:text-primary-500">
             회원가입
           </a>
         </div>

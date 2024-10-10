@@ -42,7 +42,7 @@ function createAuthFormStore() {
   }
 
   function validateEmail(value: string) {
-    const emailRegex = /^\S+@\S+\.\S+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(value)) {
       helpers.update((h) => ({
         ...h,
@@ -51,6 +51,7 @@ function createAuthFormStore() {
           color: 'red',
         },
       }));
+      return false;
     } else {
       helpers.update((h) => ({
         ...h,
@@ -59,6 +60,7 @@ function createAuthFormStore() {
           color: 'green',
         },
       }));
+      return true;
     }
   }
 

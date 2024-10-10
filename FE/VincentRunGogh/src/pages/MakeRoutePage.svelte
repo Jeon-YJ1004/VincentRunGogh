@@ -80,6 +80,7 @@
         map = L.map('map', { zoomControl: false }).setView([currentLat, currentLng], 16);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
+          minZoom: 13,
           attribution: '© OpenStreetMap',
           crossOrigin: 'anonymous',
         }).addTo(map);
