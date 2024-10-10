@@ -22,7 +22,7 @@ public class DoneDrawingStrategy implements DrawingStrategy {
     public DrawingListResponseDto findDrawingList(User user) {
 
         //완료된 드로잉 조회
-        List<Drawing> drawingList = drawingRepository.findAllByUserAndIsCompletedAndTitleIsNotNull(user, true);
+        List<Drawing> drawingList = drawingRepository.findAllByUserAndIsCompletedAndTitleIsNotNullOrderByUpdatedDesc(user, true);
 
         List<FindDrawing> findDrawingList = drawingList.stream()
                 .map(drawing -> {

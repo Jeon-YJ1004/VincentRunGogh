@@ -107,6 +107,6 @@ public class Drawing {
     // 게시글에 드로잉을 올릴 때 사용
     public void createBoard(){
         this.isCreatedBoard = true;
-        this.updated = LocalDateTime.now();
+//        this.updated = LocalDateTime.now();
     }
 }
