@@ -117,7 +117,7 @@
         <span class="text-sm"> 이동거리 </span>
         <div>
           <span class="text-lg text-gray-700 text-2xl font-bold">
-            {formatDistanceFix2($totalDistance)}
+            {Math.round($totalDistance)}
           </span> m
         </div>
       </div>

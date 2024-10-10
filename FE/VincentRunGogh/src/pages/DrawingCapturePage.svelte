@@ -192,14 +192,14 @@
     if (isComplete) {
       data.title = inputName;
     }
-    alert(
-      JSON.stringify({
-        drawingImage: $drawingImage.length > 0,
-        drawingDetailImage: $drawingDetailImage.length > 0,
-        step: $stepCount,
-        ...drawingInfo.endInfo,
-      })
-    );
+    // alert(
+    //   JSON.stringify({
+    //     drawingImage: $drawingImage.length > 0,
+    //     drawingDetailImage: $drawingDetailImage.length > 0,
+    //     step: $stepCount,
+    //     ...drawingInfo.endInfo,
+    //   })
+    // );
     if (isComplete) {
       // completeDrawing(
       //   drawingInfo.drawingId,
