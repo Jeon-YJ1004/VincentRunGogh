@@ -331,8 +331,8 @@
   let marker: Marker | null = null; // 마커 객체를 저장할 변수
   function createMarker(loc: LatLngExpression): Marker | null {
     const iconHtml = `<div class="map-marker" style="transform: rotate(${90 + $deviceOrientation.alpha}}deg)">
- <div class="map-marker">
-<img src="/mapmarker.png" />
+     <div class="map-marker">
+<img src="/mapmarker.png" class='map-marker' style="transform: rotate(${90 + $deviceOrientation.alpha}}deg)" />
 </div></div>`;
     const icon = new L.DivIcon({
       html: iconHtml,
@@ -350,8 +350,8 @@
     if (marker && marker.getIcon) {
       const icon = marker.getIcon();
       icon.options.html = `<div class="map-marker" style="transform: rotate(${90 + $deviceOrientation.alpha}}deg)">
- <div class="map-marker">
-<img src="/mapmarker.png" />
+     <div class="map-marker">
+<img src="/mapmarker.png" class='map-marker' style="transform: rotate(${90 + $deviceOrientation.alpha}}deg)" />
 </div></div>`;
       marker.setIcon(icon);
     }
@@ -360,7 +360,7 @@
   function createLines(): Polyline {
     return L.polyline(
       $posList.map((p) => p.latlng),
-      { color: 'rgba(1,87,155,0.9)', opacity: 0.5, smoothFactor: 1, weight: 10 }
+      { color: 'rgba(1,87,155,0.9)', opacity: 0.5, smoothFactor: 1, weight: 7 }
     );
   }
 
