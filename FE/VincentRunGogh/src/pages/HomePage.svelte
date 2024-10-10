@@ -251,7 +251,7 @@
       y: {
         formatter: function (val: number, { seriesIndex }) {
           if (seriesIndex === 0) {
-            return Math.floor(val / 600) + 'km'; // '운동 거리'에 km 단위 추가
+            return (val / 600).toFixed(2) + 'km'; // '운동 거리'에 km 단위 추가
           } else if (seriesIndex === 1) {
             return Math.floor(val / 60) + '분'; // '운동 시간'에 분 단위 추가
           }

@@ -21,8 +21,8 @@
     <Carousel
       class="w-full"
       images={[
-        { src: drawingImage, alt: 'drawingImage' },
         { src: artImage, alt: 'artImage' },
+        { src: drawingImage, alt: 'drawingImage' },
       ]}
       let:Indicators
     >

@@ -78,7 +78,7 @@
   ];
 
   let accountMenuIcons: MenuItem[] = [
-    { name: '비밀번호 변경', icon: LockOutline, href: '/#/changepassword' },
+    // { name: '비밀번호 변경', icon: LockOutline, href: '/#/changepassword' },
     { name: '로그아웃', icon: ArrowRightToBracketOutline, href: '/#/logout' },
   ];
 
