@@ -172,7 +172,7 @@
           const currentUser = get(userStore);
           const nickname = currentUser ? currentUser.nickname : '';
           sendRealTimePosition({ lat, lng }, nickname);
-          updateDistanceAndSpeed();
+          updateDistanceAndSpeed($posList);
         }
         setDrawingPos({ lat, lng, time: formatTimeToHMS() });
         if (map !== null) {
@@ -383,7 +383,7 @@ fill="#000000" stroke="none">
   function createLines(): Polyline {
     return L.polyline(
       $posList.map((p) => p.latlng),
-      { color: '#ff4040', opacity: 0.5, smoothFactor: 1, weight: 5 }
+      { color: 'blue', opacity: 0.5, smoothFactor: 1, weight: 5 }
     );
   }
 
