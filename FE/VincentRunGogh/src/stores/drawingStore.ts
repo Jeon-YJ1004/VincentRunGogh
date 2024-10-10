@@ -105,7 +105,7 @@ export function updateDistanceAndSpeed(posList: PositionData[]) {
       const lastPos = lastPosData.latlng;
       const newPos = newPosData.latlng;
 
-      const distance = lastPos.distanceTo(newPos)+0.1;
+      const distance = lastPos.distanceTo(newPos) + 0.1;
       const timeDiff = (newPosData.time - lastPosData.time) / 1000; // 초로 변환
       console.log('updateDistanceAndSpeed에서 distance: ' + distance + ' timeDiff: ' + timeDiff);
       if (timeDiff > 0) {
@@ -122,7 +122,7 @@ export function updateDistanceAndSpeed(posList: PositionData[]) {
       } else {
         currentPace.set('-');
       }
-      return currentDistance + distance -0.1;
+      return currentDistance + distance - 0.1;
     }
     return currentDistance;
   });

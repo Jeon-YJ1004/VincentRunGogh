@@ -92,7 +92,13 @@
   function handleLocationFound(e: L.LocationEvent) {
     const { lat, lng } = e.latlng;
     currPos = new L.LatLng(lat, lng);
-
+    //처음이 아니고
+    if ($posList.length > 0) {
+      //이동거리가 12보다 크면
+      if (currPos.distanceTo($posList[$posList.length - 1].latlng) > 12) {
+        return;
+      }
+    }
     addPosition(lat, lng);
 
     if (currPos && isFocusMarker) map.setView(currPos, zoomLevel, { animate: true });
@@ -169,9 +175,9 @@
 
         if (!$isPause) {
           // console.log('소켓 데이터 보내기!');
-          const currentUser = get(userStore);
-          const nickname = currentUser ? currentUser.nickname : '';
-          sendRealTimePosition({ lat, lng }, nickname);
+          // const currentUser = get(userStore);
+          // const nickname = currentUser ? currentUser.nickname : '';
+          // sendRealTimePosition({ lat, lng }, nickname);
           updateDistanceAndSpeed($posList);
         }
         setDrawingPos({ lat, lng, time: formatTimeToHMS() });
