@@ -1,0 +1,57 @@
+# Python 가상환경 관련 디렉토리 및 파일 무시
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.env
+*.venv
+DATA/vincent/
+lib/
+bin/
+include/
+
+# IDE 및 편집기 관련
+.idea/
+.ipynb_checkpoints
+.mypy_cache
+.vscode
+__pycache__
+.pytest_cache
+htmlcov
+*.cfg
+
+# 빌드 관련 디렉토리 및 파일 무시
+dist/
+build/
+site/
+docs_build/
+site_build/
+
+# Python 커버리지 파일
+.coverage*
+coverage.xml
+htmlcov/
+
+# 임시 파일 및 기타 설정 파일들
+.DS_Store
+Pipfile.lock
+test.db
+log.txt
+
+# macOS 및 vim 임시 파일
+.DS_Store
+*~
+.*.sw?
+.cache
+
+# 압축 파일
+docs.zip
+archive.zip
+
+# Netlify 관련
+.netlify
+
+# 기타 자동 생성 파일
+*.egg-info/
+.eggs/
