@@ -118,7 +118,7 @@
         <div>
           <span class="text-lg text-gray-700 text-2xl font-bold">
             {formatDistanceFix2($totalDistance)}
-          </span> km
+          </span> m
         </div>
       </div>
       <div class=" flex flex-col items-center justify-center">

@@ -19,6 +19,12 @@
   type CalendarOptions = typeof CalendarOptions;
 
   let today = new Date();
+  let todayStr =
+    today.getFullYear() +
+    '-' +
+    String(today.getMonth() + 1).padStart(2, '0') +
+    '-' +
+    String(today.getDate()).padStart(2, '0'); // MM과 DD를 2자리로 포매팅
 
   let monthInfo = writable<MonthInfo | null>(null);
   let selectedDayInfo = writable<DayInfo | null>(null);
@@ -94,7 +100,7 @@
       dateClick: handleDateClick,
       events: [
         {
-          date: today.toISOString().slice(0, 10), // 오늘 날짜
+          date: todayStr, // 오늘 날짜
           title: '오늘', // '오늘'이라는 제목
           color: 'transparent',
           className: ['today_indicator'],

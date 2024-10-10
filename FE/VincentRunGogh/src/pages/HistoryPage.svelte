@@ -87,7 +87,7 @@
             <h1>완료한 드로잉이 없습니다!</h1>
           {:else}
             <Timeline order="vertical">
-              {#each drawingAriticle.reverse() as article}
+              {#each drawingAriticle as article}
                 <Timeline>
                   <div class="flex justify-between">
                     <TimelineItem

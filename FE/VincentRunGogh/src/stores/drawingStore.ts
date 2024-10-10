@@ -105,11 +105,11 @@ export function updateDistanceAndSpeed() {
       const lastPos = lastPosData.latlng;
       const newPos = newPosData.latlng;
 
-      const distance = lastPos.distanceTo(newPos) / 1000; // km로 변환
+      const distance = lastPos.distanceTo(newPos);
       const timeDiff = (newPosData.time - lastPosData.time) / 1000; // 초로 변환
 
       if (timeDiff > 0 && distance > 0) {
-        const speed = distance / (timeDiff / 3600);
+        const speed = distance / 1000 / (timeDiff / 3600);
         updateLastPosSpeed(speed); // 여기에서 속도 업데이트 함수 호출
 
         const paceSeconds = 3600 / speed;
