@@ -150,10 +150,11 @@
         <h2 class="text-gray-500 mb-1 font-bold">
           {$selectedMonth}월 {$selectedDate?.split('-')[2]}일 운동
         </h2>
+
         <DrawingSummaryInfo
-          time={`${formatSecToH($selectedDayInfo.dayTotalTime)} hrs`}
+          time={$selectedDayInfo.dayTotalTime}
           averagePace={getPace($selectedDayInfo.dayTotalDistance, $selectedDayInfo.dayTotalTime)}
-          distance={formatDistanceFix2($selectedDayInfo.dayTotalDistance)}
+          distance={$selectedDayInfo.dayTotalDistance}
           km
         />
 
@@ -183,9 +184,9 @@
       <div class="text-sm">
         <h2 class="text-gray-500 mb-1 font-bold">{$selectedYear}년 {$selectedMonth}월 통계</h2>
         <DrawingSummaryInfo
-          time={`${formatSecToH($monthInfo.monthTotalTime)} h`}
+          time={$monthInfo.monthTotalTime}
           averagePace={getPace($monthInfo.monthTotalDistance, $monthInfo.monthTotalTime)}
-          distance={formatDistanceFix2($monthInfo.monthTotalDistance)}
+          distance={$monthInfo.monthTotalDistance}
         />
       </div>
     {/if}

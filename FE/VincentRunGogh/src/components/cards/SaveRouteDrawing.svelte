@@ -100,20 +100,14 @@
     </div>
     <div class="flex justify-around mb-3">
       <div>
-        루트 총 길이 <br /> <br />
+        {#if isRoute}루트{:else}드로잉{/if} 총 길이 <br /> <br />
         <span class="font-bold">{distance}km</span>
       </div>
-      {#if isRoute}
-        <div>
-          예상 소요 시간 <br /> <br />
-          <span class="font-bold">{formatSecToHMS(time)}</span>
-        </div>
-      {:else}
-        <div>
-          소요 시간 <br /> <br />
-          <span class="font-bold">{formatSecToHMS(time)}</span>
-        </div>
-      {/if}
+
+      <div>
+        {#if isRoute}예상{/if} 소요 시간 <br /> <br />
+        <span class="font-bold">{formatSecToHMS(time)}</span>
+      </div>
     </div>
   </Card>
   <div

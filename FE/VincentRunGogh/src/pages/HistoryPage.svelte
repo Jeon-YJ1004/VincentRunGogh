@@ -1,22 +1,21 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
   import { Tabs, TabItem, Timeline, TimelineItem, Card, Button } from 'flowbite-svelte';
-  import {
-    PaletteOutline,
-    FloppyDiskOutline,
-    CalendarWeekSolid,
-    ArrowRightOutline,
-  } from 'flowbite-svelte-icons';
-  import { link } from 'svelte-spa-router';
-  import BackButton from '@/components/buttons/BackButton.svelte';
+  import { PaletteOutline, FloppyDiskOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
+
   import FeedArticle from '@/components/cards/FeedArticle.svelte';
   import { getRouteList } from '@/api/routeApi';
   import { getDrawingList } from '@/api/drawingApi';
   import Header from '@/components/common/Header.svelte';
   import { formatToKoreanTime } from '@/utils/formatter';
+  import BottomSheet from '@components/common/BottomSheet.svelte';
+  import HistoryDetailContent from '@components/myhealth/HistoryDetailContent.svelte';
 
   let routeArticle = [];
   let drawingAriticle = [];
+  let activeDrawing = writable(null); // 보여줄 드로잉의 세부 정보를 추적하기 위한 스토어
+  let showModal = false;
 
   onMount(async () => {
     let routeListResponse = await getRouteList({ type: 'mine', lng: 0, lat: 0 });
@@ -25,6 +24,15 @@
     let drawingListResponse = await getDrawingList('done');
     drawingAriticle = drawingListResponse.data.findDrawingList;
   });
+  const onClickDrawingAriticle = async (drawingInfo) => {
+    console.log(drawingInfo);
+    showModal = true;
+    activeDrawing.set(drawingInfo);
+  };
+  function closeDrawingDetails() {
+    activeDrawing.set(null);
+    showModal = false;
+  }
 </script>
 
 <Header title="히스토리" to={'/myhealth'} />
@@ -70,37 +78,40 @@
         defaultClass="tab-item font-bold text-xs gap-2 bg-white bg-opacity-80 rounded-t-md"
         divClass="flex flex-col justify-center p-0 w-80"
       >
-        <div slot="title" class="flex items-center gap-1">
+        <div slot="title" class="flex items-center gap-1 pl-2">
           <FloppyDiskOutline size="sm" />
           완료한 드로잉
         </div>
-        <div id="mystorage-content" class="space-y-4" on:touchmove>
+        <div class="z-[2]" on:touchmove>
           {#if drawingAriticle.length === 0}
             <h1>완료한 드로잉이 없습니다!</h1>
           {:else}
-            {#each drawingAriticle.reverse() as article}
-              <div class="mb-3 relative z-10 overflow-y-auto">
-                <Timeline order="vertical" class="flex justify-between m-4">
-                  <TimelineItem
-                    title={article.title}
-                    date={formatToKoreanTime(article.updated, true)}
-                  >
-                    <svelte:fragment slot="icon">
-                      <span class="flex absolute justify-center items-center w-6 h-6 -start-3">
-                        <CalendarWeekSolid class="w-4 h-4 text-primary-600 dark:text-primary-400" />
-                      </span>
-                    </svelte:fragment>
-
-                    <Button color="alternative"
-                      >상세 보기<ArrowRightOutline class="ms-2 w-5 h-5" /></Button
+            <Timeline order="vertical">
+              {#each drawingAriticle.reverse() as article}
+                <Timeline>
+                  <div class="flex justify-between">
+                    <TimelineItem
+                      title={article.title}
+                      date={formatToKoreanTime(article.updated, true)}
                     >
-                  </TimelineItem>
-                  <div class="w-[30vw]">
-                    <img src={article.drawingImage} alt="" />
+                      <Button
+                        color="alternative"
+                        class="m-[1rem]"
+                        on:click={() => {
+                          onClickDrawingAriticle({
+                            drawingId: article.drawingId,
+                            title: article.title,
+                          });
+                        }}>상세보기<ArrowRightOutline class="ms-2 w-5 h-5" /></Button
+                      >
+                    </TimelineItem>
+                    <div class="w-[30%]">
+                      <img src={article.drawingImage} alt="" />
+                    </div>
                   </div>
                 </Timeline>
-              </div>
-            {/each}
+              {/each}
+            </Timeline>
           {/if}
         </div>
       </TabItem>
@@ -136,6 +147,14 @@
     </defs>
   </svg>
 </div>
+{#if showModal}
+  <!-- drawing을 button에 해당하는 drawing으로 설정 -->
+  <BottomSheet
+    Component={HistoryDetailContent}
+    props={{ drawingId: $activeDrawing.drawingId, title: $activeDrawing.title }}
+    onClose={closeDrawingDetails}
+  />
+{/if}
 
 <style>
   #mystorage-body {

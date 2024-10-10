@@ -44,7 +44,6 @@
       date,
       (response) => {
         drawingDetail = response.data.data; // 데이터 할당
-        console.log(drawingDetail);
       },
       (error) => {
         console.error('Failed to fetch drawing details:', error);
@@ -54,13 +53,15 @@
 </script>
 
 <div class="p-4 bg-white shadow-lg rounded-lg overflow-hidden">
-  <div class="flex flex-row justify-between items-start">
-    <h6 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-      {#if drawingDetail}{drawingDetail.title}{/if}
-    </h6>
-    <span class="mb-2 text-sm font-bold tracking-tight text-gray-900 dark:text-white">
-      {date}
-    </span>
+  <div class="flex flex-row justify-between items-center mb-1">
+    <div>
+      <h6 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        {#if drawingDetail}{drawingDetail.title}{/if}
+      </h6>
+      <span class="mb-2 text-sm tracking-tight text-gray-800 dark:text-white">
+        {date}
+      </span>
+    </div>
     {#if drawingDetail && drawingDetail.routeImage}
       <button
         class="flex items-center justify-center p-2 rounded bg-gray-200 hover:bg-gray-300"
@@ -77,7 +78,7 @@
     {#if drawingDetail && drawingDetail.drawingDetailList}
       {#each drawingDetail.drawingDetailList as detail}
         <li class="bg-gray-100 p-4 rounded-lg shadow">
-          <p class="font-medium text-gray-600 text-[1.40rem] leading-7">
+          <p class="font-medium text-gray-600 text-[1.40rem] leading-7 m-1">
             {formatToKoreanTime(detail.drawingDetailCreateTime, false)}
           </p>
           <DrawingInfoBox

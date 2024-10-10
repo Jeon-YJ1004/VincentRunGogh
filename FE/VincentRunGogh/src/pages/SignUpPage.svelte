@@ -28,7 +28,6 @@
     }
     $helpers.email.color = '';
     $helpers.email.message = '';
-    //TODO - 이메일 중복 조회
     if (loading) return;
     loading = true;
     checkEmailDuplication(
@@ -49,9 +48,13 @@
         } else {
           $helpers.email.color = 'red';
           $helpers.email.message = '이미 사용중인 이메일입니다';
+          loading = false;
         }
       },
-      (error) => {}
+      (error) => {
+        loading = false;
+        errorAlert('다시 시도해주세요');
+      }
     );
   };
   const handleCheckCode = () => {

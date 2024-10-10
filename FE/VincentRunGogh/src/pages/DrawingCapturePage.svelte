@@ -29,7 +29,6 @@
   import { formatDistanceFix2 } from '@/utils/formatter';
   import { loadingAlert } from '@/utils/notificationAlert';
   let drawingInfo = get(drawingStore);
-  let isLoading = false;
   // 폼 형태 변수 임시저장 or 완료
   let isComplete = $querystring?.split('=')[1] === 'complete';
   let map: LeafletMap;
@@ -40,6 +39,7 @@
   let isLocked: boolean = false;
   let latLngMessageList: string[] = ['지도를 움직여 표지를 지정해주세요', '드로잉을 저장했습니다!'];
   let latLngMessage: string = latLngMessageList[0];
+  let isMapLoaded: boolean = false; // 지도 로드 상태를 추적하는 변수
 
   let inputName: string = '';
 
@@ -86,15 +86,35 @@
     });
   }
 
-  function drawPrevLines(map: L.Map) {
+  function adjustMapBounds(map, bounds) {
+    const mapViewWidth = window.innerWidth;
+    const mapViewHeight = window.innerHeight;
+
+    const desiredViewSize = 350; // 중앙에 표시하고 싶은 영역의 크기
+
+    const paddingX = (mapViewWidth - desiredViewSize) / 2;
+    const paddingY = (mapViewHeight - desiredViewSize) / 2;
+
+    map.fitBounds(bounds, { padding: [paddingY, paddingX] });
+  }
+
+  function drawPrevLines(map: L.Map, currList: []) {
+    if (!map) return;
     const prevData = get(drawingStore).drawingPositionList;
-    if (prevData.length === 0 || prevData === null || prevData === undefined) return;
-    const prevLatlngs: L.LatLng[] = prevData?.map((item) => item.latlng);
-    prevPolyline = L.polyline(prevLatlngs, {
+    if (!prevData || prevData.length === 0) return;
+
+    // prevData의 각 항목에서 lat과 lng를 사용하여 L.LatLng 객체 생성
+    const prevLatlngs: L.LatLng[] = prevData.map((item) => new L.LatLng(item.lat, item.lng));
+
+    const prevPolyline = L.polyline(prevLatlngs, {
       color: '#5e8358',
       weight: 5,
     }).addTo(map);
+
     prevPolyline.setStyle({ zIndex: -1 });
+
+    const bounds = L.latLngBounds([...prevLatlngs, ...currList]);
+    adjustMapBounds(map, bounds);
   }
 
   // 전체 맵에 선을 그리는 함수
@@ -105,10 +125,22 @@
   // 지도 초기화 및 선 그리기
   function initializeMap() {
     map = L.map('map').setView([36.3528192, 127.3102336], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       crossOrigin: 'anonymous',
     }).addTo(map);
+
+    // 타일 로드 완료 감지
+    tileLayer.on('load', () => {
+      console.log('All tiles have been loaded');
+      isMapLoaded = true; // 모든 타일 로드 완료
+    });
+
+    // 지도 이동이나 줌 변경 시 타일 로드 재시작 감지
+    map.on('movestart', () => {
+      isMapLoaded = false; // 지도 이동 시작 시 isMapLoaded를 false로 설정
+      console.log('Map tiles are reloading due to move/zoom');
+    });
 
     drawLinesOnMap(map);
 
@@ -136,26 +168,25 @@
 
     const posListData = get(posList);
     const segments: L.LatLng[][] = [];
-    for (let i = 1; i < posListData.length; i++) {
-      const start = posListData[i - 1].latlng;
-      const end = posListData[i].latlng;
-      const segment = [start, end];
-      segments.push(segment);
+    if (posListData.length > 0) {
+      for (let i = 1; i < posListData.length; i++) {
+        const start = posListData[i - 1].latlng;
+        const end = posListData[i].latlng;
+        const segment = [start, end];
+        segments.push(segment);
+      }
+
+      segments.forEach((segment) => {
+        L.polyline(segment, {
+          color: '#5e8358', // 단일 색상 적용
+          weight: 5,
+        }).addTo(map);
+      });
     }
-
-    segments.forEach((segment) => {
-      L.polyline(segment, {
-        color: '#5e8358', // 단일 색상 적용
-        weight: 5,
-      }).addTo(map);
-    });
-
-    drawPrevLines(map);
+    drawPrevLines(map, posListData);
   }
 
   async function submitDrawing() {
-    isLoading = true;
-
     const data = {
       drawingImage: $drawingImage,
       drawingDetailImage: $drawingDetailImage,
@@ -165,7 +196,6 @@
     if (isComplete) {
       data.title = inputName;
     }
-    console.log(drawingInfo);
     if (isComplete) {
       completeDrawing(
         drawingInfo.drawingId,
@@ -173,12 +203,10 @@
         (response) => {
           if (response.data.status === 200) {
             isLocked = true;
-            isLoading = false;
             Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
           }
         },
         (error) => {
-          isLoading = false;
           if (error.response.status === 501) {
             data.positions = get(realTimePositions);
             reCompleteDrawing(
@@ -187,12 +215,10 @@
               (res) => {
                 if (response.data.status === 200) {
                   isLocked = true;
-                  isLoading = false;
                   Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
                 }
               },
               (err) => {
-                isLoading = false;
                 Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
 
                 replace('/');
@@ -207,13 +233,11 @@
         data,
         (response) => {
           if (response.data.status === 200) {
-            isLoading = false;
             isLocked = true;
             Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
           }
         },
         (error) => {
-          isLoading = false;
           if (error.response.status === 501) {
             data.positions = get(realTimePositions);
             reSaveDrawing(
@@ -222,12 +246,10 @@
               (res) => {
                 if (res.data.status === 200) {
                   isLocked = true;
-                  isLoading = false;
                   Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
                 }
               },
               (err) => {
-                isLoading = false;
                 Swal.close(); // 비동기 작업이 끝난 후에 모달 닫기
 
                 replace('/');
@@ -260,16 +282,29 @@
       } else errorMessage = '';
     }
     loadingAlert('드로잉을 저장중입니다...', '/saveroute.gif', async () => {
-      await mapCapture(true);
+      await handleCaptureClick(true);
       await changeMapWithSingleColor();
+      await handleCaptureClick(false);
 
-      await mapCapture(false);
-      if (!isLoading) {
-        await submitDrawing();
-      }
+      await submitDrawing();
     });
   }
+  async function handleCaptureClick(isTypeColorLine: boolean) {
+    if (!isMapLoaded) {
+      // 지도 로드가 완료되지 않았다면 로드 완료를 대기
+      await new Promise((resolve) => {
+        const checkLoad = setInterval(() => {
+          if (isMapLoaded) {
+            clearInterval(checkLoad);
+            resolve();
+          }
+        }, 100); // 100ms마다 로드 상태 확인
+      });
+    }
 
+    // 지도 로드가 완료되었으므로 캡처 실행
+    await mapCapture(isTypeColorLine);
+  }
   async function mapCapture(isTypeColorLine: boolean) {
     document.getElementById('route-name')?.blur();
 

@@ -70,7 +70,7 @@
     'rgba(125, 70, 148, 0.9)',
   ];
 
-  let selectedYear: number = new Date().getFullYear();
+  let selectedYear: number;
   let yearItem: SelectOptionType<any>[] = [
     { value: '2024', name: '2024' },
     { value: '2023', name: '2023' },
@@ -284,7 +284,7 @@
             var label = context.dataset.label;
             var value = context.formattedValue;
             if (label === '활동 시간') return label + ' : ' + formatSecToH(value);
-            else if (label === '이동 거리') return label + ' : ' + value + ' M';
+            else if (label === '이동 거리') return label + ' : ' + value + ' km';
             else return label + ' : ' + value + ' 번';
           },
         },
@@ -295,6 +295,8 @@
     },
   };
   onMount(() => {
+    selectedYear = new Date().getFullYear();
+
     setChartData();
   });
 </script>
@@ -338,7 +340,7 @@
       <div class="categoryTitle">
         <span>시간(h)</span>
       </div>
-      <span class="chartSum">{formatSecToH($categoryData.totalTime)}</span>
+      <span class="chartSum">{formatSecToH($categoryData.totalTime).split(' ')[0]}</span>
     </button>
     <button class="categoryBtn" on:click={() => activeCategory.set('completed')}>
       <div class="categoryTitle">

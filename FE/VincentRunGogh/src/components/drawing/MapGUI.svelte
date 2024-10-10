@@ -10,7 +10,7 @@
   } from '@/stores/drawingStore';
   import { stepCount } from '@/stores/deviceMotionStore';
   import { get } from 'svelte/store';
-  import { formatSecToMS } from '@/utils/formatter';
+  import { formatSecToMS, formatDistanceFix2 } from '@/utils/formatter';
 
   const dispatch = createEventDispatcher<{
     'click-pause': boolean;
@@ -58,7 +58,11 @@
     </button>
   </div>
   <div class="flex flex-row items-center w-[inherit] justify-around">
-    <button class="text-green-500 focus:outline-none" on:click={clickMute} aria-label="Mute Button">
+    <button
+      class="text-green-500 focus:outline-none invisible"
+      on:click={clickMute}
+      aria-label="Mute Button"
+    >
       <!-- Mute icon -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +117,7 @@
         <span class="text-sm"> 이동거리 </span>
         <div>
           <span class="text-lg text-gray-700 text-2xl font-bold">
-            {Math.round($totalDistance * 10) / 10}
+            {formatDistanceFix2($totalDistance)}
           </span> km
         </div>
       </div>

@@ -38,9 +38,13 @@ async function getDrawingList(type) {
 }
 
 // 특정 드로잉 조회 (홈)
-async function getDrawingInfo(drawingId) {
+async function getDrawingInfo(drawingId, isDetail) {
+  let url = `/drawings/${drawingId}`;
+  if (isDetail) {
+    url += '/details';
+  }
   return http
-    .get(`/drawings/${drawingId}`)
+    .get(url)
     .then((response) => response.data)
     .catch((error) => {
       throw error;

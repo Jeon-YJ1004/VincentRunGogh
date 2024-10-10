@@ -94,7 +94,7 @@
   // 진행중인 드로잉 클릭
   async function clickOngoingDrawing(artImage: string, drawingId: number) {
     try {
-      let responseOngoing = await getDrawingInfo(drawingId);
+      let responseOngoing = await getDrawingInfo(drawingId, false);
       // 요청 성공 후 모달 열기
       Swal.fire({
         html: '<div id="route-detail"></div>',

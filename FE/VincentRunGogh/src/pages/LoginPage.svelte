@@ -36,6 +36,7 @@
         }
       },
       (error) => {
+        loading = false;
         console.log(error);
       }
     );
