@@ -91,7 +91,7 @@ public class DrawingController {
                                           @RequestBody StartDrawingRequest request,
                                           @RequestParam String type){
 
-        log.info("루트 아이디 "+ request.getRouteId());
+        log.info("/drawing/start 루트 아이디 "+ request.getRouteId());
         StartDrawingResponse response = drawingService.startDrawing(userPrincipal.getId(), request, type);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -111,6 +111,7 @@ public class DrawingController {
                                             @PathVariable int drawingId,
                                             @RequestBody @Valid RestartDrawingRequest request){
 
+        log.info("drawings/start/" + drawingId);
         RestartDrawingResponse response = drawingService.restartDrawing(drawingId, request, userPrincipal.getId());
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -130,6 +131,7 @@ public class DrawingController {
                                          @PathVariable int drawingId,
                                          @RequestBody @Valid SaveDrawingRequest request){
 
+        log.info("/drawings/"+drawingId + " userId:" + userPrincipal.getId());
         SaveDrawingResponse response =  drawingService.saveDrawing(userPrincipal.getId(), drawingId, request);
 
         return ResponseEntity
@@ -152,6 +154,7 @@ public class DrawingController {
                                          @PathVariable int drawingId,
                                          @RequestBody @Valid ReSaveDrawingRequest request){
 
+        log.info("/drawings/re"+drawingId + " userId:" + userPrincipal.getId());
         SaveDrawingResponse response =  drawingService.saveDrawing(userPrincipal.getId(), drawingId, request);
 
         return ResponseEntity
@@ -173,6 +176,7 @@ public class DrawingController {
                                              @PathVariable int drawingId,
                                              @RequestBody @Valid CompleteDrawingRequest request){
 
+        log.info("/drawings/end"+drawingId + " userId:" + userPrincipal.getId());
         SaveDrawingResponse response =  drawingService.completeDrawing(userPrincipal.getId(), drawingId, request);
 
         return ResponseEntity
@@ -214,6 +218,7 @@ public class DrawingController {
     public ResponseEntity<?> getDrawingDetails(@PathVariable int drawingId,
                                                @AuthenticationPrincipal UserPrincipal userPrincipal){
 
+        log.info("/drawings/"+drawingId +"/details" + " userId:" + userPrincipal.getId());
         DrawingDetailsResponse response =  drawingService.getDrawingDetails(drawingId, userPrincipal.getId());
 
         return ResponseEntity

@@ -31,6 +31,7 @@ import com.vincentrungogh.global.exception.ErrorCode;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -153,9 +154,10 @@ public class DrawingService {
         List<MongoDrawingDetail> mongoDrawingPositionList = mongoDrawingRepository.findAllByIdIn(drawingDetailIds);
 
         // 4.
-        List<Position> drawingPositionList = mongoDrawingPositionList.stream()
-                .flatMap(mongoDrawing -> mongoDrawing.getPositionList().stream())
+        List<List<Position>> drawingPositionList = mongoDrawingPositionList.stream()
+                .map(MongoDrawingDetail::getPositionList)
                 .toList();
+
 
         // 5. 루트 정보
         List<Position> routePositionList = mongoRouteRepository.findById(drawing.getRoute().getId())

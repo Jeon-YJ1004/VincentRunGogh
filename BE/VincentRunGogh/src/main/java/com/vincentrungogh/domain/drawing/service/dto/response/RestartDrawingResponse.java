@@ -13,17 +13,18 @@ import java.util.List;
 public class RestartDrawingResponse {
 
     private String title;
-    private List<Position> drawingPositionList;
+    private List<List<Position>> drawingPositionList;
     private List<Position> routePositionList;
 
     @Builder
-    private RestartDrawingResponse(String title, List<Position> drawingPositionList, List<Position> routePositionList) {
+    private RestartDrawingResponse(String title, List<List<Position>> drawingPositionList, List<Position> routePositionList) {
         this.title = title;
         this.drawingPositionList = drawingPositionList;
         this.routePositionList = routePositionList;
     }
 
-    public static RestartDrawingResponse createRestartDrawingResponse(String title, List<Position> drawingPositionList, List<Position> routePositionList) {
+    public static RestartDrawingResponse createRestartDrawingResponse(String title,
+                                                                      List<List<Position>> drawingPositionList, List<Position> routePositionList) {
         return RestartDrawingResponse.builder()
                 .title(title)
                 .drawingPositionList(drawingPositionList)
