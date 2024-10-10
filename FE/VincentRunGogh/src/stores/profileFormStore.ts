@@ -1,5 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
 import { checkNickNameDuplication } from '@/api/authApi';
+import { userStore } from '@/stores/userStore';
+
 interface FormValues {
   nickname: string;
   height: string;
@@ -28,6 +30,18 @@ function createFormStore() {
     helpers.set(initialHelpers);
   }
   function validateNickname(value: string) {
+    const currentUser = get(userStore);
+
+    if (value === currentUser?.nickname) {
+      helpers.set({
+        ...get(helpers),
+        nickname: {
+          message: '',
+          color: 'green',
+        },
+      });
+      return;
+    }
     const regex = /^[A-Za-z가-힣0-9]{1,10}$/;
     if (!regex.test(value)) {
       helpers.update((h) => ({

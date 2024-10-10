@@ -73,12 +73,12 @@
       <Label for="gender">성별</Label>
       <ul class="flex gap-5 mt-5 items-center w-full rounded-lg">
         <li class="w-full">
-          <Radio name="gender" checked={gender === 1} on:change={() => handleGenderChange(1)}
+          <Radio name="gender" checked={gender === 0} on:change={() => handleGenderChange(0)}
             >남자</Radio
           >
         </li>
         <li class="w-full">
-          <Radio name="gender" checked={gender === 0} on:change={() => handleGenderChange(0)}
+          <Radio name="gender" checked={gender === 1} on:change={() => handleGenderChange(1)}
             >여자</Radio
           >
         </li>

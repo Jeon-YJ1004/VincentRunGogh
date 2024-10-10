@@ -3,7 +3,7 @@
 
   const MIN_BMI = 15;
   const MAX_BMI = 40;
-  export let bmi: number = 22.5; // 예제 BMI 값
+  export let bmi: number;
 
   const bmiCategoryColors = {
     Thinness: { bg: 'from-blue-200 to-blue-300', badge: 'indigo' },

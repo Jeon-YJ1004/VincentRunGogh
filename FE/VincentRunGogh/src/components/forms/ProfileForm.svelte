@@ -17,8 +17,12 @@
 
   async function handleCheckNickname() {
     const currentUser = get(userStore);
-    console.log(currentUser?.nickname, $values?.nickname);
-    if ($values.nickname.length > 0 && $values.nickname !== currentUser?.nickname) {
+
+    if (
+      $values.nickname.length > 0 &&
+      $values.nickname !== currentUser?.nickname &&
+      $helpers.nickname.color === 'red'
+    ) {
       await checkNicknameAvailability($values.nickname);
     }
   }
