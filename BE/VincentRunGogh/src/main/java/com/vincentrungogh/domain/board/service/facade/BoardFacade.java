@@ -110,7 +110,7 @@ public class BoardFacade {
         // route의 imageUrl 가져오기
         // getRoute() 결과가 없다면 null이 되는 것
         log.info("드로잉의 route 정보 " + drawing.getRoute());
-        String originRouteImageUrl = (drawing.getRoute() != null) ? drawing.getRoute().getArtImage() : null;
+        String originRouteImageUrl = (drawing.getRoute() != null) ? drawing.getRoute().getArtImage() : drawing.getAccumulatedDrawingImage();
         String drawingImageUrl = drawing.getAccumulatedDrawingImage();
         Route route = routeService.saveRoute(user, drawing.getTitle(), originRouteImageUrl, drawingImageUrl, dataResponseDto);
 
