@@ -17,6 +17,7 @@
     setDrawingPos,
     updateDistanceAndSpeed,
     isRouteDrawing,
+    realTimePositions,
   } from '@/stores/drawingStore';
   import {
     setupMotionEventListeners,
@@ -95,7 +96,11 @@
     addPosition(lat, lng);
 
     if (currPos && isFocusMarker) map.setView(currPos, zoomLevel, { animate: true });
-
+    const data = { lat, lng, time: formatTimeToHMS() };
+    // console.log('Sending data:', data);
+    realTimePositions.update((prev) => {
+      return [...prev, data];
+    });
     firstLocationFound.update((value) => {
       if (!value) {
         // 처음 위치 찾기
@@ -131,11 +136,15 @@
               prevDrawingLayers.remove();
             }
             if (response.data.data.drawingPositionList) {
-              prevDrawingLayers = createExtraLines(response.data.data.drawingPositionList, false);
-              prevDrawingLayers.addTo(map);
+              response.data.data.drawingPositionList.forEach((positionList) => {
+                if (positionList && positionList.length > 0) {
+                  let prevDrawingLayer = createExtraLines(positionList, false);
+                  prevDrawingLayer.addTo(map);
+                }
+              });
             }
             try {
-              await connectWebSocket();
+              // await connectWebSocket();
               // console.log('WebSocket connected successfully');
             } catch (error) {
               console.error('Failed to connect WebSocket:', error);
@@ -374,14 +383,26 @@ fill="#000000" stroke="none">
   let prevDrawingLayers: Polyline;
 
   function createExtraLines(positions: [], isRoute: boolean) {
-    const latlngs = positions.map((pos) => new L.LatLng(pos.lat, pos.lng));
-    console.log(latlngs);
-    return L.polyline(latlngs, {
-      color: isRoute ? '#b5b5b5' : '#606060',
-      weight: 5,
-      opacity: 0.7,
-      dashArray: isRoute ? '5, 10' : '',
-    });
+    const latlngs = positions
+      .map((pos) => {
+        if (pos.lat !== undefined && pos.lng !== undefined) {
+          return new L.LatLng(pos.lat, pos.lng);
+        }
+        return null;
+      })
+      .filter((pos) => pos !== null); // 유효하지 않은 좌표 제거
+
+    if (latlngs.length > 0) {
+      return L.polyline(latlngs, {
+        color: isRoute ? '#b5b5b5' : '#606060',
+        weight: 5,
+        opacity: 0.7,
+        dashArray: isRoute ? '5, 10' : '',
+      });
+    } else {
+      console.error('No valid lat/lng data available for polyline.');
+      return null; // 유효한 선을 그릴 수 없는 경우 null 반환
+    }
   }
 
   function mapAction() {

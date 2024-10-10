@@ -17,7 +17,7 @@ interface PositionData {
 
 interface DrawingInfo {
   title: string;
-  drawingPositionList?: Position[];
+  drawingPositionList?: Position[][];
   routePositionList?: Position[];
   routeId?: string;
   drawingId?: string;
@@ -107,7 +107,7 @@ export function updateDistanceAndSpeed() {
 
       const distance = lastPos.distanceTo(newPos);
       const timeDiff = (newPosData.time - lastPosData.time) / 1000; // 초로 변환
-
+      console.log('updateDistanceAndSpeed에서 distance: ' + distance + ' timeDiff: ' + timeDiff);
       if (timeDiff > 0 && distance > 0) {
         const speed = distance / 1000 / (timeDiff / 3600);
         updateLastPosSpeed(speed); // 여기에서 속도 업데이트 함수 호출
@@ -118,6 +118,7 @@ export function updateDistanceAndSpeed() {
         const minutesString = paceMinutes.toString().padStart(2, '0');
         const secondsString = remainingSeconds.toString().padStart(2, '0');
         currentPace.set(`${minutesString}:${secondsString}`);
+        console.log(`그래서 pace는 ${minutesString}:${secondsString}`);
       } else {
         currentPace.set('-');
       }

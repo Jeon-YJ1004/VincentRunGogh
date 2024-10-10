@@ -55,6 +55,7 @@ export function sendRealTimePosition(location: Object, nickname: string) {
     realTimePositions.update((prev) => {
       return [...prev, data];
     });
+    console.log('Sending data:', data);
     stompClient.publish({
       destination: `/pub/running/${nickname}`,
       headers: headers,
