@@ -182,6 +182,9 @@
   }
 
   async function submitDrawing() {
+    map.invalidateSize();
+    let guide = document.querySelector('#capture-guide');
+    guide.style.display = '';
     const data = {
       drawingImage: $drawingImage,
       drawingDetailImage: $drawingDetailImage,
@@ -232,6 +235,7 @@
       // );
       console.log(data);
       data.positions = get(realTimePositions);
+
       reCompleteDrawing(
         drawingInfo.drawingId,
         data,
@@ -243,9 +247,6 @@
           Swal.close();
           isLocked = false;
           toastAlert('다시 시도해주세요', '20em', false);
-          map.invalidateSize();
-          let guide = document.querySelector('#capture-guide');
-          guide.style.display = 'visibility';
         }
       );
     } else {

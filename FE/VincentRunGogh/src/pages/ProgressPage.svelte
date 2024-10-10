@@ -340,7 +340,11 @@
       <div class="categoryTitle">
         <span>시간(h)</span>
       </div>
-      <span class="chartSum">{formatSecToH($categoryData.totalTime).split(' ')[0]}</span>
+      <span class="chartSum"
+        >{#if $categoryData.totalTime === 0}0{:else}{formatSecToH($categoryData.totalTime).split(
+            ' '
+          )[0]}{/if}</span
+      >
     </button>
     <button class="categoryBtn" on:click={() => activeCategory.set('completed')}>
       <div class="categoryTitle">
