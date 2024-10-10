@@ -21,7 +21,7 @@ public class FindOthersRoute implements RouteStrategy {
     public FindRouteResponseDto findRoute(User user, double lat, double lng, Double averageSpeed) {
 
         //유저가 가지지 않는 루트 mysql에서 모두 조회
-        List<Route> routeList = routeRepository.findAllByUserIsNot(user);
+        List<Route> routeList = routeRepository.findAllByUserIsNotOrderByCreatedDesc(user);
 
         List<FindRoute> findRouteList = routeList.stream()
                 .filter(route -> route.getTitle() != null)

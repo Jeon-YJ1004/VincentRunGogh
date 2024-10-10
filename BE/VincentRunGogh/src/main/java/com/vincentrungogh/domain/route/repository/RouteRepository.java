@@ -12,5 +12,5 @@ public interface RouteRepository extends JpaRepository<Route, String> {
     List<Route> findAllByUser(User user);
 
     //유저가 아닌 것들 모두 조회
-    List<Route> findAllByUserIsNot(User user);
+    List<Route> findAllByUserIsNotOrderByCreatedDesc(User user);
 }
