@@ -320,7 +320,7 @@
 
       await changeMapWithSingleColor();
       // await handleCaptureClick(false);
-      await mapCapture(true);
+      await mapCapture(false);
 
       await submitDrawing();
     });
