@@ -329,23 +329,11 @@
   };
 
   let marker: Marker | null = null; // 마커 객체를 저장할 변수
-
   function createMarker(loc: LatLngExpression): Marker | null {
-    const iconHtml = `<div class="map-marker" style="transform: rotate(${$deviceOrientation.alpha}}deg);">
-<div class="map-marker"><svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="2rem" height="2rem" viewBox="0 0 256.000000 256.000000"
- preserveAspectRatio="xMidYMid meet">
-
-<g transform="translate(0.000000,256.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
-<path d="M1245 1839 c-484 -209 -886 -387 -892 -396 -19 -25 -16 -77 5 -97 12
--10 158 -48 386 -101 202 -47 376 -89 386 -95 10 -5 21 -17 25 -27 3 -10 44
--182 91 -382 52 -226 90 -371 100 -383 20 -21 72 -24 97 -6 22 17 777 1775
-777 1809 0 34 -29 59 -66 58 -16 -1 -425 -172 -909 -380z"/>
-</g>
-</svg>
-</div>
-    </div>`;
+    const iconHtml = `<div class="map-marker" style="transform: rotate(${90 + $deviceOrientation.alpha}}deg)">
+ <div class="map-marker">
+<img src="/mapmarker.png" />
+</div></div>`;
     const icon = new L.DivIcon({
       html: iconHtml,
       className: 'map-marker',
@@ -361,21 +349,10 @@ fill="#000000" stroke="none">
   function updateMarkerRotation() {
     if (marker && marker.getIcon) {
       const icon = marker.getIcon();
-      icon.options.html = `<div class="map-marker" style="transform: rotate(${$deviceOrientation.alpha}deg);">
-<div class="map-marker"><svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="2rem" height="2rem" viewBox="0 0 256.000000 256.000000"
- preserveAspectRatio="xMidYMid meet">
-
-<g transform="translate(0.000000,256.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
-<path d="M1245 1839 c-484 -209 -886 -387 -892 -396 -19 -25 -16 -77 5 -97 12
--10 158 -48 386 -101 202 -47 376 -89 386 -95 10 -5 21 -17 25 -27 3 -10 44
--182 91 -382 52 -226 90 -371 100 -383 20 -21 72 -24 97 -6 22 17 777 1775
-777 1809 0 34 -29 59 -66 58 -16 -1 -425 -172 -909 -380z"/>
-</g>
-</svg>
-</div>
-    </div>`;
+      icon.options.html = `<div class="map-marker" style="transform: rotate(${90 + $deviceOrientation.alpha}}deg)">
+ <div class="map-marker">
+<img src="/mapmarker.png" />
+</div></div>`;
       marker.setIcon(icon);
     }
   }
@@ -383,7 +360,7 @@ fill="#000000" stroke="none">
   function createLines(): Polyline {
     return L.polyline(
       $posList.map((p) => p.latlng),
-      { color: 'blue', opacity: 0.5, smoothFactor: 1, weight: 5 }
+      { color: 'rgba(1,87,155,0.9)', opacity: 0.5, smoothFactor: 1, weight: 10 }
     );
   }
 

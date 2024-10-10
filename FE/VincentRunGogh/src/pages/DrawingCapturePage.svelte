@@ -80,7 +80,7 @@
       console.log(speed);
       const polyline = L.polyline(segment, {
         color: getSpeedColor(speed),
-        weight: 5,
+        weight: 10,
         opacity: 0.8,
       }).addTo(map);
       // map.fitBounds(polyline.getBounds());
@@ -100,7 +100,7 @@
         allPrevLatLng.push(...prevLatlngs);
         const prevPolyline = L.polyline(prevLatlngs, {
           color: '#5e8358',
-          weight: 5,
+          weight: 10,
         }).addTo(map);
 
         prevPolyline.setStyle({ zIndex: -1 });
@@ -174,7 +174,7 @@
       segments.forEach((segment) => {
         L.polyline(segment, {
           color: '#5e8358', // 단일 색상 적용
-          weight: 5,
+          weight: 10,
         }).addTo(map);
       });
     }
