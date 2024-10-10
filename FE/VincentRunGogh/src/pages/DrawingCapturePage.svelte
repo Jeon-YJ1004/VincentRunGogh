@@ -97,7 +97,7 @@
         const prevLatlngs: L.LatLng[] = positionList.map(
           (item) => new L.LatLng(item.lat, item.lng)
         );
-        allPrevLatLng.push(prevLatlngs);
+        allPrevLatLng.push(...prevLatlngs);
         const prevPolyline = L.polyline(prevLatlngs, {
           color: '#5e8358',
           weight: 5,
@@ -194,14 +194,6 @@
     if (isComplete) {
       data.title = inputName;
     }
-    // alert(
-    //   JSON.stringify({
-    //     drawingImage: $drawingImage.length > 0,
-    //     drawingDetailImage: $drawingDetailImage.length > 0,
-    //     step: $stepCount,
-    //     ...drawingInfo.endInfo,
-    //   })
-    // );
     if (isComplete) {
       // completeDrawing(
       //   drawingInfo.drawingId,
@@ -247,6 +239,7 @@
           Swal.close();
           isLocked = false;
           toastAlert('다시 시도해주세요', '20em', false);
+          drawLinesOnMap(map);
         }
       );
     } else {
@@ -263,9 +256,7 @@
           Swal.close();
           isLocked = false;
           toastAlert('다시 시도해주세요', '20em', false);
-          map.invalidateSize();
-          let guide = document.querySelector('#capture-guide');
-          guide.style.display = 'visibility';
+          drawLinesOnMap(map);
         }
       );
       // saveDrawing(
@@ -324,9 +315,12 @@
       } else errorMessage = '';
     }
     loadingAlert('드로잉을 저장중입니다...', '/saveroute.gif', async () => {
-      await handleCaptureClick(true);
+      // await handleCaptureClick(true);
+      await mapCapture(true);
+
       await changeMapWithSingleColor();
-      await handleCaptureClick(false);
+      // await handleCaptureClick(false);
+      await mapCapture(true);
 
       await submitDrawing();
     });

@@ -383,7 +383,7 @@ fill="#000000" stroke="none">
   function createLines(): Polyline {
     return L.polyline(
       $posList.map((p) => p.latlng),
-      { color: '#ffb800', opacity: 0.5, smoothFactor: 1, weight: 5 }
+      { color: '#ff4040', opacity: 0.5, smoothFactor: 1, weight: 5 }
     );
   }
 
@@ -392,7 +392,6 @@ fill="#000000" stroke="none">
   let prevDrawingLayers: Polyline;
 
   function createExtraLines(positions: [], isRoute: boolean) {
-    console.log(positions);
     const latlngs = positions
       .map((pos) => {
         if (pos.lat !== undefined && pos.lng !== undefined) {
