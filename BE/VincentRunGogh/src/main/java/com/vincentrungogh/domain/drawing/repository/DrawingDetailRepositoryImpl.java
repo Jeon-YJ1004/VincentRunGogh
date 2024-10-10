@@ -195,7 +195,7 @@ public class DrawingDetailRepositoryImpl implements DrawingDetailRepositoryCusto
                         ))
                 .from(drawingDetail)
                 .where(drawingDetail.drawing.eq(drawing))
-                .groupBy(drawingDetail.drawing)
+//                .groupBy(drawingDetail.drawing)
                 .fetchOne();
     }
 }

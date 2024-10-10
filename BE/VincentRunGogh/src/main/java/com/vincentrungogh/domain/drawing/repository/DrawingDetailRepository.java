@@ -4,14 +4,13 @@ import com.vincentrungogh.domain.drawing.entity.*;
 import com.vincentrungogh.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DrawingDetailRepository extends JpaRepository<DrawingDetail, Integer>, DrawingDetailRepositoryCustom {
     List<DrawingDetail> findAllByDrawingAndCreatedBetween(Drawing drawing, LocalDateTime start, LocalDateTime end);
     List<DrawingDetail> findAllByDrawing(Drawing drawing);
-    List<DrawingDetail> findAllByDrawingOrderByCreated(Drawing drawing);
+    List<DrawingDetail> findAllByDrawingOrderByCreatedDesc(Drawing drawing);
 
     @Override
     Long countAllByDrawings(List<Drawing> drawings);

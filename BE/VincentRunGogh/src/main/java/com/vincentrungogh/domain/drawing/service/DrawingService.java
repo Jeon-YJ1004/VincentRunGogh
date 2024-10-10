@@ -245,10 +245,14 @@ public class DrawingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.DRAWING_NOT_FOUND));
 
         // 1. DB 조회
-        List<DrawingDetail> drawingDetails = drawingDetailRepository.findAllByDrawingOrderByCreated(drawing);
+        List<DrawingDetail> drawingDetails = drawingDetailRepository.findAllByDrawingOrderByCreatedDesc(drawing);
+
+        log.info(String.valueOf(drawing.getId()));
 
         // 2.
         DrawingDetailsSummary summary = drawingDetailRepository.findDrawingDetailsSummary(drawing);
+
+        log.info(summary.toString());
 
         DrawingDetailsResponse response =  DrawingDetailsResponse.createDrawingDetailsResponse(drawingDetails, summary);
 

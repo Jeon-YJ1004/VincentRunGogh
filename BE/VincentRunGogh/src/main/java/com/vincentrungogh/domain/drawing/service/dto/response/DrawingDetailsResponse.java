@@ -5,6 +5,7 @@ import com.vincentrungogh.domain.drawing.entity.DrawingDetail;
 import com.vincentrungogh.domain.drawing.entity.DrawingDetailsSummary;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.List;
 public class DrawingDetailsResponse {
 
     private int totalTime;
-    private int totalDistance;
+    private double totalDistance;
     private int totalStep;
     private double avgPace;
     @Setter
@@ -23,7 +24,7 @@ public class DrawingDetailsResponse {
     private List<DrawingDetailResponseDto> drawingDetails;
 
     @Builder
-    private DrawingDetailsResponse(List<DrawingDetailResponseDto> drawingDetails, int totalTime, int totalDistance, int totalStep,
+    private DrawingDetailsResponse(List<DrawingDetailResponseDto> drawingDetails, int totalTime, double totalDistance, int totalStep,
                                    String routeImage, double avgPace) {
         this.drawingDetails = drawingDetails;
         this.totalTime = totalTime;
@@ -47,9 +48,11 @@ public class DrawingDetailsResponse {
             avgPace = (int) Math.round(3600 / avgSpeed);
         }
 
+        double distance = Math.round((summary.getTotalDistance() / 1000.0)* 100) / 100.0;
+
         return DrawingDetailsResponse
                 .builder()
-                .totalDistance(summary.getTotalDistance())
+                .totalDistance(distance)
                 .totalTime(summary.getTotalTime())
                 .avgPace(avgPace)
                 .totalStep(summary.getTotalStep())
