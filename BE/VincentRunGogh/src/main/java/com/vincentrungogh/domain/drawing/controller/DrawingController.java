@@ -155,6 +155,7 @@ public class DrawingController {
                                          @RequestBody @Valid ReSaveDrawingRequest request){
 
         log.info("/drawings/re"+drawingId + " userId:" + userPrincipal.getId());
+        log.info("" + request);
         SaveDrawingResponse response =  drawingService.saveDrawing(userPrincipal.getId(), drawingId, request);
 
         return ResponseEntity
@@ -193,11 +194,11 @@ public class DrawingController {
                     content = @Content(schema = @Schema(implementation = ResultDto.class)))
     })
     @CommonSwaggerResponse.CommonResponses
-    @PostMapping("re/end/{drawingId}")
+    @PostMapping("/re/end/{drawingId}")
     public ResponseEntity<?> reCompleteDrawing(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                              @PathVariable int drawingId,
                                              @RequestBody @Valid ReCompleteDrawingRequest request){
-
+        log.info("re/end/" + request);
         SaveDrawingResponse response =  drawingService.completeDrawing(userPrincipal.getId(), drawingId, request);
 
         return ResponseEntity
