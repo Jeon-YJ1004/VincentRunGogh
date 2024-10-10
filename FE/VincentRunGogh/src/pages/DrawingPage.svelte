@@ -337,7 +337,7 @@
   let marker: Marker | null = null; // 마커 객체를 저장할 변수
 
   function createMarker(loc: LatLngExpression): Marker | null {
-    const iconHtml = `<div class="map-marker" style="transform: rotate(${$deviceOrientation.alpha + 90}}deg) scaleX(-1) ;">
+    const iconHtml = `<div class="map-marker" style="transform: rotate(${$deviceOrientation.alpha}}deg);">
 <div class="map-marker"><svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="2rem" height="2rem" viewBox="0 0 256.000000 256.000000"
  preserveAspectRatio="xMidYMid meet">
@@ -367,7 +367,7 @@ fill="#000000" stroke="none">
   function updateMarkerRotation() {
     if (marker && marker.getIcon) {
       const icon = marker.getIcon();
-      icon.options.html = `<div class="map-marker " style="transform: rotate(${$deviceOrientation.alpha + 90}deg) scaleX(-1);">
+      icon.options.html = `<div class="map-marker " style="transform: rotate(${$deviceOrientation.alpha}deg);">
 <div class="map-marker"><svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="2rem" height="2rem" viewBox="0 0 256.000000 256.000000"
  preserveAspectRatio="xMidYMid meet">
